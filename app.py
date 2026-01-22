@@ -10,7 +10,7 @@ st.set_page_config(
 if "dark" not in st.session_state:
     st.session_state.dark = False
 
-# ---------------- THEME TOGGLE ----------------
+# ---------------- DARK MODE TOGGLE ----------------
 st.toggle("🌙 Dark Mode", key="dark")
 
 # ---------------- STYLES ----------------
@@ -31,15 +31,11 @@ body {{
 }}
 
 .section {{
-    background:{"#2a2a2a" if st.session_state.dark else "#eeeeee"};
+    background:#d9edf7;
     padding:8px;
     font-weight:bold;
     border-radius:4px;
     margin-top:14px;
-}}
-
-.label {{
-    font-weight:normal;
 }}
 
 input, select {{
@@ -66,18 +62,19 @@ input, select {{
 
 .result-label {{
     background:{"#1f1f1f" if st.session_state.dark else "#f5f5f5"};
+    font-weight:normal;
 }}
 
 .result-value {{
-    background:{"#121212" if st.session_state.dark else "#ffffff"};
+    background:#eef6ff;
     font-weight:bold;
-    text-align:right;
+    text-align:left;
     animation: glow 0.4s ease-in-out;
 }}
 
 @keyframes glow {{
     from {{ background:#fff3cd; }}
-    to {{ background:{"#121212" if st.session_state.dark else "#ffffff"}; }}
+    to {{ background:#eef6ff; }}
 }}
 
 @media (max-width: 768px) {{
@@ -101,7 +98,7 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------------- INPUTS ----------------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-col1, col2 = st.columns([1,1])
+col1, col2 = st.columns(2)
 
 with col1:
     symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], key="symbol")
@@ -111,26 +108,11 @@ with col2:
     sl = st.number_input("Stop Loss", format="%.5f", key="sl")
     risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f", key="risk")
 
-# ---------------- AUTO-FOCUS JS ----------------
-st.markdown("""
-<script>
-const inputs = window.parent.document.querySelectorAll('input');
-inputs.forEach((el, idx) => {
-  el.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && inputs[idx+1]) {
-      inputs[idx+1].focus();
-    }
-  });
-});
-</script>
-""", unsafe_allow_html=True)
-
 # ---------------- CALCULATIONS ----------------
 direction = "BUY" if entry > sl else "SELL"
 
 if symbol == "XAUUSD":
-    price_diff = round(abs(entry - sl), 2)
-    point = price_diff * 100
+    point = round(abs(entry - sl) * 100, 1)
 else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
