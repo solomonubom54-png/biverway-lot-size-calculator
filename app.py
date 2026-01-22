@@ -139,10 +139,6 @@ st.markdown(f"""
 <td class="result-value">{direction}</td>
 </tr>
 <tr>
-<td class="result-label">Price Diff</td>
-<td class="result-value">{point}</td>
-</tr>
-<tr>
 <td class="result-label">Lot Size</td>
 <td class="result-value">{lot}</td>
 </tr>
