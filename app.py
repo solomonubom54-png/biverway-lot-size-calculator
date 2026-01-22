@@ -72,6 +72,13 @@ input, select {{
     animation: glow 0.4s ease-in-out;
 }}
 
+.note {{
+    font-size:12px;
+    text-align:center;
+    margin-top:6px;
+    color:{"#aaa" if st.session_state.dark else "#555"};
+}}
+
 @keyframes glow {{
     from {{ background:#fff3cd; }}
     to {{ background:#eef6ff; }}
@@ -147,11 +154,9 @@ st.markdown(f"""
 <td class="result-value">{tp}</td>
 </tr>
 </table>
+<div class="note">
+Designed according to the Biverway Trading System.<br>
+Risk-based lot sizing. Educational use only.
+</div>
 </div>
 """, unsafe_allow_html=True)
-
-# ---------------- FOOTNOTE ----------------
-st.caption(
-    "Designed according to the Biverway Trading System. "
-    "Risk-based lot sizing. Educational use only."
-)
