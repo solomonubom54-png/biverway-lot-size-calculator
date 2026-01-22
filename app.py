@@ -61,19 +61,54 @@ else:
     tp = round(entry + tp_distance if direction == "BUY" else entry - tp_distance, 5)
 
 # ---------- RESULTS ----------
-st.markdown('<div class="section" style="background:#d9edf7;">Results</div>', unsafe_allow_html=True)
-
-st.markdown(f"""
-<div class="row"><div class="label">Direction</div><div class="box">{direction}</div></div>
-<div class="row"><div class="label">Price Diff (points)</div><div class="box">{point}</div></div>
-<div class="row"><div class="label">Lot Size</div><div class="box">{lot}</div></div>
-<div class="row"><div class="label">Take Profit (1:3)</div><div class="box">{tp}</div></div>
-""", unsafe_allow_html=True)
-
-# ---------- FOOTER ----------
 st.markdown("""
-<div style="color:gray;font-size:12px;margin-top:10px;">
-Designed according to the Biverway Trading System.<br>
-Risk-based lot sizing. Educational use only.
-</div>
+<style>
+.result-table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+}
+.result-table td {
+    border:1px solid #ccc;
+    padding:8px;
+    font-size:14px;
+}
+.result-label {
+    background:#f5f5f5;
+    font-weight:bold;
+    width:45%;
+}
+.result-value {
+    background:#ffffff;
+    text-align:right;
+}
+.result-header {
+    background:#d9edf7;
+    padding:6px;
+    font-weight:bold;
+    margin-top:12px;
+    border-radius:4px;
+}
+</style>
+
+<div class="result-header">Results</div>
+
+<table class="result-table">
+<tr>
+    <td class="result-label">Direction</td>
+    <td class="result-value">{direction}</td>
+</tr>
+<tr>
+    <td class="result-label">Price Diff</td>
+    <td class="result-value">{point}</td>
+</tr>
+<tr>
+    <td class="result-label">Lot Size</td>
+    <td class="result-value">{lot}</td>
+</tr>
+<tr>
+    <td class="result-label">Take Profit (1:3)</td>
+    <td class="result-value">{tp}</td>
+</tr>
+</table>
 """, unsafe_allow_html=True)
