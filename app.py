@@ -35,7 +35,7 @@ Inputs
 
 st.write("")
 
-# ---------- INPUT ROWS ----------
+# ---------- ROW HELPERS ----------
 def input_row(label, widget):
     col1, col2 = st.columns([1.1, 2])
     with col1:
@@ -43,24 +43,56 @@ def input_row(label, widget):
     with col2:
         return widget
 
+def output_row(label, value):
+    col1, col2 = st.columns([1.1, 2])
+    with col1:
+        st.markdown(f"<div style='padding-top:6px;'>{label}</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown(
+            f"<div style='background:#eef6ff; padding:6px; border-radius:4px;'>{value}</div>",
+            unsafe_allow_html=True
+        )
+
+# ---------- INPUT ROWS ----------
 symbol = input_row(
     "Symbol",
-    st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], label_visibility="collapsed")
+    st.selectbox(
+        "",
+        ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
+        key="symbol",
+        label_visibility="collapsed"
+    )
 )
 
 entry = input_row(
     "Entry Price",
-    st.number_input("", format="%.5f", label_visibility="collapsed")
+    st.number_input(
+        "",
+        format="%.5f",
+        key="entry_price",
+        label_visibility="collapsed"
+    )
 )
 
 sl = input_row(
     "Stop Loss",
-    st.number_input("", format="%.5f", label_visibility="collapsed")
+    st.number_input(
+        "",
+        format="%.5f",
+        key="stop_loss",
+        label_visibility="collapsed"
+    )
 )
 
 risk = input_row(
     "Risk Amount",
-    st.number_input("", min_value=1.0, format="%.2f", label_visibility="collapsed")
+    st.number_input(
+        "",
+        min_value=1.0,
+        format="%.2f",
+        key="risk_amount",
+        label_visibility="collapsed"
+    )
 )
 
 st.write("")
@@ -107,16 +139,6 @@ Results
 st.write("")
 
 # ---------- OUTPUT ROWS ----------
-def output_row(label, value):
-    col1, col2 = st.columns([1.1, 2])
-    with col1:
-        st.markdown(f"<div style='padding-top:6px;'>{label}</div>", unsafe_allow_html=True)
-    with col2:
-        st.markdown(
-            f"<div style='background:#eef6ff; padding:6px; border-radius:4px;'>{value}</div>",
-            unsafe_allow_html=True
-        )
-
 output_row("Direction", direction)
 output_row("Price Diff (points)", point)
 output_row("Lot Size", lot_size)
