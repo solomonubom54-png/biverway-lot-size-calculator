@@ -108,37 +108,4 @@ st.write("")
 st.markdown(
     "<i style='color:gray;'>Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.</i>",
     unsafe_allow_html=True
-        )with col1:
-    st.markdown("Direction")
-with col2:
-    st.markdown(direction)
-
-# Price Diff row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Price Diff (points)")
-with col2:
-    st.markdown(point)
-
-# Lot Size row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Lot Size")
-with col2:
-    st.markdown(lot_size)
-
-# Take Profit row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Take Profit (1:3)")
-with col2:
-    st.markdown(tp)
-
-# -----------------
-# FOOTER NOTE
-# -----------------
-st.write("")
-st.markdown(
-    "<i style='color:gray;'>Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.</i>",
-    unsafe_allow_html=True
-        )
+)
