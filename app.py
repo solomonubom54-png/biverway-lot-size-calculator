@@ -56,10 +56,6 @@ st.markdown("""
     border-radius:4px;
 }
 
-.result-value {
-    font-weight:bold;
-}
-
 .footer {
     margin-top:12px;
     font-size:12px;
@@ -149,19 +145,19 @@ st.markdown(f"""
 <table class="table">
 <tr>
     <td class="label">Direction</td>
-    <td class="value result-value">{direction}</td>
+    <td class="value">{direction}</td>
 </tr>
 <tr>
     <td class="label">Price Diff</td>
-    <td class="value result-value">{point}</td>
+    <td class="value">{point}</td>
 </tr>
 <tr>
     <td class="label">Lot Size</td>
-    <td class="value result-value">{lot}</td>
+    <td class="value">{lot}</td>
 </tr>
 <tr>
     <td class="label">Take Profit (1:3)</td>
-    <td class="value result-value">{tp}</td>
+    <td class="value">{tp}</td>
 </tr>
 </table>
 """, unsafe_allow_html=True)
