@@ -19,16 +19,19 @@ st.write(
 # ---------------- INPUTS ----------------
 st.markdown("### Inputs")
 
+# SYMBOL
 col1, col2 = st.columns([1, 2])
 with col1:
     st.write("Symbol")
 with col2:
     symbol = st.selectbox(
         "",
-        ["EURUSD", "GBPUSD", "USDJPY", "XAUUSD"],
-        label_visibility="collapsed"
+        ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
+        label_visibility="collapsed",
+        key="symbol_input"
     )
 
+# ENTRY PRICE
 col1, col2 = st.columns([1, 2])
 with col1:
     st.write("Entry Price")
@@ -37,9 +40,11 @@ with col2:
         "",
         value=0.00000,
         format="%.5f",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="entry_input"
     )
 
+# STOP LOSS
 col1, col2 = st.columns([1, 2])
 with col1:
     st.write("Stop Loss")
@@ -48,9 +53,11 @@ with col2:
         "",
         value=0.00000,
         format="%.5f",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="sl_input"
     )
 
+# RISK
 col1, col2 = st.columns([1, 2])
 with col1:
     st.write("Risk Amount")
@@ -60,29 +67,32 @@ with col2:
         value=1.00,
         min_value=0.01,
         format="%.2f",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="risk_input"
     )
 
 # ---------------- CALCULATIONS ----------------
 direction = "-"
-price_diff = 0
+point = 0
 lot_size = 0
 take_profit = 0
 
 if entry_price != stop_loss:
     direction = "BUY" if entry_price > stop_loss else "SELL"
 
-    price_diff = abs(entry_price - stop_loss)
-
-    # Point calculation
     if symbol == "XAUUSD":
-        point = price_diff * 100
-        lot_size = risk_amount / point if point != 0 else 0
-        take_profit = entry_price + (price_diff * 3) if direction == "BUY" else entry_price - (price_diff * 3)
+        point = round(abs(entry_price - stop_loss) * 100, 1)
+        lot_size = round(risk_amount / point, 2) if point != 0 else 0
+        tp_distance = abs(entry_price - stop_loss) * 3
+        take_profit = entry_price + tp_distance if direction == "BUY" else entry_price - tp_distance
     else:
-        point = price_diff * 10000
-        lot_size = risk_amount / point if point != 0 else 0
-        take_profit = entry_price + (price_diff * 3) if direction == "BUY" else entry_price - (price_diff * 3)
+        point = abs(int(entry_price * 100000) - int(stop_loss * 100000))
+        lot_size = round(
+            (risk_amount * entry_price) / point, 2
+        ) if symbol == "USDCHF" and point != 0 else round(risk_amount / point, 2) if point != 0 else 0
+
+        tp_distance = (point * 3) / 100000
+        take_profit = entry_price + tp_distance if direction == "BUY" else entry_price - tp_distance
 
 else:
     st.warning("Entry price and Stop Loss are too close or identical. Adjust them.")
@@ -127,11 +137,11 @@ st.markdown("""
 </tr>
 <tr>
     <td class="result-label">Price Diff (points)</td>
-    <td class="result-value">{:.2f}</td>
+    <td class="result-value">{}</td>
 </tr>
 <tr>
     <td class="result-label">Lot Size</td>
-    <td class="result-value">{:.2f}</td>
+    <td class="result-value">{}</td>
 </tr>
 <tr>
     <td class="result-label">Take Profit (1:3)</td>
@@ -140,7 +150,7 @@ st.markdown("""
 </table>
 """.format(
     direction,
-    point if entry_price != stop_loss else 0,
+    point,
     lot_size,
     f"{take_profit:.5f}" if symbol != "XAUUSD" else f"{take_profit:.2f}"
 ), unsafe_allow_html=True)
