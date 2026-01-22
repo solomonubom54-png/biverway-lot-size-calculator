@@ -19,11 +19,6 @@ st.markdown("""
     border-radius:4px;
     margin-top:12px;
 }
-.result {
-    background:#eef6ff;
-    padding:8px;
-    border-radius:4px;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,34 +56,34 @@ else:
     tp = round(entry + tp_distance if direction == "BUY" else entry - tp_distance, 5)
 
 # ---------- RESULTS ----------
-st.markdown("""
+st.markdown(f"""
 <style>
-.result-table {
+.result-table {{
     width:100%;
     border-collapse:collapse;
     margin-top:8px;
-}
-.result-table td {
+}}
+.result-table td {{
     border:1px solid #ccc;
     padding:8px;
     font-size:14px;
-}
-.result-label {
+}}
+.result-label {{
     background:#f5f5f5;
     font-weight:bold;
     width:45%;
-}
-.result-value {
+}}
+.result-value {{
     background:#ffffff;
     text-align:right;
-}
-.result-header {
+}}
+.result-header {{
     background:#d9edf7;
     padding:6px;
     font-weight:bold;
     margin-top:12px;
     border-radius:4px;
-}
+}}
 </style>
 
 <div class="result-header">Results</div>
