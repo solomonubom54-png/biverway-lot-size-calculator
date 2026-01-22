@@ -2,6 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Biverway | Lot Size Calculator", layout="centered")
 
+# ---------- GLOBAL STYLES ----------
 st.markdown("""
 <style>
 .header {
@@ -12,6 +13,7 @@ st.markdown("""
     text-align:center;
     border-radius:6px;
 }
+
 .section {
     background:#eeeeee;
     padding:6px;
@@ -19,6 +21,7 @@ st.markdown("""
     border-radius:4px;
     margin-top:12px;
 }
+
 .result-header {
     background:#d9edf7;
     padding:6px;
@@ -26,21 +29,24 @@ st.markdown("""
     margin-top:12px;
     border-radius:4px;
 }
+
 .result-table {
     width:100%;
     border-collapse:collapse;
     margin-top:8px;
 }
+
 .result-table td {
     border:1px solid #ccc;
     padding:8px;
     font-size:14px;
 }
+
 .result-label {
     background:#f5f5f5;
-    font-weight:bold;
     width:45%;
 }
+
 .result-value {
     background:#ffffff;
     text-align:right;
@@ -92,19 +98,19 @@ st.markdown(f"""
 <table class="result-table">
 <tr>
     <td class="result-label">Direction</td>
-    <td class="result-value"><strong>{direction}</strong></td>
+    <td class="result-value">{direction}</td>
 </tr>
 <tr>
     <td class="result-label">Price Diff</td>
-    <td class="result-value"><strong>{point}</strong></td>
+    <td class="result-value">{point}</td>
 </tr>
 <tr>
     <td class="result-label">Lot Size</td>
-    <td class="result-value"><strong>{lot}</strong></td>
+    <td class="result-value">{lot}</td>
 </tr>
 <tr>
     <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value"><strong>{tp}</strong></td>
+    <td class="result-value">{tp}</td>
 </tr>
 </table>
 """, unsafe_allow_html=True)
