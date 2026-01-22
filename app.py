@@ -19,18 +19,48 @@ st.markdown("""
     border-radius:4px;
     margin-top:12px;
 }
+.result-header {
+    background:#d9edf7;
+    padding:6px;
+    font-weight:bold;
+    margin-top:12px;
+    border-radius:4px;
+}
+.result-table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+}
+.result-table td {
+    border:1px solid #ccc;
+    padding:8px;
+    font-size:14px;
+}
+.result-label {
+    background:#f5f5f5;
+    font-weight:bold;
+    width:45%;
+}
+.result-value {
+    background:#ffffff;
+    text-align:right;
+    font-weight:bold;
+}
 </style>
 """, unsafe_allow_html=True)
 
+# ---------- HEADER ----------
 st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
+
 with col1:
     symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
     entry = st.number_input("Entry Price", format="%.5f")
+
 with col2:
     sl = st.number_input("Stop Loss", format="%.5f")
     risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
@@ -57,53 +87,24 @@ else:
 
 # ---------- RESULTS ----------
 st.markdown(f"""
-<style>
-.result-table {{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:8px;
-}}
-.result-table td {{
-    border:1px solid #ccc;
-    padding:8px;
-    font-size:14px;
-}}
-.result-label {{
-    background:#f5f5f5;
-    font-weight:bold;
-    width:45%;
-}}
-.result-value {{
-    background:#ffffff;
-    text-align:right;
-}}
-.result-header {{
-    background:#d9edf7;
-    padding:6px;
-    font-weight:bold;
-    margin-top:12px;
-    border-radius:4px;
-}}
-</style>
-
 <div class="result-header">Results</div>
 
 <table class="result-table">
 <tr>
     <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
+    <td class="result-value"><strong>{direction}</strong></td>
 </tr>
 <tr>
     <td class="result-label">Price Diff</td>
-    <td class="result-value">{point}</td>
+    <td class="result-value"><strong>{point}</strong></td>
 </tr>
 <tr>
     <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
+    <td class="result-value"><strong>{lot}</strong></td>
 </tr>
 <tr>
     <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp}</td>
+    <td class="result-value"><strong>{tp}</strong></td>
 </tr>
 </table>
 """, unsafe_allow_html=True)
