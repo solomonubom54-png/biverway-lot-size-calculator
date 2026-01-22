@@ -24,31 +24,39 @@ st.write("")  # space
 # -----------------
 # INPUTS
 # -----------------
-with st.container():
-    st.markdown(
-        "<div style='background-color:#f0f0f0; padding:10px; border-radius:5px;'>Inputs</div>",
-        unsafe_allow_html=True
-    )
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        st.markdown("<b>Symbol</b>", unsafe_allow_html=True)
-    with col2:
-        symbol = st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], key="symbol")
+st.markdown(
+    "<div style='background-color:#f0f0f0; padding:10px; border-radius:5px; font-weight:bold;'>Inputs</div>",
+    unsafe_allow_html=True
+)
+st.write("")  # small space
 
-    with col1:
-        st.markdown("<b>Entry Price</b>", unsafe_allow_html=True)
-    with col2:
-        entry = st.number_input("", format="%.5f", key="entry")
+# Symbol input row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Symbol")
+with col2:
+    symbol = st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], key="symbol_input")
 
-    with col1:
-        st.markdown("<b>Stop Loss</b>", unsafe_allow_html=True)
-    with col2:
-        sl = st.number_input("", format="%.5f", key="sl")
+# Entry Price row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Entry Price")
+with col2:
+    entry = st.number_input("", format="%.5f", key="entry_input")
 
-    with col1:
-        st.markdown("<b>Risk Amount</b>", unsafe_allow_html=True)
-    with col2:
-        risk = st.number_input("", min_value=1.0, format="%.2f", key="risk")
+# Stop Loss row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Stop Loss")
+with col2:
+    sl = st.number_input("", format="%.5f", key="sl_input")
+
+# Risk Amount row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Risk Amount")
+with col2:
+    risk = st.number_input("", min_value=1.0, format="%.2f", key="risk_input")
 
 st.write("")  # space
 
@@ -82,22 +90,41 @@ else:
     tp = round(tp, 5)
 
 # -----------------
-# OUTPUTS (styled table-like)
+# OUTPUTS
 # -----------------
 st.markdown(
-    "<div style='background-color:#ADD8E6; padding:10px; border-radius:5px;'>Results</div>",
+    "<div style='background-color:#ADD8E6; padding:10px; border-radius:5px; font-weight:bold;'>Results</div>",
     unsafe_allow_html=True
 )
+st.write("")
 
-result_labels = ["Direction", "Price Diff (points)", "Lot Size", "Take Profit (1:3)"]
-result_values = [direction, point, lot_size, tp]
+# Direction row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Direction")
+with col2:
+    st.markdown(direction)
 
-for label, value in zip(result_labels, result_values):
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        st.markdown(f"<b>{label}</b>", unsafe_allow_html=True)
-    with col2:
-        st.markdown(f"{value}", unsafe_allow_html=True)
+# Price Diff row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Price Diff (points)")
+with col2:
+    st.markdown(point)
+
+# Lot Size row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Lot Size")
+with col2:
+    st.markdown(lot_size)
+
+# Take Profit row
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown("Take Profit (1:3)")
+with col2:
+    st.markdown(tp)
 
 # -----------------
 # FOOTER NOTE
@@ -106,4 +133,4 @@ st.write("")
 st.markdown(
     "<i style='color:gray;'>Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.</i>",
     unsafe_allow_html=True
-)
+        )
