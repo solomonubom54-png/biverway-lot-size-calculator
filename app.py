@@ -2,9 +2,10 @@ import streamlit as st
 
 st.set_page_config(page_title="Biverway | Lot Size Calculator", layout="centered")
 
-# ---------- GLOBAL STYLES ----------
+# ---------- GLOBAL & MOBILE STYLES ----------
 st.markdown("""
 <style>
+/* ===== BASE STYLES ===== */
 .header {
     background:#f5a623;
     padding:12px;
@@ -33,7 +34,7 @@ st.markdown("""
 .result-table {
     width:100%;
     border-collapse:collapse;
-    margin-top:8px;
+    margin-top:6px;
 }
 
 .result-table td {
@@ -51,6 +52,49 @@ st.markdown("""
     background:#ffffff;
     text-align:right;
     font-weight:bold;
+}
+
+/* ===== STREAMLIT INPUT TUNING ===== */
+div[data-testid="stNumberInput"],
+div[data-testid="stSelectbox"] {
+    margin-bottom: 6px;
+}
+
+/* ===== MOBILE OPTIMIZATION ===== */
+@media (max-width: 768px) {
+
+    .header {
+        font-size:18px;
+        padding:10px;
+    }
+
+    .section {
+        margin-top:8px;
+        padding:5px;
+    }
+
+    /* Reduce space between columns */
+    div[data-testid="column"] {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    /* Inputs tighter */
+    div[data-testid="stNumberInput"] input,
+    div[data-testid="stSelectbox"] select {
+        padding:6px;
+        font-size:14px;
+    }
+
+    /* Result table tighter */
+    .result-table td {
+        padding:6px;
+        font-size:13px;
+    }
+
+    .result-label {
+        width:50%;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
