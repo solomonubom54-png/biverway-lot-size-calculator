@@ -25,22 +25,22 @@ col1, col2 = st.columns([1, 2])
 with col1:
     st.markdown("<b>Symbol</b>", unsafe_allow_html=True)
 with col2:
-    symbol = st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+    symbol = st.selectbox("symbol_selector", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 
 with col1:
     st.markdown("<b>Entry Price</b>", unsafe_allow_html=True)
 with col2:
-    entry = st.number_input("", format="%.5f")
+    entry = st.number_input("entry_price_input", format="%.5f")
 
 with col1:
     st.markdown("<b>Stop Loss</b>", unsafe_allow_html=True)
 with col2:
-    sl = st.number_input("", format="%.5f")
+    sl = st.number_input("stop_loss_input", format="%.5f")
 
 with col1:
     st.markdown("<b>Risk Amount</b>", unsafe_allow_html=True)
 with col2:
-    risk = st.number_input("", min_value=1.0, format="%.2f")
+    risk = st.number_input("risk_amount_input", min_value=1.0, format="%.2f")
 
 # -----------------
 # CALCULATIONS
