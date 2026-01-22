@@ -2,31 +2,39 @@ import streamlit as st
 
 st.set_page_config(page_title="Biverway | Lot Size Calculator", layout="centered")
 
-# ---------- STYLES ----------
+# ---------- CSS ----------
 st.markdown("""
 <style>
+/* Hide real widgets */
+.hidden { display:none; }
+
 .row {
-    display: grid;
+    display:grid;
     grid-template-columns: 1fr 1.6fr;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 8px;
+    gap:10px;
+    align-items:center;
+    margin-bottom:8px;
 }
+
 .label {
-    font-weight: 500;
+    font-weight:500;
 }
+
 .box {
-    background: #eef6ff;
-    padding: 6px;
-    border-radius: 4px;
+    background:#eef6ff;
+    padding:6px 8px;
+    border-radius:4px;
+    min-height:32px;
 }
+
 .section {
-    background: #eeeeee;
-    padding: 6px;
-    font-weight: bold;
-    border-radius: 4px;
-    margin-top: 10px;
+    background:#eeeeee;
+    padding:6px;
+    font-weight:bold;
+    border-radius:4px;
+    margin-top:12px;
 }
+
 .header {
     background:#f5a623;
     padding:12px;
@@ -41,20 +49,24 @@ st.markdown("""
 # ---------- HEADER ----------
 st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
-# ---------- INPUTS ----------
+# ---------- HIDDEN INPUT WIDGETS ----------
+st.markdown('<div class="hidden">', unsafe_allow_html=True)
+
+symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+entry = st.number_input("Entry", format="%.5f")
+sl = st.number_input("SL", format="%.5f")
+risk = st.number_input("Risk", min_value=1.0, format="%.2f")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------- INPUT DISPLAY ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], key="symbol")
-
-entry = st.number_input("", format="%.5f", key="entry")
-sl = st.number_input("", format="%.5f", key="sl")
-risk = st.number_input("", min_value=1.0, format="%.2f", key="risk")
-
 st.markdown(f"""
-<div class="row"><div class="label">Symbol</div><div>{symbol}</div></div>
-<div class="row"><div class="label">Entry Price</div><div>{entry:.5f}</div></div>
-<div class="row"><div class="label">Stop Loss</div><div>{sl:.5f}</div></div>
-<div class="row"><div class="label">Risk Amount</div><div>{risk:.2f}</div></div>
+<div class="row"><div class="label">Symbol</div><div class="box">{symbol}</div></div>
+<div class="row"><div class="label">Entry Price</div><div class="box">{entry:.5f}</div></div>
+<div class="row"><div class="label">Stop Loss</div><div class="box">{sl:.5f}</div></div>
+<div class="row"><div class="label">Risk Amount</div><div class="box">{risk:.2f}</div></div>
 """, unsafe_allow_html=True)
 
 # ---------- CALCULATIONS ----------
