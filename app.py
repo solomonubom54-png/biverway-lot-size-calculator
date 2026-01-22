@@ -1,44 +1,40 @@
 import streamlit as st
 
-# Page config
+# -----------------
+# PAGE CONFIG
+# -----------------
 st.set_page_config(
     page_title="Biverway | Lot Size Calculator",
     layout="centered"
 )
 
-# Header
+# -----------------
+# HEADER
+# -----------------
 st.title("Biverway | Lot Size Calculator")
 st.write("This app calculates lot size and take profit based on the Biverway Trading System.")
 
 # -----------------
 # INPUTS
 # -----------------
-
-# Symbol selector
 symbol = st.selectbox(
     "Select Symbol",
     ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
 )
 
-# Entry Price input
 entry = st.number_input("Entry Price", format="%.5f")
-
-# Stop Loss input
 sl = st.number_input("Stop Loss", format="%.5f")
-
-# Risk Amount input
 risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 
 # -----------------
 # CALCULATIONS
 # -----------------
-
-# Calculate Direction
+# Direction
 direction = "BUY" if entry > sl else "SELL"
 
-# Calculate Price Difference (points)
+# Price Difference
 if symbol == "XAUUSD":
-    point = abs(entry - sl) * 100
+    point = round(abs(entry - sl) * 100, 1)  # Round to 1 decimal place
 else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
@@ -48,14 +44,14 @@ if point == 0:
     lot_size = 0
     tp = entry
 else:
-    # Calculate Lot Size
+    # Lot Size
     if symbol == "USDCHF":
         lot_size = (risk * entry) / point
     else:
         lot_size = risk / point
     lot_size = round(lot_size, 2)
 
-    # Calculate Take Profit (1:3)
+    # Take Profit (1:3)
     if symbol == "XAUUSD":
         tp_distance = abs(entry - sl) * 3
     else:
