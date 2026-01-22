@@ -5,55 +5,67 @@ st.set_page_config(
     layout="centered"
 )
 
-# ----------------- HEADER -----------------
-st.markdown(
-    """
-    <div style='background-color:#FFA500; color:black; padding:15px; text-align:center; font-size:28px; font-weight:bold; border-radius:10px;'>
-        Biverway | Lot Size Calculator
-    </div>
-    """,
-    unsafe_allow_html=True
+# ---------- HEADER ----------
+st.markdown("""
+<div style="
+    background:#f5a623;
+    padding:12px;
+    font-size:24px;
+    font-weight:bold;
+    text-align:center;
+    border-radius:6px;
+">
+Biverway | Lot Size Calculator
+</div>
+""", unsafe_allow_html=True)
+
+st.write("")
+
+# ---------- INPUTS TITLE ----------
+st.markdown("""
+<div style="
+    background:#eeeeee;
+    padding:6px;
+    font-weight:bold;
+    border-radius:4px;
+">
+Inputs
+</div>
+""", unsafe_allow_html=True)
+
+st.write("")
+
+# ---------- INPUT ROWS ----------
+def input_row(label, widget):
+    col1, col2 = st.columns([1.1, 2])
+    with col1:
+        st.markdown(f"<div style='padding-top:6px;'>{label}</div>", unsafe_allow_html=True)
+    with col2:
+        return widget
+
+symbol = input_row(
+    "Symbol",
+    st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], label_visibility="collapsed")
 )
-st.write("")  # space
 
-# ----------------- INPUTS -----------------
-st.markdown(
-    "<div style='background-color:#f0f0f0; padding:10px; border-radius:5px; font-weight:bold;'>Inputs</div>",
-    unsafe_allow_html=True
+entry = input_row(
+    "Entry Price",
+    st.number_input("", format="%.5f", label_visibility="collapsed")
 )
-st.write("")  # small space
 
-# Symbol input row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Symbol")
-with col2:
-    symbol = st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], key="symbol_input")
+sl = input_row(
+    "Stop Loss",
+    st.number_input("", format="%.5f", label_visibility="collapsed")
+)
 
-# Entry Price row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Entry Price")
-with col2:
-    entry = st.number_input("", format="%.5f", key="entry_input")
+risk = input_row(
+    "Risk Amount",
+    st.number_input("", min_value=1.0, format="%.2f", label_visibility="collapsed")
+)
 
-# Stop Loss row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Stop Loss")
-with col2:
-    sl = st.number_input("", format="%.5f", key="sl_input")
+st.write("")
 
-# Risk Amount row
-col1, col2 = st.columns([1, 2])
-with col1:
-    st.markdown("Risk Amount")
-with col2:
-    risk = st.number_input("", min_value=1.0, format="%.2f", key="risk_input")
-
-st.write("")  # space
-
-# ----------------- CALCULATIONS -----------------
+# ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
 if symbol == "XAUUSD":
@@ -69,6 +81,7 @@ else:
         lot_size = (risk * entry) / point
     else:
         lot_size = risk / point
+
     lot_size = round(lot_size, 2)
 
     if symbol == "XAUUSD":
@@ -79,29 +92,41 @@ else:
     tp = entry + tp_distance if direction == "BUY" else entry - tp_distance
     tp = round(tp, 5)
 
-# ----------------- OUTPUTS -----------------
-st.markdown(
-    "<div style='background-color:#ADD8E6; padding:10px; border-radius:5px; font-weight:bold;'>Results</div>",
-    unsafe_allow_html=True
-)
+# ---------- RESULTS TITLE ----------
+st.markdown("""
+<div style="
+    background:#d9edf7;
+    padding:6px;
+    font-weight:bold;
+    border-radius:4px;
+">
+Results
+</div>
+""", unsafe_allow_html=True)
+
 st.write("")
 
-# Output rows
+# ---------- OUTPUT ROWS ----------
 def output_row(label, value):
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1.1, 2])
     with col1:
-        st.markdown(label)
+        st.markdown(f"<div style='padding-top:6px;'>{label}</div>", unsafe_allow_html=True)
     with col2:
-        st.markdown(value)
+        st.markdown(
+            f"<div style='background:#eef6ff; padding:6px; border-radius:4px;'>{value}</div>",
+            unsafe_allow_html=True
+        )
 
 output_row("Direction", direction)
 output_row("Price Diff (points)", point)
 output_row("Lot Size", lot_size)
 output_row("Take Profit (1:3)", tp)
 
-# ----------------- FOOTER -----------------
+# ---------- FOOTER ----------
 st.write("")
-st.markdown(
-    "<i style='color:gray;'>Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.</i>",
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div style="color:gray; font-size:12px;">
+Designed according to the Biverway Trading System.<br>
+Risk-based lot sizing. Educational use only.
+</div>
+""", unsafe_allow_html=True)
