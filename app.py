@@ -2,6 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Biverway | Lot Size Calculator", layout="centered")
 
+# ---------- GLOBAL STYLES ----------
 st.markdown("""
 <style>
 .header {
@@ -12,6 +13,7 @@ st.markdown("""
     text-align:center;
     border-radius:6px;
 }
+
 .section {
     background:#eeeeee;
     padding:6px;
@@ -19,18 +21,53 @@ st.markdown("""
     border-radius:4px;
     margin-top:12px;
 }
+
+.result-header {
+    background:#d9edf7;
+    padding:6px;
+    font-weight:bold;
+    margin-top:12px;
+    border-radius:4px;
+}
+
+.result-table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+}
+
+.result-table td {
+    border:1px solid #ccc;
+    padding:8px;
+    font-size:14px;
+}
+
+.result-label {
+    background:#f5f5f5;
+    font-weight:bold;
+    width:45%;
+}
+
+.result-value {
+    background:#ffffff;
+    font-weight:bold;
+    text-align:left;
+}
 </style>
 """, unsafe_allow_html=True)
 
+# ---------- HEADER ----------
 st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
+
 with col1:
     symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
     entry = st.number_input("Entry Price", format="%.5f")
+
 with col2:
     sl = st.number_input("Stop Loss", format="%.5f")
     risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
@@ -57,35 +94,6 @@ else:
 
 # ---------- RESULTS ----------
 st.markdown(f"""
-<style>
-.result-table {{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:8px;
-}}
-.result-table td {{
-    border:1px solid #ccc;
-    padding:8px;
-    font-size:14px;
-}}
-.result-label {{
-    background:#f5f5f5;
-    font-weight:bold;
-    width:45%;
-}}
-.result-value {{
-    background:#ffffff;
-    text-align:right;
-}}
-.result-header {{
-    background:#d9edf7;
-    padding:6px;
-    font-weight:bold;
-    margin-top:12px;
-    border-radius:4px;
-}}
-</style>
-
 <div class="result-header">Results</div>
 
 <table class="result-table">
