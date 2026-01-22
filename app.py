@@ -9,22 +9,38 @@ st.set_page_config(
 )
 
 # -----------------
-# HEADER
+# HEADER (orange, bold, centered)
 # -----------------
-st.title("Biverway | Lot Size Calculator")
+st.markdown(
+    "<h1 style='background-color:#FFA500; color:black; padding:10px; text-align:center;'>Biverway | Lot Size Calculator</h1>",
+    unsafe_allow_html=True
+)
 st.write("This app calculates lot size and take profit based on the Biverway Trading System.")
 
 # -----------------
-# INPUTS
+# INPUTS (2-column layout)
 # -----------------
-symbol = st.selectbox(
-    "Select Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
-)
+col1, col2 = st.columns([1, 2])
 
-entry = st.number_input("Entry Price", format="%.5f")
-sl = st.number_input("Stop Loss", format="%.5f")
-risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
+with col1:
+    st.markdown("<b>Symbol</b>", unsafe_allow_html=True)
+with col2:
+    symbol = st.selectbox("", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+
+with col1:
+    st.markdown("<b>Entry Price</b>", unsafe_allow_html=True)
+with col2:
+    entry = st.number_input("", format="%.5f")
+
+with col1:
+    st.markdown("<b>Stop Loss</b>", unsafe_allow_html=True)
+with col2:
+    sl = st.number_input("", format="%.5f")
+
+with col1:
+    st.markdown("<b>Risk Amount</b>", unsafe_allow_html=True)
+with col2:
+    risk = st.number_input("", min_value=1.0, format="%.2f")
 
 # -----------------
 # CALCULATIONS
@@ -61,16 +77,25 @@ else:
     tp = round(tp, 5)
 
 # -----------------
-# OUTPUT
+# OUTPUT (2-column layout like sheet)
 # -----------------
 st.subheader("Results")
-st.write("**Direction:**", direction)
-st.write("**Price Diff (points):**", point)
-st.write("**Lot Size:**", lot_size)
-st.write("**Take Profit (1:3):**", tp)
+
+result_labels = ["Direction", "Price Diff (points)", "Lot Size", "Take Profit (1:3)"]
+result_values = [direction, point, lot_size, tp]
+
+for label, value in zip(result_labels, result_values):
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.markdown(f"<b>{label}</b>", unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"{value}", unsafe_allow_html=True)
 
 # -----------------
 # FOOTER NOTE
 # -----------------
 st.write("")
-st.write("*Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.*")
+st.markdown(
+    "<i style='color:gray;'>Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.</i>",
+    unsafe_allow_html=True
+)
