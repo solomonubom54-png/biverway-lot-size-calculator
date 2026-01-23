@@ -66,7 +66,8 @@ st.markdown("""
 }
 
 .footer-note {
-    margin-top:18px;
+    margin-top:20px;
+    margin-bottom:40px;
     font-size:12px;
     color:#555;
     text-align:center;
@@ -141,19 +142,19 @@ st.markdown(f"""
 </table>
 """, unsafe_allow_html=True)
 
-# ---------- COPYABLE OUTPUTS ----------
+# ---------- COPYABLE VALUES ----------
 st.markdown('<div class="copy-section"></div>', unsafe_allow_html=True)
 
 st.text_input(
     "Copy Lot Size",
     value=str(lot),
-    disabled=True
+    help="Tap and hold to copy"
 )
 
 st.text_input(
     "Copy Take Profit",
     value=str(tp),
-    disabled=True
+    help="Tap and hold to copy"
 )
 
 # ---------- FOOTER ----------
