@@ -6,13 +6,9 @@ st.set_page_config(
     layout="centered"
 )
 
-# ---------- STYLES + JS ----------
+# ---------- STYLES ----------
 st.markdown("""
 <style>
-body {
-    background-color: #ffffff;
-}
-
 .header {
     background:#f5a623;
     padding:14px;
@@ -40,35 +36,15 @@ body {
     margin-top:16px;
 }
 
-.result-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:6px;
-}
-
-.result-table td {
-    border:1px solid #ccc;
-    padding:10px;
-    font-size:14px;
+.result-row {
+    background:#eef6ff;
+    padding:8px;
+    border-radius:4px;
+    margin-bottom:6px;
 }
 
 .result-label {
-    background:#f7f7f7;
     font-weight:normal;
-    width:50%;
-    text-align:left;
-}
-
-.result-value {
-    background:#eef6ff;
-    font-weight:bold;
-    text-align:left;
-}
-
-.copy-btn {
-    cursor:pointer;
-    margin-left:8px;
-    font-size:14px;
 }
 
 .footer-note {
@@ -78,12 +54,6 @@ body {
     text-align:center;
 }
 </style>
-
-<script>
-function copyText(text) {
-    navigator.clipboard.writeText(text);
-}
-</script>
 """, unsafe_allow_html=True)
 
 # ---------- HEADER ----------
@@ -120,31 +90,33 @@ else:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-st.markdown(f"""
-<table class="result-table">
-<tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-</tr>
-<tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">
-        {lot}
-        <span class="copy-btn" onclick="copyText('{lot}')">📋</span>
-    </td>
-</tr>
-<tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">
-        {tp}
-        <span class="copy-btn" onclick="copyText('{tp}')">📋</span>
-    </td>
-</tr>
-</table>
-""", unsafe_allow_html=True)
+# Direction (no copy)
+c1, c2 = st.columns([1, 2])
+with c1:
+    st.markdown("**Direction**")
+with c2:
+    st.markdown(f"**{direction}**")
+
+# Lot Size (copyable)
+c1, c2, c3 = st.columns([1, 1.5, 1])
+with c1:
+    st.markdown("Lot Size")
+with c2:
+    st.markdown(f"**{lot}**")
+with c3:
+    st.code(lot)
+
+# Take Profit (copyable)
+c1, c2, c3 = st.columns([1, 1.5, 1])
+with c1:
+    st.markdown("Take Profit (1:3)")
+with c2:
+    st.markdown(f"**{tp}**")
+with c3:
+    st.code(tp)
 
 # ---------- FOOTER ----------
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+                    )
