@@ -9,6 +9,10 @@ st.set_page_config(
 # ---------- STYLES ----------
 st.markdown("""
 <style>
+body {
+    background-color: #ffffff;
+}
+
 .header {
     background:#f5a623;
     padding:14px;
@@ -36,19 +40,36 @@ st.markdown("""
     margin-top:16px;
 }
 
-.result-row {
+.results-box {
     background:#eef6ff;
-    padding:8px;
-    border-radius:4px;
-    margin-bottom:6px;
+    padding:12px;
+    border-radius:8px;
+}
+
+.result-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    font-size:15px;
 }
 
 .result-label {
     font-weight:normal;
 }
 
+.copy-box {
+    width:120px;
+    padding:6px;
+    border-radius:4px;
+    border:1px solid #ccc;
+    background:#f9fcff;
+    text-align:center;
+    font-weight:bold;
+}
+
 .footer-note {
-    margin-top:18px;
+    margin-top:16px;
     font-size:12px;
     color:#555;
     text-align:center;
@@ -62,10 +83,26 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
-entry = st.number_input("Entry Price", format="%.5f")
-sl = st.number_input("Stop Loss", format="%.5f")
-risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
+symbol = st.selectbox(
+    "Symbol",
+    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
+)
+
+entry = st.number_input(
+    "Entry Price",
+    format="%.5f"
+)
+
+sl = st.number_input(
+    "Stop Loss",
+    format="%.5f"
+)
+
+risk = st.number_input(
+    "Risk Amount",
+    min_value=1.0,
+    format="%.2f"
+)
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
@@ -90,33 +127,27 @@ else:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-# Direction (no copy)
-c1, c2 = st.columns([1, 2])
-with c1:
-    st.markdown("**Direction**")
-with c2:
-    st.markdown(f"**{direction}**")
+st.markdown(f"""
+<div class="results-box">
+    <div class="result-row">
+        <span class="result-label">Direction</span>
+        <strong>{direction}</strong>
+    </div>
 
-# Lot Size (copyable)
-c1, c2, c3 = st.columns([1, 1.5, 1])
-with c1:
-    st.markdown("Lot Size")
-with c2:
-    st.markdown(f"**{lot}**")
-with c3:
-    st.code(lot)
+    <div class="result-row">
+        <span class="result-label">Lot Size</span>
+        <input class="copy-box" value="{lot}" readonly>
+    </div>
 
-# Take Profit (copyable)
-c1, c2, c3 = st.columns([1, 1.5, 1])
-with c1:
-    st.markdown("Take Profit (1:3)")
-with c2:
-    st.markdown(f"**{tp}**")
-with c3:
-    st.code(tp)
+    <div class="result-row">
+        <span class="result-label">Take Profit (1:3)</span>
+        <input class="copy-box" value="{tp}" readonly>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-                    )
+        )
