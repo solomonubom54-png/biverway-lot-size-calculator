@@ -50,23 +50,38 @@ st.markdown("""
 
 .result-label {
     background:#f7f7f7;
-    font-weight:normal;
     width:50%;
-    text-align:left;
 }
 
 .result-value {
     background:#eef6ff;
     font-weight:bold;
-    text-align:left;
 }
 
-.copy-section {
+.copy-block {
     margin-top:14px;
 }
 
+.copy-label {
+    font-size:14px;
+    margin-bottom:4px;
+}
+
+.copy-box {
+    width:100%;
+    padding:10px;
+    font-size:16px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    background:#f9f9f9;
+}
+
+.copy-box:focus {
+    outline:none;
+}
+
 .footer-note {
-    margin-top:20px;
+    margin-top:22px;
     margin-bottom:40px;
     font-size:12px;
     color:#555;
@@ -81,26 +96,10 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox(
-    "Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
-)
-
-entry = st.number_input(
-    "Entry Price",
-    format="%.5f"
-)
-
-sl = st.number_input(
-    "Stop Loss",
-    format="%.5f"
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    min_value=1.0,
-    format="%.2f"
-)
+symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+entry = st.number_input("Entry Price", format="%.5f")
+sl = st.number_input("Stop Loss", format="%.5f")
+risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
@@ -111,51 +110,41 @@ else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
 if point == 0:
-    lot = 0.0
-    tp = entry
+    lot = "0.00"
+    tp = f"{entry:.5f}"
 else:
     if symbol == "USDCHF":
-        lot = round((risk * entry) / point, 2)
+        lot = f"{(risk * entry) / point:.2f}"
     else:
-        lot = round(risk / point, 2)
+        lot = f"{risk / point:.2f}"
 
-    tp_distance = abs(entry - sl) * 3 if symbol == "XAUUSD" else (point * 3) / 100000
-    tp = round(entry + tp_distance if direction == "BUY" else entry - tp_distance, 5)
+    tp_dist = abs(entry - sl) * 3 if symbol == "XAUUSD" else (point * 3) / 100000
+    tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+    tp = f"{tp_val:.5f}"
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
 st.markdown(f"""
 <table class="result-table">
-<tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-</tr>
-<tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
-</tr>
-<tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp}</td>
-</tr>
+<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
+<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
+<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp}</td></tr>
 </table>
 """, unsafe_allow_html=True)
 
-# ---------- COPYABLE VALUES ----------
-st.markdown('<div class="copy-section"></div>', unsafe_allow_html=True)
+# ---------- COPYABLE (READONLY) ----------
+st.markdown(f"""
+<div class="copy-block">
+    <div class="copy-label">Copy Lot Size</div>
+    <input class="copy-box" type="text" value="{lot}" readonly>
+</div>
 
-st.text_input(
-    "Copy Lot Size",
-    value=str(lot),
-    help="Tap and hold to copy"
-)
-
-st.text_input(
-    "Copy Take Profit",
-    value=str(tp),
-    help="Tap and hold to copy"
-)
+<div class="copy-block">
+    <div class="copy-label">Copy Take Profit</div>
+    <input class="copy-box" type="text" value="{tp}" readonly>
+</div>
+""", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
