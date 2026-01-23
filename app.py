@@ -56,7 +56,6 @@ st.markdown("""
 .result-value {
     background:#eef6ff;
     font-weight:bold;
-    text-align:left;
 }
 
 .footer-note {
@@ -76,8 +75,11 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
-entry = st.number_input("Entry Price", format="%.5f")
-sl = st.number_input("Stop Loss", format="%.5f")
+
+price_format = "%.2f" if symbol == "XAUUSD" else "%.5f"
+
+entry = st.number_input("Entry Price", format=price_format)
+sl = st.number_input("Stop Loss", format=price_format)
 risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 
 # ---------- CALCULATIONS ----------
@@ -90,16 +92,21 @@ else:
 
 if point == 0:
     lot = "0.00"
-    tp = f"{entry:.5f}"
+    tp_display = format(entry, ".2f" if symbol == "XAUUSD" else ".5f")
 else:
     if symbol == "USDCHF":
         lot = f"{(risk * entry) / point:.2f}"
     else:
         lot = f"{risk / point:.2f}"
 
-    tp_dist = abs(entry - sl) * 3 if symbol == "XAUUSD" else (point * 3) / 100000
-    tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
-    tp = f"{tp_val:.5f}"
+    if symbol == "XAUUSD":
+        tp_dist = abs(entry - sl) * 3
+        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+        tp_display = format(tp_val, ".2f")
+    else:
+        tp_dist = (point * 3) / 100000
+        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+        tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
@@ -108,7 +115,7 @@ st.markdown(f"""
 <table class="result-table">
 <tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
 <tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
-<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp}</td></tr>
+<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
 </table>
 """, unsafe_allow_html=True)
 
@@ -116,4 +123,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+               )
