@@ -1,148 +1,155 @@
 import streamlit as st
 
-# ---------- PAGE CONFIG ----------
 st.set_page_config(
     page_title="Biverway | Lot Size Calculator",
     layout="centered"
 )
 
-# ---------- STYLES ----------
-st.markdown("""
-<style>
-body {
-    background-color: #ffffff;
-}
+# ------------------ STATE ------------------
+if "dark" not in st.session_state:
+    st.session_state.dark = False
 
-.header {
+# ------------------ TOGGLE ------------------
+st.toggle("🌙 Dark Mode", key="dark")
+
+# ------------------ THEME ------------------
+bg = "#0e1117" if st.session_state.dark else "#ffffff"
+text = "#eaeaea" if st.session_state.dark else "#000000"
+card = "#161b22" if st.session_state.dark else "#f7f9fc"
+accent = "#4da3ff"
+border = "#2a2f3a" if st.session_state.dark else "#d0d7de"
+
+st.markdown(f"""
+<style>
+body {{
+    background:{bg};
+    color:{text};
+}}
+
+.header {{
     background:#f5a623;
     padding:14px;
     font-size:22px;
     font-weight:bold;
     text-align:center;
     border-radius:8px;
-    margin-bottom:12px;
-}
+    color:#000;
+}}
 
-.section {
-    background:#d9edf7;
-    padding:8px;
-    font-weight:bold;
-    border-radius:6px;
+.section {{
     margin-top:14px;
-    margin-bottom:8px;
-}
-
-.result-header {
-    background:#d9edf7;
     padding:8px;
     font-weight:bold;
-    border-radius:6px;
-    margin-top:16px;
-}
+}}
 
-.result-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:6px;
-}
+.card {{
+    background:{card};
+    border:1px solid {border};
+    border-radius:10px;
+    padding:12px;
+}}
 
-.result-table td {
-    border:1px solid #ccc;
-    padding:10px;
+.label {{
     font-size:14px;
-}
+}}
 
-.result-label {
-    background:#f7f7f7;
-    font-weight:normal;
-    width:50%;
-    text-align:left;
-}
+.result-box {{
+    position:sticky;
+    bottom:0;
+    background:{card};
+    border:2px solid {accent};
+    border-radius:12px;
+    padding:12px;
+    margin-top:14px;
+    animation: pulse 0.4s ease-in-out;
+}}
 
-.result-value {
-    background:#eef6ff;
+@keyframes pulse {{
+    0% {{ box-shadow:0 0 0 {accent}; }}
+    100% {{ box-shadow:0 0 12px {accent}; }}
+}}
+
+.result-row {{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+}}
+
+.result-value {{
     font-weight:bold;
-    text-align:left;
-}
+    color:{accent};
+}}
 
-.footer-note {
-    margin-top:18px;
+.note {{
     font-size:12px;
-    color:#555;
-    text-align:center;
-}
+    opacity:0.7;
+    margin-top:8px;
+}}
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {{
+    let inputs = document.querySelectorAll("input");
+    inputs.forEach((el, i) => {{
+        el.addEventListener("keydown", e => {{
+            if (e.key === "Enter" && inputs[i+1]) {{
+                inputs[i+1].focus();
+            }}
+        }});
+    }});
+});
+</script>
 """, unsafe_allow_html=True)
 
-# ---------- HEADER ----------
+# ------------------ HEADER ------------------
 st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
-# ---------- INPUTS ----------
+# ------------------ INPUTS ------------------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
+st.markdown('<div class="card">', unsafe_allow_html=True)
 
-symbol = st.selectbox(
-    "Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
-)
+symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+entry = st.number_input("Entry Price", format="%.5f", key="entry")
+sl = st.number_input("Stop Loss", format="%.5f", key="sl")
+risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f", key="risk")
 
-entry = st.number_input(
-    "Entry Price",
-    format="%.5f"
-)
+st.markdown('</div>', unsafe_allow_html=True)
 
-sl = st.number_input(
-    "Stop Loss",
-    format="%.5f"
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    min_value=1.0,
-    format="%.2f"
-)
-
-# ---------- CALCULATIONS ----------
+# ------------------ CALCULATION ------------------
 direction = "BUY" if entry > sl else "SELL"
 
 if symbol == "XAUUSD":
-    point = abs(entry - sl) * 100
+    price_diff = round(abs(entry - sl) * 100, 1)
 else:
-    point = abs(int(entry * 100000) - int(sl * 100000))
+    price_diff = abs(int(entry * 100000) - int(sl * 100000))
 
-if point == 0:
+if price_diff == 0:
     lot = 0
     tp = entry
 else:
-    if symbol == "USDCHF":
-        lot = round((risk * entry) / point, 2)
-    else:
-        lot = round(risk / point, 2)
-
-    tp_distance = abs(entry - sl) * 3 if symbol == "XAUUSD" else (point * 3) / 100000
+    lot = round(risk / price_diff, 2)
+    tp_distance = abs(entry - sl) * 3
     tp = round(entry + tp_distance if direction == "BUY" else entry - tp_distance, 5)
 
-# ---------- RESULTS ----------
-st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
-
+# ------------------ RESULTS ------------------
+st.markdown('<div class="section">Results</div>', unsafe_allow_html=True)
 st.markdown(f"""
-<table class="result-table">
-<tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-</tr>
-<tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
-</tr>
-<tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp}</td>
-</tr>
-</table>
-""", unsafe_allow_html=True)
+<div class="result-box">
+    <div class="result-row">
+        <span>Direction</span>
+        <span class="result-value">{direction}</span>
+    </div>
+    <div class="result-row">
+        <span>Lot Size</span>
+        <span class="result-value">{lot}</span>
+    </div>
+    <div class="result-row">
+        <span>Take Profit (1:3)</span>
+        <span class="result-value">{tp}</span>
+    </div>
+</div>
 
-# ---------- FOOTER ----------
-st.markdown(
-    '<div class="footer-note">Designed according to Biverway Trading System</div>',
-    unsafe_allow_html=True
-               )
+<div class="note">
+Designed according to the Biverway Trading System. Risk-based lot sizing. Educational use only.
+</div>
+""", unsafe_allow_html=True)
