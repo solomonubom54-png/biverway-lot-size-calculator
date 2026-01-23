@@ -9,10 +9,6 @@ st.set_page_config(
 # ---------- STYLES ----------
 st.markdown("""
 <style>
-body {
-    background-color: #ffffff;
-}
-
 .header {
     background:#f5a623;
     padding:14px;
@@ -40,36 +36,37 @@ body {
     margin-top:16px;
 }
 
-.results-box {
-    background:#eef6ff;
-    padding:12px;
-    border-radius:8px;
+.result-table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:6px;
 }
 
-.result-row {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
-    font-size:15px;
+.result-table td {
+    border:1px solid #ccc;
+    padding:10px;
+    font-size:14px;
 }
 
 .result-label {
+    background:#f7f7f7;
     font-weight:normal;
+    width:50%;
+    text-align:left;
 }
 
-.copy-box {
-    width:120px;
-    padding:6px;
-    border-radius:4px;
-    border:1px solid #ccc;
-    background:#f9fcff;
-    text-align:center;
+.result-value {
+    background:#eef6ff;
     font-weight:bold;
+    text-align:left;
+}
+
+.copy-section {
+    margin-top:14px;
 }
 
 .footer-note {
-    margin-top:16px;
+    margin-top:18px;
     font-size:12px;
     color:#555;
     text-align:center;
@@ -113,7 +110,7 @@ else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
 if point == 0:
-    lot = 0
+    lot = 0.0
     tp = entry
 else:
     if symbol == "USDCHF":
@@ -128,26 +125,39 @@ else:
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
 st.markdown(f"""
-<div class="results-box">
-    <div class="result-row">
-        <span class="result-label">Direction</span>
-        <strong>{direction}</strong>
-    </div>
-
-    <div class="result-row">
-        <span class="result-label">Lot Size</span>
-        <input class="copy-box" value="{lot}" readonly>
-    </div>
-
-    <div class="result-row">
-        <span class="result-label">Take Profit (1:3)</span>
-        <input class="copy-box" value="{tp}" readonly>
-    </div>
-</div>
+<table class="result-table">
+<tr>
+    <td class="result-label">Direction</td>
+    <td class="result-value">{direction}</td>
+</tr>
+<tr>
+    <td class="result-label">Lot Size</td>
+    <td class="result-value">{lot}</td>
+</tr>
+<tr>
+    <td class="result-label">Take Profit (1:3)</td>
+    <td class="result-value">{tp}</td>
+</tr>
+</table>
 """, unsafe_allow_html=True)
+
+# ---------- COPYABLE OUTPUTS ----------
+st.markdown('<div class="copy-section"></div>', unsafe_allow_html=True)
+
+st.text_input(
+    "Copy Lot Size",
+    value=str(lot),
+    disabled=True
+)
+
+st.text_input(
+    "Copy Take Profit",
+    value=str(tp),
+    disabled=True
+)
 
 # ---------- FOOTER ----------
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
