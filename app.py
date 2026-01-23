@@ -6,7 +6,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# ---------- STYLES ----------
+# ---------- STYLES + JS ----------
 st.markdown("""
 <style>
 body {
@@ -65,10 +65,10 @@ body {
     text-align:left;
 }
 
-.copy-label {
-    font-size:13px;
-    font-weight:bold;
-    margin-top:12px;
+.copy-btn {
+    cursor:pointer;
+    margin-left:8px;
+    font-size:14px;
 }
 
 .footer-note {
@@ -78,6 +78,12 @@ body {
     text-align:center;
 }
 </style>
+
+<script>
+function copyText(text) {
+    navigator.clipboard.writeText(text);
+}
+</script>
 """, unsafe_allow_html=True)
 
 # ---------- HEADER ----------
@@ -86,26 +92,10 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox(
-    "Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
-)
-
-entry = st.number_input(
-    "Entry Price",
-    format="%.5f"
-)
-
-sl = st.number_input(
-    "Stop Loss",
-    format="%.5f"
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    min_value=1.0,
-    format="%.2f"
-)
+symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+entry = st.number_input("Entry Price", format="%.5f")
+sl = st.number_input("Stop Loss", format="%.5f")
+risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
@@ -138,21 +128,20 @@ st.markdown(f"""
 </tr>
 <tr>
     <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
+    <td class="result-value">
+        {lot}
+        <span class="copy-btn" onclick="copyText('{lot}')">📋</span>
+    </td>
 </tr>
 <tr>
     <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp}</td>
+    <td class="result-value">
+        {tp}
+        <span class="copy-btn" onclick="copyText('{tp}')">📋</span>
+    </td>
 </tr>
 </table>
 """, unsafe_allow_html=True)
-
-# ---------- COPYABLE RESULTS ----------
-st.markdown('<div class="copy-label">Copy Lot Size</div>', unsafe_allow_html=True)
-st.code(lot)
-
-st.markdown('<div class="copy-label">Copy Take Profit</div>', unsafe_allow_html=True)
-st.code(tp)
 
 # ---------- FOOTER ----------
 st.markdown(
