@@ -65,6 +65,12 @@ body {
     text-align:left;
 }
 
+.copy-label {
+    font-size:13px;
+    font-weight:bold;
+    margin-top:12px;
+}
+
 .footer-note {
     margin-top:18px;
     font-size:12px;
@@ -140,6 +146,13 @@ st.markdown(f"""
 </tr>
 </table>
 """, unsafe_allow_html=True)
+
+# ---------- COPYABLE RESULTS ----------
+st.markdown('<div class="copy-label">Copy Lot Size</div>', unsafe_allow_html=True)
+st.code(lot)
+
+st.markdown('<div class="copy-label">Copy Take Profit</div>', unsafe_allow_html=True)
+st.code(tp)
 
 # ---------- FOOTER ----------
 st.markdown(
