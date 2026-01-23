@@ -56,28 +56,7 @@ st.markdown("""
 .result-value {
     background:#eef6ff;
     font-weight:bold;
-}
-
-.copy-block {
-    margin-top:14px;
-}
-
-.copy-label {
-    font-size:14px;
-    margin-bottom:4px;
-}
-
-.copy-box {
-    width:100%;
-    padding:10px;
-    font-size:16px;
-    border-radius:6px;
-    border:1px solid #ccc;
-    background:#f9f9f9;
-}
-
-.copy-box:focus {
-    outline:none;
+    text-align:left;
 }
 
 .footer-note {
@@ -131,19 +110,6 @@ st.markdown(f"""
 <tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
 <tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp}</td></tr>
 </table>
-""", unsafe_allow_html=True)
-
-# ---------- COPYABLE (READONLY) ----------
-st.markdown(f"""
-<div class="copy-block">
-    <div class="copy-label">Copy Lot Size</div>
-    <input class="copy-box" type="text" value="{lot}" readonly>
-</div>
-
-<div class="copy-block">
-    <div class="copy-label">Copy Take Profit</div>
-    <input class="copy-box" type="text" value="{tp}" readonly>
-</div>
 """, unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
