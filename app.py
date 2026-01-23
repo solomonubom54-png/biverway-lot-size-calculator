@@ -6,96 +6,74 @@ st.set_page_config(
     layout="centered"
 )
 
-# ---------------- STATE ----------------
-if "dark" not in st.session_state:
-    st.session_state.dark = False
-
-# ---------------- DARK MODE TOGGLE ----------------
-st.toggle("🌙 Dark Mode", key="dark")
-
-# ---------------- STYLES ----------------
-st.markdown(f"""
+# ---------------- STYLES (NO DARK LOGIC HERE) ----------------
+st.markdown("""
 <style>
-body {{
-    background: {"#121212" if st.session_state.dark else "#ffffff"};
-}}
-
-.header {{
+.header {
     background:#f5a623;
     padding:12px;
     font-size:22px;
     font-weight:bold;
     text-align:center;
     border-radius:6px;
-    color:#000;
-}}
+}
 
-.section {{
+.section {
     background:#d9edf7;
     padding:8px;
     font-weight:bold;
     border-radius:4px;
     margin-top:14px;
-}}
+}
 
-input, select {{
-    font-size:16px !important;
-}}
-
-.result-header {{
+.result-header {
     background:#d9edf7;
     padding:8px;
     font-weight:bold;
     margin-top:14px;
     border-radius:4px;
-}}
+}
 
-.result-table {{
+.result-table {
     width:100%;
     border-collapse:collapse;
-}}
+}
 
-.result-table td {{
-    border:1px solid {"#444" if st.session_state.dark else "#ccc"};
+.result-table td {
+    border:1px solid #ccc;
     padding:10px;
-}}
+}
 
-.result-label {{
-    background:{"#1f1f1f" if st.session_state.dark else "#f5f5f5"};
+.result-label {
+    background:#f5f5f5;
     font-weight:normal;
-}}
+}
 
-.result-value {{
+.result-value {
     background:#eef6ff;
     font-weight:bold;
     text-align:left;
-    animation: glow 0.4s ease-in-out;
-}}
+}
 
-.note {{
+.note {
     font-size:12px;
     text-align:center;
     margin-top:6px;
-    color:{"#aaa" if st.session_state.dark else "#555"};
-}}
+    opacity:0.7;
+}
 
-@keyframes glow {{
-    from {{ background:#fff3cd; }}
-    to {{ background:#eef6ff; }}
-}}
-
-@media (max-width: 768px) {{
-    .sticky {{
+@media (max-width: 768px) {
+    .sticky {
         position:fixed;
         bottom:0;
         left:0;
         right:0;
         padding:10px;
-        background:{"#121212" if st.session_state.dark else "#ffffff"};
+        background:var(--background-color);
         box-shadow:0 -2px 8px rgba(0,0,0,0.2);
         z-index:999;
-    }}
-}}
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -108,12 +86,12 @@ st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
 with col1:
-    symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"], key="symbol")
-    entry = st.number_input("Entry Price", format="%.5f", key="entry")
+    symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+    entry = st.number_input("Entry Price", format="%.5f")
 
 with col2:
-    sl = st.number_input("Stop Loss", format="%.5f", key="sl")
-    risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f", key="risk")
+    sl = st.number_input("Stop Loss", format="%.5f")
+    risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 
 # ---------------- CALCULATIONS ----------------
 direction = "BUY" if entry > sl else "SELL"
