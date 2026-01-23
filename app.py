@@ -76,7 +76,7 @@ st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 
-price_format = "%.2f" if symbol == "XAUUSD" else "%.5f"
+price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
