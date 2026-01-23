@@ -102,7 +102,7 @@ else:
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
-        tp_display = format(tp_val, ".2f")
+        tp_display = format(tp_val, ".3f")
     else:
         tp_dist = (point * 3) / 100000
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
