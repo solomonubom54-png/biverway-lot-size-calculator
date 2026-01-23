@@ -92,7 +92,7 @@ else:
 
 if point == 0:
     lot = "0.00"
-    tp_display = format(entry, ".2f" if symbol == "XAUUSD" else ".5f")
+    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 else:
     if symbol == "USDCHF":
         lot = f"{(risk * entry) / point:.2f}"
