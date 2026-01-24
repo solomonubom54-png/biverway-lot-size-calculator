@@ -90,11 +90,12 @@ direction = "BUY" if entry > sl else "SELL"
 if symbol == "XAUUSD":
     point = abs(entry - sl) * 100
 else:
-    point = abs(entry - sl) * 100000
+    point = abs(entry - sl) * 100000  # For USDCHF, EURUSD, GBPUSD
 
 # Initialize outputs
+lot_val = 0.0
 lot = "0.00"
-actual_risk = 0.00
+actual_risk = 0.0
 tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 
 if point > 0 and risk > 0:
@@ -106,7 +107,7 @@ if point > 0 and risk > 0:
         lot_val = risk / point
     lot = f"{lot_val:.2f}"
 
-    # ACTUAL RISK (Google Sheet formula replicated)
+    # ACTUAL RISK
     if symbol == "USDCHF":
         actual_risk = round(lot_val * (point / 10) * (10 / entry), 2)
     else:
@@ -141,4 +142,4 @@ st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=Tru
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+        )
