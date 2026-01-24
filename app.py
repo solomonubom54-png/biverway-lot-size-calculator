@@ -79,19 +79,7 @@ symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
-
-# ---------- RISK TYPE (DROPDOWN) ----------
-risk_type = st.selectbox(
-    "Risk Type",
-    ["Fixed Amount", "Risk %"]
-)
-
-if risk_type == "Fixed Amount":
-    risk_amount = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
-else:
-    account_size = st.number_input("Account Size", min_value=1.0, format="%.2f")
-    risk_percent = st.number_input("Risk %", min_value=0.01, format="%.2f")
-    risk_amount = (account_size * risk_percent) / 100
+risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
@@ -106,9 +94,9 @@ if point == 0:
     tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 else:
     if symbol == "USDCHF":
-        lot = f"{(risk_amount * entry) / point:.2f}"
+        lot = f"{(risk * entry) / point:.2f}"
     else:
-        lot = f"{risk_amount / point:.2f}"
+        lot = f"{risk / point:.2f}"
 
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
