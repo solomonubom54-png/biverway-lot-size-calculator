@@ -81,48 +81,49 @@ entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
 risk = st.number_input("Risk Amount", min_value=0.0, format="%.2f")
 
-# ---------- CALCULATIONS ----------
+# ---------- CORE CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
+price_diff = abs(entry - sl)
+
+# ---- POINT (matches A11) ----
 if symbol == "XAUUSD":
-    price_diff = abs(entry - sl)
     point = price_diff * 100
 else:
-    point = abs(int(entry * 100000) - int(sl * 100000))
-    price_diff = point / 100000
+    point = price_diff * 100000
 
-show_actual_risk = False
-
+# ---------- LOT SIZE (matches A14) ----------
 if point == 0 or risk == 0:
-    lot = "0.00"
-    actual_risk = "0.00"
-    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+    lot_value = 0
 else:
     if symbol == "USDCHF":
         lot_value = (risk * entry) / point
     else:
         lot_value = risk / point
 
-    lot = f"{lot_value:.2f}"
+lot = f"{round(lot_value, 2):.2f}"
 
-    # ----- ACTUAL RISK -----
-    if symbol == "XAUUSD":
-        actual_risk_value = lot_value * price_diff * 100
+# ---------- ACTUAL RISK (matches A12 EXACTLY) ----------
+if lot_value == 0:
+    actual_risk_value = 0
+else:
+    if symbol == "USDCHF":
+        actual_risk_value = lot_value * (point / 10) * (10 / entry)
     else:
         actual_risk_value = lot_value * point
 
-    actual_risk = f"{actual_risk_value:.2f}"
-    show_actual_risk = actual_risk_value > 0
+actual_risk = f"{round(actual_risk_value, 2):.2f}"
+show_actual_risk = actual_risk_value > 0
 
-    # ----- TAKE PROFIT -----
-    if symbol == "XAUUSD":
-        tp_dist = price_diff * 3
-        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
-        tp_display = format(tp_val, ".3f")
-    else:
-        tp_dist = (point * 3) / 100000
-        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
-        tp_display = format(tp_val, ".5f")
+# ---------- TAKE PROFIT (matches A15 logic) ----------
+if symbol == "XAUUSD":
+    tp_dist = price_diff * 3
+    tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+    tp_display = format(tp_val, ".3f")
+else:
+    tp_dist = (point * 3) / 100000
+    tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+    tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
@@ -151,4 +152,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+        )
