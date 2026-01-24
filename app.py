@@ -86,11 +86,11 @@ risk = st.number_input("Risk Amount", min_value=0.0, value=0.00, format="%.2f")
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
-# Compute points
+# Compute price difference in points/pips
 if symbol == "XAUUSD":
-    point = abs(entry - sl) * 100
+    point = abs(entry - sl) * 100  # gold: use 100 multiplier
 else:
-    point = abs(entry - sl) * 100000  # For USDCHF, EURUSD, GBPUSD
+    point = abs(entry - sl) * 100000  # forex pairs
 
 # Initialize outputs
 lot_val = 0.0
@@ -99,22 +99,22 @@ actual_risk = 0.0
 tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 
 if point > 0 and risk > 0:
-
     # ---------- LOT SIZE ----------
     if symbol == "USDCHF":
-        lot_val_raw = (risk * entry) / point        # raw lot for calculations
-        lot_val = round(lot_val_raw, 2)            # rounded lot for display
+        lot_val_raw = (risk * entry) / point      # raw lot for calculations
+        lot_val = round(lot_val_raw, 2)          # rounded lot for display
         lot = f"{lot_val:.2f}"
-
-        # ---------- ACTUAL RISK ----------
-        actual_risk = round(lot_val_raw * (point / 10) * (10 / entry), 2)
-
     else:
         lot_val_raw = risk / point
         lot_val = round(lot_val_raw, 2)
         lot = f"{lot_val:.2f}"
 
-        actual_risk = round(lot_val_raw * point, 2)  # actual risk matches Sheet
+    # ---------- ACTUAL RISK ----------
+    if symbol == "XAUUSD":
+        actual_risk_val = lot_val_raw * abs(entry - sl) * 100  # gold
+    else:
+        actual_risk_val = lot_val_raw * abs(entry - sl) * 100000  # forex
+    actual_risk = round(actual_risk_val, 2)
 
     # ---------- TAKE PROFIT (1:3) ----------
     if symbol == "XAUUSD":
@@ -129,10 +129,9 @@ if point > 0 and risk > 0:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-# Build table rows
+# Build result table
 rows = f"<tr><td class='result-label'>Direction</td><td class='result-value'>{direction}</td></tr>"
 
-# Only show Actual Risk if > 0
 if actual_risk > 0:
     rows += f"<tr><td class='result-label'>Actual Risk</td><td class='result-value'>{actual_risk}</td></tr>"
 
@@ -145,4 +144,4 @@ st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=Tru
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
