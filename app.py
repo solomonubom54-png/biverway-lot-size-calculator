@@ -74,67 +74,72 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+symbol = st.selectbox(
+    "Symbol",
+    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
+)
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
-entry = st.number_input("Entry Price", format=price_format)
-sl = st.number_input("Stop Loss", format=price_format)
-risk = st.number_input("Risk Amount", min_value=0.0, format="%.2f")
+
+entry = st.number_input(
+    "Entry Price",
+    format=price_format
+)
+
+sl = st.number_input(
+    "Stop Loss",
+    format=price_format
+)
+
+risk = st.number_input(
+    "Risk Amount",
+    min_value=0.0,
+    format="%.2f"
+)
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
 if symbol == "XAUUSD":
-    stop_distance = abs(entry - sl)
-    stop_pips = stop_distance * 100
+    point = abs(entry - sl) * 100
 else:
-    stop_pips = abs(int(entry * 100000) - int(sl * 100000))
-    stop_distance = stop_pips / 100000
+    point = abs(int(entry * 100000) - int(sl * 100000))
 
-if stop_pips == 0 or risk == 0:
+if point == 0:
     lot = "0.00"
-    actual_risk = "0.00"
     tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
-
 else:
-    # ---------- LOT SIZE ----------
     if symbol == "USDCHF":
-        lot_value = (risk * entry) / stop_pips
+        lot = f"{(risk * entry) / point:.2f}"
     else:
-        lot_value = risk / stop_pips
+        lot = f"{risk / point:.2f}"
 
-    lot = f"{lot_value:.2f}"
-
-    # ---------- ACTUAL RISK (FIXED) ----------
-    if symbol == "USDCHF":
-        pip_value = 10 / entry
-        actual_risk_value = lot_value * pip_value * stop_pips   # correct scale
-    elif symbol == "XAUUSD":
-        actual_risk_value = lot_value * stop_distance * 100
-    else:
-        actual_risk_value = lot_value * stop_pips
-
-    actual_risk = f"{actual_risk_value:.2f}"
-
-    # ---------- TAKE PROFIT ----------
     if symbol == "XAUUSD":
-        tp_distance = stop_distance * 3
-        tp = entry + tp_distance if direction == "BUY" else entry - tp_distance
-        tp_display = format(tp, ".3f")
+        tp_dist = abs(entry - sl) * 3
+        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+        tp_display = format(tp_val, ".3f")
     else:
-        tp_distance = (stop_pips * 3) / 100000
-        tp = entry + tp_distance if direction == "BUY" else entry - tp_distance
-        tp_display = format(tp, ".5f")
+        tp_dist = (point * 3) / 100000
+        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+        tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
 st.markdown(f"""
 <table class="result-table">
-<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
-<tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
-<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
-<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
+<tr>
+    <td class="result-label">Direction</td>
+    <td class="result-value">{direction}</td>
+</tr>
+<tr>
+    <td class="result-label">Lot Size</td>
+    <td class="result-value">{lot}</td>
+</tr>
+<tr>
+    <td class="result-label">Take Profit (1:3)</td>
+    <td class="result-value">{tp_display}</td>
+</tr>
 </table>
 """, unsafe_allow_html=True)
 
@@ -142,4 +147,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-    )
+        )
