@@ -95,8 +95,9 @@ if stop_pips == 0 or risk == 0:
     lot = "0.00"
     actual_risk = "0.00"
     tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+
 else:
-    # ----- LOT SIZE -----
+    # ---------- LOT SIZE ----------
     if symbol == "USDCHF":
         lot_value = (risk * entry) / stop_pips
     else:
@@ -104,10 +105,10 @@ else:
 
     lot = f"{lot_value:.2f}"
 
-    # ----- ACTUAL RISK (CORRECTED) -----
+    # ---------- ACTUAL RISK (FIXED) ----------
     if symbol == "USDCHF":
         pip_value = 10 / entry
-        actual_risk_value = lot_value * pip_value * stop_pips
+        actual_risk_value = lot_value * pip_value * stop_pips   # correct scale
     elif symbol == "XAUUSD":
         actual_risk_value = lot_value * stop_distance * 100
     else:
@@ -115,7 +116,7 @@ else:
 
     actual_risk = f"{actual_risk_value:.2f}"
 
-    # ----- TAKE PROFIT -----
+    # ---------- TAKE PROFIT ----------
     if symbol == "XAUUSD":
         tp_distance = stop_distance * 3
         tp = entry + tp_distance if direction == "BUY" else entry - tp_distance
@@ -141,4 +142,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+    )
