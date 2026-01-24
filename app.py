@@ -51,11 +51,13 @@ st.markdown("""
 .result-label {
     background:#f7f7f7;
     width:50%;
+    text-align:left;
 }
 
 .result-value {
     background:#eef6ff;
     font-weight:bold;
+    text-align:left;
 }
 
 .footer-note {
@@ -74,52 +76,51 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox(
-    "Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
-)
+symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-entry = st.number_input(
-    "Entry Price",
-    format=price_format
-)
-
-sl = st.number_input(
-    "Stop Loss",
-    format=price_format
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    min_value=0.0,
-    format="%.2f"
-)
+entry = st.number_input("Entry Price", format=price_format)
+sl = st.number_input("Stop Loss", format=price_format)
+risk = st.number_input("Risk Amount", min_value=0.0, value=0.00, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
+# Point calculation (matches Google Sheet)
 if symbol == "XAUUSD":
-    point = abs(entry - sl) * 100
+    points = abs(entry - sl) * 100
 else:
-    point = abs(int(entry * 100000) - int(sl * 100000))
+    points = abs(entry - sl) * 100000
 
-if point == 0:
-    lot = "0.00"
-    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+# LOT SIZE (Sheet logic)
+if points == 0 or risk == 0:
+    lot = 0.00
 else:
     if symbol == "USDCHF":
-        lot = f"{(risk * entry) / point:.2f}"
+        lot = round((risk * entry) / points, 2)
     else:
-        lot = f"{risk / point:.2f}"
+        lot = round(risk / points, 2)
 
+# ACTUAL RISK (Sheet logic)
+if lot == 0:
+    actual_risk = 0.00
+else:
+    if symbol == "USDCHF":
+        actual_risk = round(lot * (points / 10) * (10 / entry), 2)
+    else:
+        actual_risk = round(lot * points, 2)
+
+# TAKE PROFIT (1:3)
+if points == 0:
+    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+else:
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".3f")
     else:
-        tp_dist = (point * 3) / 100000
+        tp_dist = (points * 3) / 100000
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
@@ -131,6 +132,10 @@ st.markdown(f"""
 <tr>
     <td class="result-label">Direction</td>
     <td class="result-value">{direction}</td>
+</tr>
+<tr>
+    <td class="result-label">Actual Risk</td>
+    <td class="result-value">{actual_risk}</td>
 </tr>
 <tr>
     <td class="result-label">Lot Size</td>
@@ -147,4 +152,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
