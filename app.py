@@ -6,6 +6,13 @@ st.set_page_config(
     layout="centered"
 )
 
+# ---------- SESSION STATE INIT ----------
+if "symbol" not in st.session_state:
+    st.session_state.symbol = "EURUSD"
+    st.session_state.entry = 0.0
+    st.session_state.sl = 0.0
+    st.session_state.risk = 0.0
+
 # ---------- STYLES ----------
 st.markdown("""
 <style>
@@ -18,7 +25,6 @@ st.markdown("""
     border-radius:8px;
     margin-bottom:12px;
 }
-
 .section {
     background:#d9edf7;
     padding:8px;
@@ -27,7 +33,6 @@ st.markdown("""
     margin-top:14px;
     margin-bottom:8px;
 }
-
 .result-header {
     background:#d9edf7;
     padding:8px;
@@ -35,29 +40,24 @@ st.markdown("""
     border-radius:6px;
     margin-top:16px;
 }
-
 .result-table {
     width:100%;
     border-collapse:collapse;
     margin-top:6px;
 }
-
 .result-table td {
     border:1px solid #ccc;
     padding:10px;
     font-size:14px;
 }
-
 .result-label {
     background:#f7f7f7;
     width:50%;
 }
-
 .result-value {
     background:#eef6ff;
     font-weight:bold;
 }
-
 .footer-note {
     margin-top:22px;
     margin-bottom:40px;
@@ -69,37 +69,44 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------- HEADER ----------
-st.markdown(
-    '<div class="header">Biverway | Lot Size Calculator</div>',
-    unsafe_allow_html=True
-)
+st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
+def reset_inputs():
+    st.session_state.entry = 0.0
+    st.session_state.sl = 0.0
+    st.session_state.risk = 0.0
+
 symbol = st.selectbox(
     "Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"]
+    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
+    key="symbol",
+    on_change=reset_inputs
 )
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
 entry = st.number_input(
     "Entry Price",
-    format=price_format
+    format=price_format,
+    key="entry"
 )
 
 sl = st.number_input(
     "Stop Loss",
-    format=price_format
+    format=price_format,
+    key="sl"
 )
 
 risk = st.number_input(
     "Risk Amount",
-    value=0.00,
-    min_value=0.00,
-    format="%.2f"
+    format="%.2f",
+    key="risk"
 )
+
+inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
@@ -109,16 +116,26 @@ if symbol == "XAUUSD":
 else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
-if point == 0 or risk == 0:
-    lot_display = "0.00"
-    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
-else:
-    if symbol == "USDCHF":
-        lot = (risk * entry) / point
-    else:
-        lot = risk / point
+lot = "0.00"
+actual_risk = "0.00"
+tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 
-    lot_display = f"{lot:.2f}"
+if inputs_ready and point > 0:
+
+    if symbol == "USDCHF":
+        lot_raw = (risk * entry) / point
+    else:
+        lot_raw = risk / point
+
+    lot_rounded = round(lot_raw, 2)
+    lot = f"{lot_rounded:.2f}"
+
+    if symbol == "USDCHF":
+        actual_risk_val = lot_rounded * point / entry
+    else:
+        actual_risk_val = lot_rounded * point
+
+    actual_risk = f"{actual_risk_val:.2f}"
 
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
@@ -132,20 +149,23 @@ else:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
+rows = f"""
+<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
+"""
+
+if inputs_ready:
+    rows += f"""
+<tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
+"""
+
+rows += f"""
+<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
+<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
+"""
+
 st.markdown(f"""
 <table class="result-table">
-<tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-</tr>
-<tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot_display}</td>
-</tr>
-<tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp_display}</td>
-</tr>
+{rows}
 </table>
 """, unsafe_allow_html=True)
 
@@ -153,4 +173,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
