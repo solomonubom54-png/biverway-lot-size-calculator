@@ -79,7 +79,7 @@ symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
-risk = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
+risk = st.number_input("Risk Amount", min_value=0.0, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
