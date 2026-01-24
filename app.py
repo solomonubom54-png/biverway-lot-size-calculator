@@ -51,13 +51,11 @@ st.markdown("""
 .result-label {
     background:#f7f7f7;
     width:50%;
-    text-align:left;
 }
 
 .result-value {
     background:#eef6ff;
     font-weight:bold;
-    text-align:left;
 }
 
 .footer-note {
@@ -82,69 +80,62 @@ price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
-risk = st.number_input("Risk Amount", min_value=0.0, value=0.00, format="%.2f")
+risk = st.number_input("Risk Amount", format="%.2f")
+
+# ---------- INPUT VALIDATION ----------
+inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
-# Point calculation (matches Google Sheet)
 if symbol == "XAUUSD":
-    points = abs(entry - sl) * 100
+    point = abs(entry - sl) * 100
 else:
-    points = abs(entry - sl) * 100000
+    point = abs(int(entry * 100000) - int(sl * 100000))
 
-# LOT SIZE (Sheet logic)
-if points == 0 or risk == 0:
-    lot = 0.00
-else:
-    if symbol == "USDCHF":
-        lot = round((risk * entry) / points, 2)
-    else:
-        lot = round(risk / points, 2)
-
-# ACTUAL RISK (Sheet logic)
-if lot == 0:
-    actual_risk = 0.00
-else:
-    if symbol == "USDCHF":
-        actual_risk = round(lot * (points / 10) * (10 / entry), 2)
-    else:
-        actual_risk = round(lot * points, 2)
-
-# TAKE PROFIT (1:3)
-if points == 0:
+if point == 0:
+    lot = "0.00"
     tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+    actual_risk = "0.00"
 else:
+    if symbol == "USDCHF":
+        lot_val = (risk * entry) / point
+        actual_risk = f"{lot_val * point / entry:.2f}"
+    else:
+        lot_val = risk / point
+        actual_risk = f"{lot_val * point:.2f}"
+
+    lot = f"{lot_val:.2f}"
+
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".3f")
     else:
-        tp_dist = (points * 3) / 100000
+        tp_dist = (point * 3) / 100000
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
+result_rows = f"""
+<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
+"""
+
+if inputs_ready:
+    result_rows += f"""
+<tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
+"""
+
+result_rows += f"""
+<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
+<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
+"""
+
 st.markdown(f"""
 <table class="result-table">
-<tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-</tr>
-<tr>
-    <td class="result-label">Actual Risk</td>
-    <td class="result-value">{actual_risk}</td>
-</tr>
-<tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
-</tr>
-<tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp_display}</td>
-</tr>
+{result_rows}
 </table>
 """, unsafe_allow_html=True)
 
