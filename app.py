@@ -91,6 +91,8 @@ else:
     point = abs(int(entry * 100000) - int(sl * 100000))
     price_diff = point / 100000
 
+show_actual_risk = False
+
 if point == 0 or risk == 0:
     lot = "0.00"
     actual_risk = "0.00"
@@ -110,6 +112,7 @@ else:
         actual_risk_value = lot_value * point
 
     actual_risk = f"{actual_risk_value:.2f}"
+    show_actual_risk = actual_risk_value > 0
 
     # ----- TAKE PROFIT -----
     if symbol == "XAUUSD":
@@ -124,12 +127,23 @@ else:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-st.markdown(f"""
-<table class="result-table">
+rows = f"""
 <tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
+"""
+
+if show_actual_risk:
+    rows += f"""
 <tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
+"""
+
+rows += f"""
 <tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
 <tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
+"""
+
+st.markdown(f"""
+<table class="result-table">
+{rows}
 </table>
 """, unsafe_allow_html=True)
 
@@ -137,4 +151,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-    )
+)
