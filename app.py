@@ -76,22 +76,23 @@ st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 
+# Set decimal formatting for XAUUSD
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
-risk = st.number_input("Risk Amount", min_value=0.0, value=0.0, format="%.2f")
+risk = st.number_input("Risk Amount", min_value=0.0, value=0.00, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
-# Points calculation
+# Compute points
 if symbol == "XAUUSD":
     point = abs(entry - sl) * 100
 else:
     point = abs(entry - sl) * 100000
 
-# Default outputs
+# Initialize outputs
 lot = "0.00"
 actual_risk = 0.00
 tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
@@ -109,7 +110,8 @@ if point > 0 and risk > 0:
     # ACTUAL RISK
     if symbol == "USDCHF":
         mid_price = (entry + sl) / 2
-        actual_risk = round(lot_val * abs(entry - sl) * 100000 / mid_price, 2)
+        if mid_price != 0:
+            actual_risk = round(lot_val * abs(entry - sl) * 100000 / mid_price, 2)
     else:
         actual_risk = round(lot_val * point, 2)
 
@@ -126,25 +128,17 @@ if point > 0 and risk > 0:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-rows = f"""
-<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
-"""
+# Build table rows
+rows = f"<tr><td class='result-label'>Direction</td><td class='result-value'>{direction}</td></tr>"
 
+# Only show Actual Risk if > 0
 if actual_risk > 0:
-    rows += f"""
-    <tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
-    """
+    rows += f"<tr><td class='result-label'>Actual Risk</td><td class='result-value'>{actual_risk}</td></tr>"
 
-rows += f"""
-<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
-<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
-"""
+rows += f"<tr><td class='result-label'>Lot Size</td><td class='result-value'>{lot}</td></tr>"
+rows += f"<tr><td class='result-label'>Take Profit (1:3)</td><td class='result-value'>{tp_display}</td></tr>"
 
-st.markdown(f"""
-<table class="result-table">
-{rows}
-</table>
-""", unsafe_allow_html=True)
+st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
