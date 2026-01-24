@@ -85,41 +85,45 @@ risk = st.number_input("Risk Amount", min_value=0.0, format="%.2f")
 direction = "BUY" if entry > sl else "SELL"
 
 if symbol == "XAUUSD":
-    price_diff = abs(entry - sl)
-    point = price_diff * 100
+    stop_distance = abs(entry - sl)
+    stop_pips = stop_distance * 100
 else:
-    point = abs(int(entry * 100000) - int(sl * 100000))
-    price_diff = point / 100000
+    stop_pips = abs(int(entry * 100000) - int(sl * 100000))
+    stop_distance = stop_pips / 100000
 
-if point == 0 or risk == 0:
+if stop_pips == 0 or risk == 0:
     lot = "0.00"
     actual_risk = "0.00"
     tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 else:
+    # ----- LOT SIZE -----
     if symbol == "USDCHF":
-        lot_value = (risk * entry) / point
+        lot_value = (risk * entry) / stop_pips
     else:
-        lot_value = risk / point
+        lot_value = risk / stop_pips
 
     lot = f"{lot_value:.2f}"
 
-    # ----- ACTUAL RISK -----
-    if symbol == "XAUUSD":
-        actual_risk_value = lot_value * price_diff * 100
+    # ----- ACTUAL RISK (FIXED) -----
+    if symbol == "USDCHF":
+        pip_value = 10 / entry
+        actual_risk_value = lot_value * pip_value * stop_pips
+    elif symbol == "XAUUSD":
+        actual_risk_value = lot_value * stop_distance * 100
     else:
-        actual_risk_value = lot_value * point
+        actual_risk_value = lot_value * stop_pips
 
     actual_risk = f"{actual_risk_value:.2f}"
 
     # ----- TAKE PROFIT -----
     if symbol == "XAUUSD":
-        tp_dist = price_diff * 3
-        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
-        tp_display = format(tp_val, ".3f")
+        tp_distance = stop_distance * 3
+        tp = entry + tp_distance if direction == "BUY" else entry - tp_distance
+        tp_display = format(tp, ".3f")
     else:
-        tp_dist = (point * 3) / 100000
-        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
-        tp_display = format(tp_val, ".5f")
+        tp_distance = (stop_pips * 3) / 100000
+        tp = entry + tp_distance if direction == "BUY" else entry - tp_distance
+        tp_display = format(tp, ".5f")
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
@@ -137,4 +141,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
