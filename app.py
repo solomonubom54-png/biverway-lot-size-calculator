@@ -82,7 +82,6 @@ entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
 risk = st.number_input("Risk Amount", format="%.2f")
 
-# ---------- INPUT VALIDATION ----------
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
 # ---------- CALCULATIONS ----------
@@ -95,17 +94,18 @@ else:
 
 if point == 0:
     lot = "0.00"
-    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
     actual_risk = "0.00"
+    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 else:
     if symbol == "USDCHF":
         lot_val = (risk * entry) / point
-        actual_risk = f"{lot_val * point / entry:.2f}"
+        actual_risk_val = lot_val * point / entry
     else:
         lot_val = risk / point
-        actual_risk = f"{lot_val * point:.2f}"
+        actual_risk_val = lot_val * point
 
     lot = f"{lot_val:.2f}"
+    actual_risk = f"{actual_risk_val:.2f}"
 
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
@@ -119,23 +119,23 @@ else:
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-result_rows = f"""
+rows = f"""
 <tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
 """
 
 if inputs_ready:
-    result_rows += f"""
+    rows += f"""
 <tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
 """
 
-result_rows += f"""
+rows += f"""
 <tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
 <tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
 """
 
 st.markdown(f"""
 <table class="result-table">
-{result_rows}
+{rows}
 </table>
 """, unsafe_allow_html=True)
 
