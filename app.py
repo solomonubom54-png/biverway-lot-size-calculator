@@ -6,6 +6,13 @@ st.set_page_config(
     layout="centered"
 )
 
+# ---------- SESSION STATE INIT ----------
+if "symbol" not in st.session_state:
+    st.session_state.symbol = "EURUSD"
+    st.session_state.entry = 0.0
+    st.session_state.sl = 0.0
+    st.session_state.risk = 0.0
+
 # ---------- STYLES ----------
 st.markdown("""
 <style>
@@ -67,13 +74,37 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
+def reset_inputs():
+    st.session_state.entry = 0.0
+    st.session_state.sl = 0.0
+    st.session_state.risk = 0.0
+
+symbol = st.selectbox(
+    "Symbol",
+    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
+    key="symbol",
+    on_change=reset_inputs
+)
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-entry = st.number_input("Entry Price", format=price_format)
-sl = st.number_input("Stop Loss", format=price_format)
-risk = st.number_input("Risk Amount", format="%.2f")
+entry = st.number_input(
+    "Entry Price",
+    format=price_format,
+    key="entry"
+)
+
+sl = st.number_input(
+    "Stop Loss",
+    format=price_format,
+    key="sl"
+)
+
+risk = st.number_input(
+    "Risk Amount",
+    format="%.2f",
+    key="risk"
+)
 
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
@@ -91,7 +122,6 @@ tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 
 if inputs_ready and point > 0:
 
-    # ---- LOT SIZE (ROUNDED FIRST) ----
     if symbol == "USDCHF":
         lot_raw = (risk * entry) / point
     else:
@@ -100,7 +130,6 @@ if inputs_ready and point > 0:
     lot_rounded = round(lot_raw, 2)
     lot = f"{lot_rounded:.2f}"
 
-    # ---- ACTUAL RISK (CORRECT FORMULA) ----
     if symbol == "USDCHF":
         actual_risk_val = lot_rounded * point / entry
     else:
@@ -108,7 +137,6 @@ if inputs_ready and point > 0:
 
     actual_risk = f"{actual_risk_val:.2f}"
 
-    # ---- TAKE PROFIT ----
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -145,4 +173,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+    )
