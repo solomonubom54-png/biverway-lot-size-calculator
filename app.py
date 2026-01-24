@@ -76,72 +76,62 @@ st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 
-# Decimal formatting for XAUUSD
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
-
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
-risk = st.number_input("Risk Amount", min_value=0.0, value=0.00, format="%.2f")
+risk = st.number_input("Risk Amount", min_value=0.0, format="%.2f")
 
 # ---------- CALCULATIONS ----------
 direction = "BUY" if entry > sl else "SELL"
 
-# Compute price difference in points/pips
 if symbol == "XAUUSD":
-    point = abs(entry - sl) * 100  # gold: use 100 multiplier
+    price_diff = abs(entry - sl)
+    point = price_diff * 100
 else:
-    point = abs(entry - sl) * 10000 if symbol == "USDCHF" else abs(entry - sl) * 100000  # forex
+    point = abs(int(entry * 100000) - int(sl * 100000))
+    price_diff = point / 100000
 
-# Initialize outputs
-lot_val = 0.0
-lot = "0.00"
-actual_risk = 0.0
-tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
-
-if point > 0 and risk > 0:
-    # ---------- LOT SIZE ----------
+if point == 0 or risk == 0:
+    lot = "0.00"
+    actual_risk = "0.00"
+    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+else:
     if symbol == "USDCHF":
-        lot_val_raw = (risk * entry) / point      # raw lot
-        lot_val = round(lot_val_raw, 2)          # rounded lot
-        lot = f"{lot_val:.2f}"
+        lot_value = (risk * entry) / point
     else:
-        lot_val_raw = risk / point
-        lot_val = round(lot_val_raw, 2)
-        lot = f"{lot_val:.2f}"
+        lot_value = risk / point
 
-    # ---------- ACTUAL RISK ----------
-    if symbol == "XAUUSD":
-        actual_risk_val = lot_val_raw * abs(entry - sl) * 100
-    elif symbol == "USDCHF":
-        # Correct formula to reflect actual USD risk
-        actual_risk_val = lot_val_raw * abs(entry - sl) * 10000 / entry * 10
-    else:  # EURUSD, GBPUSD
-        actual_risk_val = lot_val_raw * abs(entry - sl) * 100000
-    actual_risk = round(actual_risk_val, 2)
+    lot = f"{lot_value:.2f}"
 
-    # ---------- TAKE PROFIT (1:3) ----------
+    # ----- ACTUAL RISK -----
     if symbol == "XAUUSD":
-        tp_dist = abs(entry - sl) * 3
+        actual_risk_value = lot_value * price_diff * 100
+    else:
+        actual_risk_value = lot_value * point
+
+    actual_risk = f"{actual_risk_value:.2f}"
+
+    # ----- TAKE PROFIT -----
+    if symbol == "XAUUSD":
+        tp_dist = price_diff * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".3f")
     else:
-        tp_dist = (point * 3) / (100 if symbol == "USDCHF" else 100000)
+        tp_dist = (point * 3) / 100000
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS ----------
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
-# Build result table
-rows = f"<tr><td class='result-label'>Direction</td><td class='result-value'>{direction}</td></tr>"
-
-if actual_risk > 0:
-    rows += f"<tr><td class='result-label'>Actual Risk</td><td class='result-value'>{actual_risk}</td></tr>"
-
-rows += f"<tr><td class='result-label'>Lot Size</td><td class='result-value'>{lot}</td></tr>"
-rows += f"<tr><td class='result-label'>Take Profit (1:3)</td><td class='result-value'>{tp_display}</td></tr>"
-
-st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=True)
+st.markdown(f"""
+<table class="result-table">
+<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
+<tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
+<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
+<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
+</table>
+""", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
