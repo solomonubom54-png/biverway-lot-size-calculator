@@ -18,7 +18,6 @@ st.markdown("""
     border-radius:8px;
     margin-bottom:12px;
 }
-
 .section {
     background:#d9edf7;
     padding:8px;
@@ -27,7 +26,6 @@ st.markdown("""
     margin-top:14px;
     margin-bottom:8px;
 }
-
 .result-header {
     background:#d9edf7;
     padding:8px;
@@ -35,29 +33,24 @@ st.markdown("""
     border-radius:6px;
     margin-top:16px;
 }
-
 .result-table {
     width:100%;
     border-collapse:collapse;
     margin-top:6px;
 }
-
 .result-table td {
     border:1px solid #ccc;
     padding:10px;
     font-size:14px;
 }
-
 .result-label {
     background:#f7f7f7;
     width:50%;
 }
-
 .result-value {
     background:#eef6ff;
     font-weight:bold;
 }
-
 .footer-note {
     margin-top:22px;
     margin-bottom:40px;
@@ -92,21 +85,30 @@ if symbol == "XAUUSD":
 else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
-if point == 0:
-    lot = "0.00"
-    actual_risk = "0.00"
-    tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
-else:
-    if symbol == "USDCHF":
-        lot_val = (risk * entry) / point
-        actual_risk_val = lot_val * point / entry
-    else:
-        lot_val = risk / point
-        actual_risk_val = lot_val * point
+lot = "0.00"
+actual_risk = "0.00"
+tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 
-    lot = f"{lot_val:.2f}"
+if inputs_ready and point > 0:
+
+    # ---- LOT SIZE (ROUNDED FIRST) ----
+    if symbol == "USDCHF":
+        lot_raw = (risk * entry) / point
+    else:
+        lot_raw = risk / point
+
+    lot_rounded = round(lot_raw, 2)
+    lot = f"{lot_rounded:.2f}"
+
+    # ---- ACTUAL RISK (CORRECT FORMULA) ----
+    if symbol == "USDCHF":
+        actual_risk_val = lot_rounded * point / entry
+    else:
+        actual_risk_val = lot_rounded * point
+
     actual_risk = f"{actual_risk_val:.2f}"
 
+    # ---- TAKE PROFIT ----
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -143,4 +145,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+        )
