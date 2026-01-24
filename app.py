@@ -90,7 +90,7 @@ direction = "BUY" if entry > sl else "SELL"
 if symbol == "XAUUSD":
     point = abs(entry - sl) * 100  # gold: use 100 multiplier
 else:
-    point = abs(entry - sl) * 100000  # forex pairs
+    point = abs(entry - sl) * 10000 if symbol == "USDCHF" else abs(entry - sl) * 100000  # forex
 
 # Initialize outputs
 lot_val = 0.0
@@ -101,8 +101,8 @@ tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 if point > 0 and risk > 0:
     # ---------- LOT SIZE ----------
     if symbol == "USDCHF":
-        lot_val_raw = (risk * entry) / point      # raw lot for calculations
-        lot_val = round(lot_val_raw, 2)          # rounded lot for display
+        lot_val_raw = (risk * entry) / point      # raw lot
+        lot_val = round(lot_val_raw, 2)          # rounded lot
         lot = f"{lot_val:.2f}"
     else:
         lot_val_raw = risk / point
@@ -111,9 +111,12 @@ if point > 0 and risk > 0:
 
     # ---------- ACTUAL RISK ----------
     if symbol == "XAUUSD":
-        actual_risk_val = lot_val_raw * abs(entry - sl) * 100  # gold
-    else:
-        actual_risk_val = lot_val_raw * abs(entry - sl) * 100000  # forex
+        actual_risk_val = lot_val_raw * abs(entry - sl) * 100
+    elif symbol == "USDCHF":
+        # Correct formula to reflect actual USD risk
+        actual_risk_val = lot_val_raw * abs(entry - sl) * 10000 / entry * 10
+    else:  # EURUSD, GBPUSD
+        actual_risk_val = lot_val_raw * abs(entry - sl) * 100000
     actual_risk = round(actual_risk_val, 2)
 
     # ---------- TAKE PROFIT (1:3) ----------
@@ -122,7 +125,7 @@ if point > 0 and risk > 0:
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".3f")
     else:
-        tp_dist = (point * 3) / 100000
+        tp_dist = (point * 3) / (100 if symbol == "USDCHF" else 100000)
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
@@ -144,4 +147,4 @@ st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=Tru
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+    )
