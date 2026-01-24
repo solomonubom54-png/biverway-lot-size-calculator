@@ -109,7 +109,7 @@ if point > 0 and risk > 0:
     # ACTUAL RISK
     if symbol == "USDCHF":
         mid_price = (entry + sl) / 2
-        actual_risk = round(lot_val * point * (10 / mid_price), 2)
+        actual_risk = round(lot_val * abs(entry - sl) * 100000 / mid_price, 2)
     else:
         actual_risk = round(lot_val * point, 2)
 
@@ -150,4 +150,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+        )
