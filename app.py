@@ -100,20 +100,22 @@ tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
 
 if point > 0 and risk > 0:
 
-    # LOT SIZE
+    # ---------- LOT SIZE ----------
     if symbol == "USDCHF":
-        lot_val = (risk * entry) / point
+        lot_val_raw = (risk * entry) / point
+        lot_val = round(lot_val_raw, 2)  # Use rounded lot for Actual Risk
     else:
-        lot_val = risk / point
+        lot_val_raw = risk / point
+        lot_val = round(lot_val_raw, 2)
     lot = f"{lot_val:.2f}"
 
-    # ACTUAL RISK
+    # ---------- ACTUAL RISK ----------
     if symbol == "USDCHF":
         actual_risk = round(lot_val * (point / 10) * (10 / entry), 2)
     else:
         actual_risk = round(lot_val * point, 2)
 
-    # TAKE PROFIT (1:3)
+    # ---------- TAKE PROFIT (1:3) ----------
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -142,4 +144,4 @@ st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=Tru
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+        )
