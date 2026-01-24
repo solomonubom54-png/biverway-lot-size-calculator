@@ -104,7 +104,7 @@ else:
 
     lot = f"{lot_value:.2f}"
 
-    # ----- ACTUAL RISK (FIXED) -----
+    # ----- ACTUAL RISK (CORRECTED) -----
     if symbol == "USDCHF":
         pip_value = 10 / entry
         actual_risk_value = lot_value * pip_value * stop_pips
