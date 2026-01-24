@@ -76,7 +76,7 @@ st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox("Symbol", ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"])
 
-# Set decimal formatting for XAUUSD
+# Decimal formatting for XAUUSD
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
 entry = st.number_input("Entry Price", format=price_format)
@@ -104,14 +104,11 @@ if point > 0 and risk > 0:
         lot_val = (risk * entry) / point
     else:
         lot_val = risk / point
-
     lot = f"{lot_val:.2f}"
 
-    # ACTUAL RISK
+    # ACTUAL RISK (Google Sheet formula replicated)
     if symbol == "USDCHF":
-        mid_price = (entry + sl) / 2
-        if mid_price != 0:
-            actual_risk = round(lot_val * abs(entry - sl) * 100000 / mid_price, 2)
+        actual_risk = round(lot_val * (point / 10) * (10 / entry), 2)
     else:
         actual_risk = round(lot_val * point, 2)
 
@@ -144,4 +141,4 @@ st.markdown(f"<table class='result-table'>{rows}</table>", unsafe_allow_html=Tru
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
