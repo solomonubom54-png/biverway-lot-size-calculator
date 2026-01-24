@@ -71,13 +71,20 @@ st.markdown("""
 # ---------- HEADER ----------
 st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
-# ---------- INPUTS ----------
-st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
+# ---------- RESET FUNCTIONS ----------
+def reset_all():
+    st.session_state.symbol = "EURUSD"
+    st.session_state.entry = 0.0
+    st.session_state.sl = 0.0
+    st.session_state.risk = 0.0
 
 def reset_inputs():
     st.session_state.entry = 0.0
     st.session_state.sl = 0.0
     st.session_state.risk = 0.0
+
+# ---------- INPUTS ----------
+st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox(
     "Symbol",
@@ -105,6 +112,9 @@ risk = st.number_input(
     format="%.2f",
     key="risk"
 )
+
+# ---------- RESET BUTTON ----------
+st.button("🔄 Reset All", on_click=reset_all)
 
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
@@ -173,4 +183,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+    )
