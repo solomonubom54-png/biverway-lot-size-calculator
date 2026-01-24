@@ -102,18 +102,19 @@ if point > 0 and risk > 0:
 
     # ---------- LOT SIZE ----------
     if symbol == "USDCHF":
-        lot_val_raw = (risk * entry) / point
-        lot_val = round(lot_val_raw, 2)  # Use rounded lot for Actual Risk
+        lot_val_raw = (risk * entry) / point        # raw lot for calculations
+        lot_val = round(lot_val_raw, 2)            # rounded lot for display
+        lot = f"{lot_val:.2f}"
+
+        # ---------- ACTUAL RISK ----------
+        actual_risk = round(lot_val_raw * (point / 10) * (10 / entry), 2)
+
     else:
         lot_val_raw = risk / point
         lot_val = round(lot_val_raw, 2)
-    lot = f"{lot_val:.2f}"
+        lot = f"{lot_val:.2f}"
 
-    # ---------- ACTUAL RISK ----------
-    if symbol == "USDCHF":
-        actual_risk = round(lot_val * (point / 10) * (10 / entry), 2)
-    else:
-        actual_risk = round(lot_val * point, 2)
+        actual_risk = round(lot_val_raw * point, 2)  # actual risk matches Sheet
 
     # ---------- TAKE PROFIT (1:3) ----------
     if symbol == "XAUUSD":
