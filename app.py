@@ -80,14 +80,13 @@ price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 entry = st.number_input("Entry Price", format=price_format)
 sl = st.number_input("Stop Loss", format=price_format)
 
-# ---------- RISK MODE ----------
-risk_mode = st.radio(
+# ---------- RISK TYPE (DROPDOWN) ----------
+risk_type = st.selectbox(
     "Risk Type",
-    ["Fixed Amount", "Risk %"],
-    horizontal=True
+    ["Fixed Amount", "Risk %"]
 )
 
-if risk_mode == "Fixed Amount":
+if risk_type == "Fixed Amount":
     risk_amount = st.number_input("Risk Amount", min_value=1.0, format="%.2f")
 else:
     account_size = st.number_input("Account Size", min_value=1.0, format="%.2f")
@@ -135,4 +134,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+    )
