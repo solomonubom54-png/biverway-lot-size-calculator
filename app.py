@@ -13,6 +13,12 @@ if "symbol" not in st.session_state:
     st.session_state.sl = 0.0
     st.session_state.risk = 0.0
 
+# ---------- RESET FUNCTION ----------
+def reset_all():
+    st.session_state.entry = 0.0
+    st.session_state.sl = 0.0
+    st.session_state.risk = 0.0
+
 # ---------- STYLES ----------
 st.markdown("""
 <style>
@@ -65,6 +71,10 @@ st.markdown("""
     font-weight:bold;
 }
 
+.reset-btn {
+    margin-top:8px;
+}
+
 .footer-note {
     margin-top:24px;
     margin-bottom:40px;
@@ -81,16 +91,10 @@ st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_a
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-def reset_inputs():
-    st.session_state.entry = 0.0
-    st.session_state.sl = 0.0
-    st.session_state.risk = 0.0
-
 symbol = st.selectbox(
     "Symbol",
     ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
-    key="symbol",
-    on_change=reset_inputs
+    key="symbol"
 )
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
@@ -113,14 +117,17 @@ risk = st.number_input(
     key="risk"
 )
 
+st.button("Reset All", on_click=reset_all)
+
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
-# ---------- CALCULATIONS ----------
+# ---------- DEFAULT VALUES ----------
 direction = "—"
 lot = "0.00"
 actual_risk = "0.00"
 tp_display = format(0, ".3f" if symbol == "XAUUSD" else ".5f")
 
+# ---------- CALCULATIONS ----------
 if inputs_ready:
     direction = "BUY" if entry > sl else "SELL"
 
