@@ -105,27 +105,28 @@ if symbol == "XAUUSD":
 else:
     point = abs(int(entry * 100000) - int(sl * 100000))
 
+# Defaults
 lot = "0.00"
-actual_risk = "0.00"
-tp_display = ""
+tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
+actual_risk = ""
 
 if inputs_ready and point > 0:
 
+    # Lot size
     if symbol == "USDCHF":
-        lot_raw = (risk * entry) / point
+        lot_val = round((risk * entry) / point, 2)
     else:
-        lot_raw = risk / point
+        lot_val = round(risk / point, 2)
 
-    lot_val = round(lot_raw, 2)
     lot = f"{lot_val:.2f}"
 
+    # Actual risk
     if symbol == "USDCHF":
-        actual_risk_val = lot_val * point / entry
+        actual_risk = f"{(lot_val * point / entry):.2f}"
     else:
-        actual_risk_val = lot_val * point
+        actual_risk = f"{(lot_val * point):.2f}"
 
-    actual_risk = f"{actual_risk_val:.2f}"
-
+    # Take profit
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -142,9 +143,12 @@ rows = f"""
 <tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
 """
 
-if inputs_ready:
+if actual_risk:
     rows += f"""
 <tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
+"""
+
+rows += f"""
 <tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
 <tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
 """
