@@ -104,13 +104,15 @@ inputs_ready = (
 )
 
 # ---------- DEFAULT RESULTS ----------
-direction = "BUY" if entry > sl else "SELL"
+direction = "—"
 lot = "0.00"
 actual_risk = ""
 tp_display = "0.000" if symbol == "XAUUSD" else "0.00000"
 
 # ---------- CALCULATIONS ----------
 if inputs_ready:
+
+    direction = "BUY" if entry > sl else "SELL"
 
     if symbol == "XAUUSD":
         point = abs(entry - sl) * 100
@@ -168,4 +170,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+)
