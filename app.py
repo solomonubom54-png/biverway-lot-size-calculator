@@ -95,24 +95,29 @@ risk = st.number_input("Risk Amount", format="%.2f", key="risk")
 
 st.button("Reset All", on_click=reset_all)
 
-inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
+# ---------- INPUT VALIDATION ----------
+inputs_ready = (
+    entry > 0 and
+    sl > 0 and
+    risk > 0 and
+    entry != sl
+)
+
+# ---------- DEFAULT RESULTS ----------
+direction = "BUY" if entry > sl else "SELL"
+lot = "0.00"
+actual_risk = ""
+tp_display = "0.000" if symbol == "XAUUSD" else "0.00000"
 
 # ---------- CALCULATIONS ----------
-direction = "BUY" if entry > sl else "SELL"
+if inputs_ready:
 
-if symbol == "XAUUSD":
-    point = abs(entry - sl) * 100
-else:
-    point = abs(int(entry * 100000) - int(sl * 100000))
+    if symbol == "XAUUSD":
+        point = abs(entry - sl) * 100
+    else:
+        point = abs(int(entry * 100000) - int(sl * 100000))
 
-# Defaults
-lot = "0.00"
-tp_display = format(entry, ".3f" if symbol == "XAUUSD" else ".5f")
-actual_risk = ""
-
-if inputs_ready and point > 0:
-
-    # Lot size
+    # Lot Size
     if symbol == "USDCHF":
         lot_val = round((risk * entry) / point, 2)
     else:
@@ -120,13 +125,13 @@ if inputs_ready and point > 0:
 
     lot = f"{lot_val:.2f}"
 
-    # Actual risk
+    # Actual Risk
     if symbol == "USDCHF":
         actual_risk = f"{(lot_val * point / entry):.2f}"
     else:
         actual_risk = f"{(lot_val * point):.2f}"
 
-    # Take profit
+    # Take Profit
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -143,7 +148,7 @@ rows = f"""
 <tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
 """
 
-if actual_risk:
+if inputs_ready:
     rows += f"""
 <tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
 """
@@ -163,4 +168,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-)
+        )
