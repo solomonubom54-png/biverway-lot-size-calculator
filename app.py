@@ -19,15 +19,6 @@ def reset_all():
     st.session_state.sl = 0.0
     st.session_state.risk = 0.0
 
-# ---------- HIDE STREAMLIT UI ----------
-st.markdown("""
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
-
 # ---------- STYLES ----------
 st.markdown("""
 <style>
@@ -38,6 +29,14 @@ st.markdown("""
     font-weight:bold;
     text-align:center;
     border-radius:8px;
+    margin-bottom:14px;
+}
+
+.guide {
+    background:#f7f7f7;
+    padding:12px;
+    border-radius:6px;
+    font-size:14px;
     margin-bottom:14px;
 }
 
@@ -93,6 +92,30 @@ st.markdown("""
 # ---------- HEADER ----------
 st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
+# ---------- HOW TO USE (COLLAPSIBLE) ----------
+with st.expander("📘 How to use this calculator"):
+    st.markdown("""
+<div class="guide">
+
+<b>Step 1 — Select Symbol</b><br>
+Choose the instrument you are trading (EURUSD, GBPUSD, USDCHF, or XAUUSD).<br><br>
+
+<b>Step 2 — Enter Prices</b><br>
+Input your Entry Price and Stop Loss exactly as placed on your chart.<br><br>
+
+<b>Step 3 — Enter Risk Amount</b><br>
+This is the fixed amount you are willing to lose on the trade.<br><br>
+
+<b>Step 4 — Review Results</b><br>
+The calculator returns:<br>
+• <b>Direction (BUY / SELL)</b> — based on Entry vs Stop Loss<br>
+• <b>Lot Size</b> — the position size needed for your risk<br>
+• <b>Actual Risk</b> — the real risk after lot size rounding<br>
+• <b>Take Profit (1:3 R:R)</b> — target based on a 1:3 risk–reward ratio
+
+</div>
+""", unsafe_allow_html=True)
+
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
@@ -105,29 +128,15 @@ symbol = st.selectbox(
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-entry = st.number_input(
-    "Entry Price",
-    format=price_format,
-    key="entry"
-)
-
-sl = st.number_input(
-    "Stop Loss",
-    format=price_format,
-    key="sl"
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    format="%.2f",
-    key="risk"
-)
+entry = st.number_input("Entry Price", format=price_format, key="entry")
+sl = st.number_input("Stop Loss", format=price_format, key="sl")
+risk = st.number_input("Risk Amount", format="%.2f", key="risk")
 
 st.button("Reset All", on_click=reset_all)
 
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
-# ---------- DEFAULT VALUES ----------
+# ---------- DEFAULT STATES ----------
 direction = "—"
 lot = "0.00"
 actual_risk = "0.00"
@@ -170,29 +179,17 @@ if inputs_ready:
 st.markdown('<div class="result-header">Results</div>', unsafe_allow_html=True)
 
 rows = f"""
-<tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-</tr>
+<tr><td class="result-label">Direction</td><td class="result-value">{direction}</td></tr>
 """
 
 if inputs_ready:
     rows += f"""
-<tr>
-    <td class="result-label">Actual Risk</td>
-    <td class="result-value">{actual_risk}</td>
-</tr>
+<tr><td class="result-label">Actual Risk</td><td class="result-value">{actual_risk}</td></tr>
 """
 
 rows += f"""
-<tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
-</tr>
-<tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp_display}</td>
-</tr>
+<tr><td class="result-label">Lot Size</td><td class="result-value">{lot}</td></tr>
+<tr><td class="result-label">Take Profit (1:3)</td><td class="result-value">{tp_display}</td></tr>
 """
 
 st.markdown(f"""
@@ -205,4 +202,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System · v1.3+</div>',
     unsafe_allow_html=True
-)
+        )
