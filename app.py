@@ -3,6 +3,7 @@ import streamlit as st
 # ---------- PAGE CONFIG ----------
 st.set_page_config(
     page_title="Biverway | Lot Size Calculator",
+    page_icon="favicon.png",
     layout="centered"
 )
 
@@ -31,7 +32,6 @@ st.markdown("""
     border-radius:8px;
     margin-bottom:14px;
 }
-
 .section {
     background:#d9edf7;
     padding:10px;
@@ -40,7 +40,6 @@ st.markdown("""
     margin-top:16px;
     margin-bottom:10px;
 }
-
 .result-header {
     background:#d9edf7;
     padding:10px;
@@ -48,33 +47,24 @@ st.markdown("""
     border-radius:6px;
     margin-top:18px;
 }
-
 .result-table {
     width:100%;
     border-collapse:collapse;
     margin-top:8px;
 }
-
 .result-table td {
     border:1px solid #ccc;
     padding:12px;
     font-size:14px;
 }
-
 .result-label {
     background:#f7f7f7;
     width:50%;
 }
-
 .result-value {
     background:#eef6ff;
     font-weight:bold;
 }
-
-.reset-btn {
-    margin-top:8px;
-}
-
 .footer-note {
     margin-top:24px;
     margin-bottom:40px;
@@ -99,23 +89,9 @@ symbol = st.selectbox(
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-entry = st.number_input(
-    "Entry Price",
-    format=price_format,
-    key="entry"
-)
-
-sl = st.number_input(
-    "Stop Loss",
-    format=price_format,
-    key="sl"
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    format="%.2f",
-    key="risk"
-)
+entry = st.number_input("Entry Price", format=price_format, key="entry")
+sl = st.number_input("Stop Loss", format=price_format, key="sl")
+risk = st.number_input("Risk Amount", format="%.2f", key="risk")
 
 st.button("Reset All", on_click=reset_all)
 
