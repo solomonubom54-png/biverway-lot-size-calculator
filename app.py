@@ -19,6 +19,15 @@ def reset_all():
     st.session_state.sl = 0.0
     st.session_state.risk = 0.0
 
+# ---------- HIDE STREAMLIT UI ----------
+st.markdown("""
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
+
 # ---------- STYLES ----------
 st.markdown("""
 <style>
@@ -194,6 +203,6 @@ st.markdown(f"""
 
 # ---------- FOOTER ----------
 st.markdown(
-    '<div class="footer-note">Designed according to Biverway Trading System</div>',
+    '<div class="footer-note">Designed according to Biverway Trading System · v1.3+</div>',
     unsafe_allow_html=True
-    )
+)
