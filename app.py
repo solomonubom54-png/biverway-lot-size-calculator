@@ -90,7 +90,8 @@ st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 symbol = st.selectbox(
     "Symbol",
     ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
-    key="symbol"
+    key="symbol",
+    on_change=reset_all
 )
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
@@ -195,4 +196,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System</div>',
     unsafe_allow_html=True
-        )
+    )
