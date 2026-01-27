@@ -68,6 +68,19 @@ st.markdown("""
     border:1px solid #ccc;
     padding:12px;
     font-size:14px;
+    color:#111; /* FORCE readable text */
+}
+
+.result-label {
+    background:#f7f7f7;
+    width:50%;
+    color:#111;
+}
+
+.result-value {
+    background:#eef6ff;
+    font-weight:bold;
+    color:#111;
 }
 
 .result-label {
