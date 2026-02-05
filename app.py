@@ -31,6 +31,7 @@ header {visibility: hidden;}
 # ---------- STYLES ----------
 st.markdown("""
 <style>
+/* ---------- NORMAL (LIGHT MODE) STYLES ---------- */
 .header {
     background:#f5a623;
     padding:16px;
@@ -48,6 +49,7 @@ st.markdown("""
     border-radius:6px;
     margin-top:16px;
     margin-bottom:10px;
+    color:#111;
 }
 
 .result-header {
@@ -56,6 +58,7 @@ st.markdown("""
     font-weight:bold;
     border-radius:6px;
     margin-top:18px;
+    color:#111;
 }
 
 .result-table {
@@ -68,7 +71,7 @@ st.markdown("""
     border:1px solid #ccc;
     padding:12px;
     font-size:14px;
-    color:#111; /* FORCE readable text */
+    color:#111;
 }
 
 .result-label {
@@ -81,16 +84,6 @@ st.markdown("""
     background:#eef6ff;
     font-weight:bold;
     color:#111;
-}
-
-.result-label {
-    background:#f7f7f7;
-    width:50%;
-}
-
-.result-value {
-    background:#eef6ff;
-    font-weight:bold;
 }
 
 .footer-note {
@@ -99,6 +92,15 @@ st.markdown("""
     font-size:12px;
     color:#555;
     text-align:center;
+}
+
+/* ---------- DARK MODE FIX (ONLY AFFECTS INPUTS & RESULTS HEADERS) ---------- */
+@media (prefers-color-scheme: dark) {
+    .section,
+    .result-header {
+        color:#000 !important;
+        font-weight:700;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
