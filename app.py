@@ -31,7 +31,6 @@ header {visibility: hidden;}
 # ---------- STYLES ----------
 st.markdown("""
 <style>
-/* ---------- NORMAL (LIGHT MODE) STYLES ---------- */
 .header {
     background:#f5a623;
     padding:16px;
@@ -40,6 +39,7 @@ st.markdown("""
     text-align:center;
     border-radius:8px;
     margin-bottom:14px;
+    color:#000; /* FORCE black text in all modes */
 }
 
 .section {
@@ -49,7 +49,7 @@ st.markdown("""
     border-radius:6px;
     margin-top:16px;
     margin-bottom:10px;
-    color:#111;
+    color:#000;
 }
 
 .result-header {
@@ -58,7 +58,7 @@ st.markdown("""
     font-weight:bold;
     border-radius:6px;
     margin-top:18px;
-    color:#111;
+    color:#000;
 }
 
 .result-table {
@@ -92,15 +92,6 @@ st.markdown("""
     font-size:12px;
     color:#555;
     text-align:center;
-}
-
-/* ---------- DARK MODE FIX (ONLY AFFECTS INPUTS & RESULTS HEADERS) ---------- */
-@media (prefers-color-scheme: dark) {
-    .section,
-    .result-header {
-        color:#000 !important;
-        font-weight:700;
-    }
 }
 </style>
 """, unsafe_allow_html=True)
