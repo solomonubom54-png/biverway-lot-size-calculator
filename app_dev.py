@@ -3,12 +3,12 @@ import streamlit as st
 # ----------------------------------
 # Biverway Lot Size Calculator
 # Version: v1.4-dev
-# Development Version
+# Terminal Layout Test
 # ----------------------------------
 
 # ---------- PAGE CONFIG ----------
 st.set_page_config(
-    page_title="Biverway | Lot Size Calculator (Dev)",
+    page_title="Biverway | Lot Size Calculator",
     layout="centered"
 )
 
@@ -39,7 +39,7 @@ header {visibility:hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- STYLES ----------
+# ---------- TERMINAL STYLE ----------
 st.markdown("""
 <style>
 
@@ -62,7 +62,7 @@ st.markdown("""
     color:#000;
 }
 
-/* TERMINAL STYLE PANELS */
+/* PANEL STYLE */
 
 .panel{
     background:#ffffff;
@@ -75,9 +75,8 @@ st.markdown("""
 
 .panel-title{
     font-weight:bold;
-    font-size:15px;
+    font-size:16px;
     margin-bottom:12px;
-    color:#333;
 }
 
 /* RESULT TABLE */
@@ -121,39 +120,41 @@ unsafe_allow_html=True
 )
 
 # ---------- INPUT PANEL ----------
-st.markdown('<div class="panel">', unsafe_allow_html=True)
-st.markdown('<div class="panel-title">Inputs</div>', unsafe_allow_html=True)
+with st.container():
 
-symbol = st.selectbox(
-    "Symbol",
-    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
-    key="symbol",
-    on_change=reset_all
-)
+    st.markdown('<div class="panel">', unsafe_allow_html=True)
+    st.markdown('<div class="panel-title">Inputs</div>', unsafe_allow_html=True)
 
-price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
+    symbol = st.selectbox(
+        "Symbol",
+        ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
+        key="symbol",
+        on_change=reset_all
+    )
 
-entry = st.number_input(
-    "Entry Price",
-    format=price_format,
-    key="entry"
-)
+    price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-sl = st.number_input(
-    "Stop Loss",
-    format=price_format,
-    key="sl"
-)
+    entry = st.number_input(
+        "Entry Price",
+        format=price_format,
+        key="entry"
+    )
 
-risk = st.number_input(
-    "Risk Amount",
-    format="%.2f",
-    key="risk"
-)
+    sl = st.number_input(
+        "Stop Loss",
+        format=price_format,
+        key="sl"
+    )
 
-st.button("Reset All", on_click=reset_all)
+    risk = st.number_input(
+        "Risk Amount",
+        format="%.2f",
+        key="risk"
+    )
 
-st.markdown('</div>', unsafe_allow_html=True)
+    st.button("Reset All", on_click=reset_all)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- VALIDATION ----------
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
@@ -199,42 +200,44 @@ if inputs_ready:
         tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS PANEL ----------
-st.markdown('<div class="panel">', unsafe_allow_html=True)
-st.markdown('<div class="panel-title">Results</div>', unsafe_allow_html=True)
+with st.container():
 
-rows = f"""
-<tr>
-<td class="result-label">Direction</td>
-<td class="result-value">{direction}</td>
-</tr>
-"""
+    st.markdown('<div class="panel">', unsafe_allow_html=True)
+    st.markdown('<div class="panel-title">Results</div>', unsafe_allow_html=True)
 
-if inputs_ready:
+    rows = f"""
+    <tr>
+    <td class="result-label">Direction</td>
+    <td class="result-value">{direction}</td>
+    </tr>
+    """
+
+    if inputs_ready:
+        rows += f"""
+        <tr>
+        <td class="result-label">Actual Risk</td>
+        <td class="result-value">{actual_risk}</td>
+        </tr>
+        """
+
     rows += f"""
-<tr>
-<td class="result-label">Actual Risk</td>
-<td class="result-value">{actual_risk}</td>
-</tr>
-"""
+    <tr>
+    <td class="result-label">Lot Size</td>
+    <td class="result-value">{lot}</td>
+    </tr>
+    <tr>
+    <td class="result-label">Take Profit (1:3)</td>
+    <td class="result-value">{tp_display}</td>
+    </tr>
+    """
 
-rows += f"""
-<tr>
-<td class="result-label">Lot Size</td>
-<td class="result-value">{lot}</td>
-</tr>
-<tr>
-<td class="result-label">Take Profit (1:3)</td>
-<td class="result-value">{tp_display}</td>
-</tr>
-"""
+    st.markdown(f"""
+    <table class="result-table">
+    {rows}
+    </table>
+    """, unsafe_allow_html=True)
 
-st.markdown(f"""
-<table class="result-table">
-{rows}
-</table>
-""", unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
