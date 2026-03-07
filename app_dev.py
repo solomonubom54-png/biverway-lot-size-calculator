@@ -49,6 +49,8 @@ st.markdown("""
     max-width:600px;
 }
 
+/* HEADER */
+
 .header{
     background:#f5a623;
     padding:16px;
@@ -100,6 +102,8 @@ st.markdown("""
     font-weight:bold;
 }
 
+/* FOOTER */
+
 .footer-note{
     margin-top:20px;
     font-size:12px;
@@ -122,12 +126,12 @@ st.markdown('<div class="panel-title">Inputs</div>', unsafe_allow_html=True)
 
 symbol = st.selectbox(
     "Symbol",
-    ["EURUSD","GBPUSD","USDCHF","XAUUSD"],
+    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
     key="symbol",
     on_change=reset_all
 )
 
-price_format = "%.3f" if symbol=="XAUUSD" else "%.5f"
+price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
 entry = st.number_input(
     "Entry Price",
@@ -152,53 +156,53 @@ st.button("Reset All", on_click=reset_all)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- VALIDATION ----------
-inputs_ready = entry>0 and sl>0 and risk>0 and entry!=sl
+inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
 # ---------- DEFAULT VALUES ----------
-direction="—"
-lot="0.00"
-actual_risk="0.00"
-tp_display=format(0,".3f" if symbol=="XAUUSD" else ".5f")
+direction = "—"
+lot = "0.00"
+actual_risk = "0.00"
+tp_display = format(0, ".3f" if symbol == "XAUUSD" else ".5f")
 
 # ---------- CALCULATIONS ----------
 if inputs_ready:
 
-    direction="BUY" if entry>sl else "SELL"
+    direction = "BUY" if entry > sl else "SELL"
 
-    if symbol=="XAUUSD":
-        point=abs(entry-sl)*100
+    if symbol == "XAUUSD":
+        point = abs(entry - sl) * 100
     else:
-        point=abs(int(entry*100000)-int(sl*100000))
+        point = abs(int(entry * 100000) - int(sl * 100000))
 
-    if symbol=="USDCHF":
-        lot_raw=(risk*entry)/point
+    if symbol == "USDCHF":
+        lot_raw = (risk * entry) / point
     else:
-        lot_raw=risk/point
+        lot_raw = risk / point
 
-    lot_rounded=round(lot_raw,2)
-    lot=f"{lot_rounded:.2f}"
+    lot_rounded = round(lot_raw, 2)
+    lot = f"{lot_rounded:.2f}"
 
-    if symbol=="USDCHF":
-        actual_risk_val=lot_rounded*point/entry
+    if symbol == "USDCHF":
+        actual_risk_val = lot_rounded * point / entry
     else:
-        actual_risk_val=lot_rounded*point
+        actual_risk_val = lot_rounded * point
 
-    actual_risk=f"{actual_risk_val:.2f}"
+    actual_risk = f"{actual_risk_val:.2f}"
 
-    if symbol=="XAUUSD":
-        tp_dist=abs(entry-sl)*3
-        tp_val=entry+tp_dist if direction=="BUY" else entry-tp_dist
-        tp_display=format(tp_val,".3f")
+    if symbol == "XAUUSD":
+        tp_dist = abs(entry - sl) * 3
+        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+        tp_display = format(tp_val, ".3f")
     else:
-        tp_dist=(point*3)/100000
-        tp_val=entry+tp_dist if direction=="BUY" else entry-tp_dist
-        tp_display=format(tp_val,".5f")
+        tp_dist = (point * 3) / 100000
+        tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
+        tp_display = format(tp_val, ".5f")
 
 # ---------- RESULTS PANEL ----------
 st.markdown('<div class="panel">', unsafe_allow_html=True)
 st.markdown('<div class="panel-title">Results</div>', unsafe_allow_html=True)
 
-rows=f"""
+rows = f"""
 <tr>
 <td class="result-label">Direction</td>
 <td class="result-value">{direction}</td>
@@ -206,14 +210,14 @@ rows=f"""
 """
 
 if inputs_ready:
-    rows+=f"""
+    rows += f"""
 <tr>
 <td class="result-label">Actual Risk</td>
 <td class="result-value">{actual_risk}</td>
 </tr>
 """
 
-rows+=f"""
+rows += f"""
 <tr>
 <td class="result-label">Lot Size</td>
 <td class="result-value">{lot}</td>
@@ -236,4 +240,4 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown(
 '<div class="footer-note">Designed according to Biverway Trading System · v1.4-dev</div>',
 unsafe_allow_html=True
-    )
+)
