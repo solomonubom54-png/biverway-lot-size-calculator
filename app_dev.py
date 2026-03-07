@@ -3,7 +3,7 @@ import streamlit as st
 # ----------------------------------
 # Biverway Lot Size Calculator
 # Version: v1.4-dev
-# Terminal Layout Test
+# UI Refinement Version
 # ----------------------------------
 
 # ---------- PAGE CONFIG ----------
@@ -17,7 +17,7 @@ st.markdown("""
 <meta name="viewport" content="width=device-width, initial-scale=1">
 """, unsafe_allow_html=True)
 
-# ---------- SESSION STATE ----------
+# ---------- SESSION STATE INIT ----------
 if "symbol" not in st.session_state:
     st.session_state.symbol = "EURUSD"
     st.session_state.entry = 0.0
@@ -39,12 +39,14 @@ header {visibility:hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- TERMINAL STYLE ----------
+# ---------- STYLES ----------
 st.markdown("""
 <style>
 
+/* PAGE WIDTH */
+
 .block-container{
-    padding-top:1rem;
+    padding-top:1.2rem;
     padding-bottom:1rem;
     max-width:600px;
 }
@@ -53,30 +55,35 @@ st.markdown("""
 
 .header{
     background:#f5a623;
-    padding:16px;
+    padding:18px;
     font-size:22px;
     font-weight:bold;
     text-align:center;
-    border-radius:8px;
-    margin-bottom:18px;
+    border-radius:10px;
+    margin-bottom:20px;
     color:#000;
 }
 
-/* PANEL STYLE */
+/* SECTION TITLES */
 
-.panel{
-    background:#ffffff;
-    border:1px solid #dcdcdc;
-    border-radius:10px;
-    padding:16px;
-    margin-bottom:18px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.06);
+.section{
+    background:#d9edf7;
+    padding:10px;
+    font-weight:bold;
+    border-radius:8px;
+    margin-top:20px;
+    margin-bottom:12px;
+    color:#000;
 }
 
-.panel-title{
-    font-weight:bold;
-    font-size:16px;
-    margin-bottom:12px;
+/* INPUT FIELDS */
+
+.stNumberInput input{
+    font-weight:500;
+}
+
+.stSelectbox div[data-baseweb="select"]{
+    border-radius:8px;
 }
 
 /* RESULT TABLE */
@@ -84,10 +91,11 @@ st.markdown("""
 .result-table{
     width:100%;
     border-collapse:collapse;
+    margin-top:8px;
 }
 
 .result-table td{
-    border:1px solid #e2e2e2;
+    border:1px solid #dcdcdc;
     padding:12px;
     font-size:14px;
 }
@@ -104,7 +112,8 @@ st.markdown("""
 /* FOOTER */
 
 .footer-note{
-    margin-top:20px;
+    margin-top:26px;
+    margin-bottom:40px;
     font-size:12px;
     color:#666;
     text-align:center;
@@ -119,42 +128,37 @@ st.markdown(
 unsafe_allow_html=True
 )
 
-# ---------- INPUT PANEL ----------
-with st.container():
+# ---------- INPUTS ----------
+st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="panel">', unsafe_allow_html=True)
-    st.markdown('<div class="panel-title">Inputs</div>', unsafe_allow_html=True)
+symbol = st.selectbox(
+    "Symbol",
+    ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
+    key="symbol",
+    on_change=reset_all
+)
 
-    symbol = st.selectbox(
-        "Symbol",
-        ["EURUSD", "GBPUSD", "USDCHF", "XAUUSD"],
-        key="symbol",
-        on_change=reset_all
-    )
+price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-    price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
+entry = st.number_input(
+    "Entry Price",
+    format=price_format,
+    key="entry"
+)
 
-    entry = st.number_input(
-        "Entry Price",
-        format=price_format,
-        key="entry"
-    )
+sl = st.number_input(
+    "Stop Loss",
+    format=price_format,
+    key="sl"
+)
 
-    sl = st.number_input(
-        "Stop Loss",
-        format=price_format,
-        key="sl"
-    )
+risk = st.number_input(
+    "Risk Amount",
+    format="%.2f",
+    key="risk"
+)
 
-    risk = st.number_input(
-        "Risk Amount",
-        format="%.2f",
-        key="risk"
-    )
-
-    st.button("Reset All", on_click=reset_all)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+st.button("Reset All", on_click=reset_all)
 
 # ---------- VALIDATION ----------
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
@@ -199,45 +203,40 @@ if inputs_ready:
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
-# ---------- RESULTS PANEL ----------
-with st.container():
+# ---------- RESULTS ----------
+st.markdown('<div class="section">Results</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="panel">', unsafe_allow_html=True)
-    st.markdown('<div class="panel-title">Results</div>', unsafe_allow_html=True)
+rows = f"""
+<tr>
+<td class="result-label">Direction</td>
+<td class="result-value">{direction}</td>
+</tr>
+"""
 
-    rows = f"""
-    <tr>
-    <td class="result-label">Direction</td>
-    <td class="result-value">{direction}</td>
-    </tr>
-    """
-
-    if inputs_ready:
-        rows += f"""
-        <tr>
-        <td class="result-label">Actual Risk</td>
-        <td class="result-value">{actual_risk}</td>
-        </tr>
-        """
-
+if inputs_ready:
     rows += f"""
-    <tr>
-    <td class="result-label">Lot Size</td>
-    <td class="result-value">{lot}</td>
-    </tr>
-    <tr>
-    <td class="result-label">Take Profit (1:3)</td>
-    <td class="result-value">{tp_display}</td>
-    </tr>
-    """
+<tr>
+<td class="result-label">Actual Risk</td>
+<td class="result-value">{actual_risk}</td>
+</tr>
+"""
 
-    st.markdown(f"""
-    <table class="result-table">
-    {rows}
-    </table>
-    """, unsafe_allow_html=True)
+rows += f"""
+<tr>
+<td class="result-label">Lot Size</td>
+<td class="result-value">{lot}</td>
+</tr>
+<tr>
+<td class="result-label">Take Profit (1:3)</td>
+<td class="result-value">{tp_display}</td>
+</tr>
+"""
 
-    st.markdown('</div>', unsafe_allow_html=True)
+st.markdown(f"""
+<table class="result-table">
+{rows}
+</table>
+""", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
