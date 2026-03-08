@@ -95,15 +95,19 @@ st.markdown("""
     color:#111;
 }
 
+/* Equal column widths */
+
 .result-label{
     background:#f7f7f7;
     color:#111;
+    width:50%;
 }
 
 .result-value{
     background:#eef6ff;
     font-weight:bold;
     color:#111;
+    width:50%;
 }
 
 /* FOOTER */
@@ -200,21 +204,13 @@ if inputs_ready:
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
-# ---------- FORMAT DIRECTION ----------
-if direction == "BUY":
-    direction_display = "BUY ↑"
-elif direction == "SELL":
-    direction_display = "SELL ↓"
-else:
-    direction_display = "—"
-
 # ---------- RESULTS ----------
 st.markdown('<div class="section">Results</div>', unsafe_allow_html=True)
 
 rows = f"""
 <tr>
 <td class="result-label">Direction</td>
-<td class="result-value">{direction_display}</td>
+<td class="result-value">{direction}</td>
 </tr>
 """
 
@@ -247,4 +243,4 @@ st.markdown(f"""
 st.markdown(
 '<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
 unsafe_allow_html=True
-    )
+)
