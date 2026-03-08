@@ -16,56 +16,132 @@
     align-items: center;
     justify-content: center;
     font-family: 'DM Mono', monospace;
-    padding: 24px 16px;
+    padding: 32px 20px;
   }
-  .wrapper { width: 100%; max-width: 460px; animation: fadeIn 0.5s ease; }
+  .wrapper {
+    width: 100%;
+    max-width: 520px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  /* DESKTOP */
+  @media (min-width: 900px) {
+    body { padding: 48px 40px; }
+    .wrapper { max-width: 640px; }
+    .brand { font-size: 28px !important; }
+    .subtitle { font-size: 13px !important; }
+    .symbol-btn { font-size: 13px !important; padding: 12px 8px !important; }
+    input[type=number] { font-size: 17px !important; padding: 16px 20px !important; }
+    .label { font-size: 11px !important; }
+    .reset-btn { font-size: 14px !important; padding: 15px !important; }
+    .result-key { font-size: 13px !important; }
+    .lot-value { font-size: 28px !important; }
+    .normal-value { font-size: 17px !important; }
+    .badge { font-size: 14px !important; padding: 5px 18px !important; }
+    .result-row { padding: 18px 24px !important; }
+    .section-pad { padding: 24px 24px 0 !important; }
+    .inputs { padding: 20px 24px 24px !important; gap: 18px !important; }
+    .results-header { padding: 14px 24px !important; }
+    .card-footer { font-size: 11px !important; padding: 14px 24px !important; }
+  }
+
+  /* TABLET */
+  @media (min-width: 600px) and (max-width: 899px) {
+    .wrapper { max-width: 560px; }
+    .brand { font-size: 24px !important; }
+    input[type=number] { font-size: 16px !important; }
+    .lot-value { font-size: 24px !important; }
+  }
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
   .header { text-align: center; margin-bottom: 28px; }
   .header-title { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #f5a623; box-shadow: 0 0 10px #f5a623; }
   .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
   .subtitle { color: #3a3e52; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; }
-  .card { background: #0d0f17; border: 1px solid #1a1c28; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+
+  .card {
+    background: #0d0f17;
+    border: 1px solid #1a1c28;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
   .section-pad { padding: 20px 20px 0; }
+
   .label { font-size: 10px; color: #3a3e52; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
   .label.focused { color: #f5a623; }
+
   .symbol-row { display: flex; gap: 6px; }
-  .symbol-btn { flex: 1; padding: 10px 4px; border-radius: 7px; border: 1px solid #1e2130; background: transparent; color: #555978; font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.18s; letter-spacing: 0.02em; }
+  .symbol-btn {
+    flex: 1; padding: 10px 4px;
+    border-radius: 7px; border: 1px solid #1e2130;
+    background: transparent; color: #555978;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    cursor: pointer; transition: all 0.18s; letter-spacing: 0.02em;
+  }
   .symbol-btn:hover { border-color: rgba(245,166,35,0.3); color: #f5a623; }
   .symbol-btn.active { background: #f5a623; border-color: #f5a623; color: #000; font-weight: 500; }
+
   .glow-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(245,166,35,0.35), transparent); margin: 16px 20px 0; }
+
   .inputs { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
   .input-group { display: flex; flex-direction: column; }
-  input[type=number] { width: 100%; background: #13151c; border: 1px solid #1e2130; color: #e8eaf2; padding: 14px 16px; font-size: 15px; font-family: 'DM Mono', monospace; border-radius: 8px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -moz-appearance: textfield; }
+
+  input[type=number] {
+    width: 100%; background: #13151c;
+    border: 1px solid #1e2130; color: #e8eaf2;
+    padding: 14px 16px; font-size: 15px;
+    font-family: 'DM Mono', monospace;
+    border-radius: 8px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number]:focus { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.12); }
   input[type=number]::placeholder { color: #3a3e52; }
-  .reset-btn { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid #1e2130; background: transparent; color: #555978; font-family: 'DM Mono', monospace; font-size: 13px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .reset-btn {
+    width: 100%; padding: 13px;
+    border-radius: 8px; border: 1px solid #1e2130;
+    background: transparent; color: #555978;
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
   .reset-btn:hover { border-color: #e05252; color: #e05252; }
+
   .results { border-top: 1px solid #1a1c28; background: #0b0d14; }
   .results-header { padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
   .results-label { font-size: 10px; color: #3a3e52; letter-spacing: 0.14em; text-transform: uppercase; }
   .live-indicator { font-size: 9px; color: #3a3e52; letter-spacing: 0.1em; display: flex; align-items: center; gap: 5px; }
   .live-dot { width: 5px; height: 5px; border-radius: 50%; background: #1e2130; transition: all 0.3s; }
   .live-dot.active { background: #34d399; box-shadow: 0 0 6px #34d399; }
+
   .result-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid #13151c; transition: background 0.2s; }
   .result-row:last-child { border-bottom: none; }
   .result-row:hover { background: #0f1118; }
   .result-key { font-size: 12px; color: #555978; letter-spacing: 0.06em; }
+
   .badge { padding: 4px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; }
   .badge-buy  { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
   .badge-sell { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.25); }
   .badge-none { background: #1a1c28; color: #555978; border: 1px solid #1e2130; }
+
   .lot-value { font-size: 22px; font-weight: 500; color: #1e2130; transition: color 0.3s; }
   .lot-value.active { color: #f5a623; }
   .normal-value { font-size: 15px; color: #1e2130; transition: color 0.3s; }
   .normal-value.active { color: #e8eaf2; }
+
   .actual-risk-row { display: none; }
   .actual-risk-row.visible { display: flex; animation: fadeIn 0.3s ease; }
+
   .card-footer { padding: 12px 18px; border-top: 1px solid #13151c; text-align: center; font-size: 10px; color: #2a2c3a; letter-spacing: 0.1em; }
 </style>
 </head>
@@ -93,15 +169,18 @@
     <div class="inputs">
       <div class="input-group">
         <div class="label" id="lbl-entry">Entry Price</div>
-        <input type="number" id="entry" step="any" placeholder="0.00000" onfocus="focusLabel('lbl-entry')" onblur="blurLabel('lbl-entry')" oninput="recalculate()" />
+        <input type="number" id="entry" step="any" placeholder="0.00000"
+          onfocus="focusLabel('lbl-entry')" onblur="blurLabel('lbl-entry')" oninput="recalculate()" />
       </div>
       <div class="input-group">
         <div class="label" id="lbl-sl">Stop Loss</div>
-        <input type="number" id="sl" step="any" placeholder="0.00000" onfocus="focusLabel('lbl-sl')" onblur="blurLabel('lbl-sl')" oninput="recalculate()" />
+        <input type="number" id="sl" step="any" placeholder="0.00000"
+          onfocus="focusLabel('lbl-sl')" onblur="blurLabel('lbl-sl')" oninput="recalculate()" />
       </div>
       <div class="input-group">
         <div class="label" id="lbl-risk">Risk Amount ($)</div>
-        <input type="number" id="risk" step="any" placeholder="0.00" onfocus="focusLabel('lbl-risk')" onblur="blurLabel('lbl-risk')" oninput="recalculate()" />
+        <input type="number" id="risk" step="any" placeholder="0.00"
+          onfocus="focusLabel('lbl-risk')" onblur="blurLabel('lbl-risk')" oninput="recalculate()" />
       </div>
       <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
     </div>
@@ -211,4 +290,4 @@
   }
 </script>
 </body>
- </html>
+         </html>
