@@ -1,14 +1,16 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Biverway | Lot Size Calculator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
+  html, body {
     min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
     background: #0a0b0f;
     display: flex;
     align-items: center;
@@ -31,7 +33,7 @@
   .label { font-size: 10px; color: #3a3e52; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
   .label.focused { color: #f5a623; }
   .symbol-row { display: flex; gap: 6px; }
-  .symbol-btn { flex: 1; padding: 10px 6px; border-radius: 7px; border: 1px solid #1e2130; background: transparent; color: #555978; font-family: 'DM Mono', monospace; font-size: 12px; cursor: pointer; transition: all 0.18s; letter-spacing: 0.04em; }
+  .symbol-btn { flex: 1; padding: 10px 4px; border-radius: 7px; border: 1px solid #1e2130; background: transparent; color: #555978; font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.18s; letter-spacing: 0.02em; }
   .symbol-btn:hover { border-color: rgba(245,166,35,0.3); color: #f5a623; }
   .symbol-btn.active { background: #f5a623; border-color: #f5a623; color: #000; font-weight: 500; }
   .glow-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(245,166,35,0.35), transparent); margin: 16px 20px 0; }
@@ -209,4 +211,4 @@
   }
 </script>
 </body>
-  </html>
+ </html>
