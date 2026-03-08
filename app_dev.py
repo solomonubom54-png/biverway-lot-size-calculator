@@ -68,7 +68,17 @@ st.markdown("""
     color:#000;
 }
 
-/* RESULT PANEL */
+/* INPUT FIELDS */
+
+.stNumberInput input{
+    font-weight:500;
+}
+
+.stSelectbox div[data-baseweb="select"]{
+    border-radius:6px;
+}
+
+/* RESULT TABLE */
 
 .result-table{
     width:100%;
@@ -77,24 +87,25 @@ st.markdown("""
 }
 
 .result-table td{
-    padding:10px 4px;
+    border:1px solid #ccc;
+    padding:12px;
     font-size:14px;
     color:#111;
 }
 
-/* LABELS */
+/* Equal column widths */
 
 .result-label{
-    text-align:left;
+    background:#f7f7f7;
     width:50%;
+    color:#111;
 }
 
-/* VALUES */
-
 .result-value{
-    text-align:right;
-    width:50%;
+    background:#eef6ff;
     font-weight:bold;
+    width:50%;
+    color:#111;
 }
 
 /* FOOTER */
@@ -227,4 +238,4 @@ st.markdown(f"""
 st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
     unsafe_allow_html=True
-  )
+)
