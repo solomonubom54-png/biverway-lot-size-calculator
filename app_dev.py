@@ -68,42 +68,33 @@ st.markdown("""
     color:#000;
 }
 
-/* INPUT FIELDS */
-
-.stNumberInput input{
-    font-weight:500;
-}
-
-.stSelectbox div[data-baseweb="select"]{
-    border-radius:6px;
-}
-
-/* RESULT TABLE */
+/* RESULT PANEL */
 
 .result-table{
     width:100%;
     border-collapse:collapse;
-    margin-top:14px;
+    margin-top:6px;
 }
 
 .result-table td{
-    border:1px solid #ccc;
-    padding:12px;
+    padding:10px 4px;
     font-size:14px;
     color:#111;
 }
 
+/* LABELS */
+
 .result-label{
-    background:#f7f7f7;
+    text-align:left;
     width:50%;
-    color:#111;
 }
 
+/* VALUES */
+
 .result-value{
-    background:#eef6ff;
-    font-weight:bold;
+    text-align:right;
     width:50%;
-    color:#111;
+    font-weight:bold;
 }
 
 /* FOOTER */
