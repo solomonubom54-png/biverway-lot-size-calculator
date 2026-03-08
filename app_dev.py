@@ -239,3 +239,4 @@ st.markdown(
     '<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
     unsafe_allow_html=True
 )
+
