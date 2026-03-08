@@ -3,7 +3,6 @@ import streamlit as st
 # ----------------------------------
 # Biverway Lot Size Calculator
 # Version: v1.4+
-# Sticky Results Test
 # ----------------------------------
 
 # ---------- PAGE CONFIG ----------
@@ -12,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# ---------- SESSION STATE ----------
+# ---------- SESSION STATE INIT ----------
 if "symbol" not in st.session_state:
     st.session_state.symbol = "EURUSD"
     st.session_state.entry = 0.0
@@ -71,13 +70,14 @@ st.markdown("""
     color:#000;
 }
 
-/* STICKY RESULTS PANEL */
+/* INPUT FIELDS */
 
-.results-panel{
-    position:sticky;
-    bottom:0;
-    background:#ffffff;
-    padding-top:10px;
+.stNumberInput input{
+    font-weight:500;
+}
+
+.stSelectbox div[data-baseweb="select"]{
+    border-radius:8px;
 }
 
 /* RESULT TABLE */
@@ -163,6 +163,7 @@ inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 # ---------- DEFAULT VALUES ----------
 direction = "—"
 lot = "0.00"
+actual_risk = "0.00"
 tp_display = format(0, ".3f" if symbol == "XAUUSD" else ".5f")
 
 # ---------- CALCULATIONS ----------
@@ -183,6 +184,13 @@ if inputs_ready:
     lot_rounded = round(lot_raw, 2)
     lot = f"{lot_rounded:.2f}"
 
+    if symbol == "USDCHF":
+        actual_risk_val = lot_rounded * point / entry
+    else:
+        actual_risk_val = lot_rounded * point
+
+    actual_risk = f"{actual_risk_val:.2f}"
+
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -201,8 +209,6 @@ else:
     direction_display = "—"
 
 # ---------- RESULTS ----------
-st.markdown('<div class="results-panel">', unsafe_allow_html=True)
-
 st.markdown('<div class="section">Results</div>', unsafe_allow_html=True)
 
 rows = f"""
@@ -210,6 +216,17 @@ rows = f"""
 <td class="result-label">Direction</td>
 <td class="result-value">{direction_display}</td>
 </tr>
+"""
+
+if inputs_ready:
+    rows += f"""
+<tr>
+<td class="result-label">Actual Risk</td>
+<td class="result-value">{actual_risk}</td>
+</tr>
+"""
+
+rows += f"""
 <tr>
 <td class="result-label">Lot Size</td>
 <td class="result-value">{lot}</td>
@@ -226,10 +243,8 @@ st.markdown(f"""
 </table>
 """, unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
-
 # ---------- FOOTER ----------
 st.markdown(
 '<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
 unsafe_allow_html=True
-)
+    )
