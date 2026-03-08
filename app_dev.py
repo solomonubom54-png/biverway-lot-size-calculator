@@ -3,22 +3,21 @@ import streamlit as st
 # ----------------------------------
 # Biverway Lot Size Calculator
 # Version: v1.4+
+# Sticky Results Test
 # ----------------------------------
 
-# ---------- PAGE CONFIG ----------
 st.set_page_config(
     page_title="Biverway | Lot Size Calculator",
     layout="centered"
 )
 
-# ---------- SESSION STATE INIT ----------
+# ---------- SESSION STATE ----------
 if "symbol" not in st.session_state:
     st.session_state.symbol = "EURUSD"
     st.session_state.entry = 0.0
     st.session_state.sl = 0.0
     st.session_state.risk = 0.0
 
-# ---------- RESET FUNCTION ----------
 def reset_all():
     st.session_state.entry = 0.0
     st.session_state.sl = 0.0
@@ -37,15 +36,11 @@ header {visibility:hidden;}
 st.markdown("""
 <style>
 
-/* PAGE WIDTH */
-
 .block-container{
     padding-top:1.2rem;
     padding-bottom:1rem;
     max-width:600px;
 }
-
-/* HEADER */
 
 .header{
     background:#f5a623;
@@ -58,8 +53,6 @@ st.markdown("""
     color:#000;
 }
 
-/* SECTION TITLES */
-
 .section{
     background:#d9edf7;
     padding:10px;
@@ -70,17 +63,14 @@ st.markdown("""
     color:#000;
 }
 
-/* INPUT FIELDS */
+/* Sticky Results */
 
-.stNumberInput input{
-    font-weight:500;
+.results-panel{
+    position:sticky;
+    bottom:0;
+    background:white;
+    padding-top:10px;
 }
-
-.stSelectbox div[data-baseweb="select"]{
-    border-radius:8px;
-}
-
-/* RESULT TABLE */
 
 .result-table{
     width:100%;
@@ -97,16 +87,12 @@ st.markdown("""
 
 .result-label{
     background:#f7f7f7;
-    color:#111;
 }
 
 .result-value{
     background:#eef6ff;
     font-weight:bold;
-    color:#111;
 }
-
-/* FOOTER */
 
 .footer-note{
     margin-top:26px;
@@ -137,33 +123,16 @@ symbol = st.selectbox(
 
 price_format = "%.3f" if symbol == "XAUUSD" else "%.5f"
 
-entry = st.number_input(
-    "Entry Price",
-    format=price_format,
-    key="entry"
-)
-
-sl = st.number_input(
-    "Stop Loss",
-    format=price_format,
-    key="sl"
-)
-
-risk = st.number_input(
-    "Risk Amount",
-    format="%.2f",
-    key="risk"
-)
+entry = st.number_input("Entry Price", format=price_format, key="entry")
+sl = st.number_input("Stop Loss", format=price_format, key="sl")
+risk = st.number_input("Risk Amount", format="%.2f", key="risk")
 
 st.button("Reset All", on_click=reset_all)
 
-# ---------- VALIDATION ----------
 inputs_ready = entry > 0 and sl > 0 and risk > 0 and entry != sl
 
-# ---------- DEFAULT VALUES ----------
 direction = "—"
 lot = "0.00"
-actual_risk = "0.00"
 tp_display = format(0, ".3f" if symbol == "XAUUSD" else ".5f")
 
 # ---------- CALCULATIONS ----------
@@ -184,13 +153,6 @@ if inputs_ready:
     lot_rounded = round(lot_raw, 2)
     lot = f"{lot_rounded:.2f}"
 
-    if symbol == "USDCHF":
-        actual_risk_val = lot_rounded * point / entry
-    else:
-        actual_risk_val = lot_rounded * point
-
-    actual_risk = f"{actual_risk_val:.2f}"
-
     if symbol == "XAUUSD":
         tp_dist = abs(entry - sl) * 3
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
@@ -200,7 +162,6 @@ if inputs_ready:
         tp_val = entry + tp_dist if direction == "BUY" else entry - tp_dist
         tp_display = format(tp_val, ".5f")
 
-# ---------- FORMAT DIRECTION ----------
 if direction == "BUY":
     direction_display = "BUY ↑"
 elif direction == "SELL":
@@ -209,6 +170,8 @@ else:
     direction_display = "—"
 
 # ---------- RESULTS ----------
+st.markdown('<div class="results-panel">', unsafe_allow_html=True)
+
 st.markdown('<div class="section">Results</div>', unsafe_allow_html=True)
 
 rows = f"""
@@ -216,17 +179,6 @@ rows = f"""
 <td class="result-label">Direction</td>
 <td class="result-value">{direction_display}</td>
 </tr>
-"""
-
-if inputs_ready:
-    rows += f"""
-<tr>
-<td class="result-label">Actual Risk</td>
-<td class="result-value">{actual_risk}</td>
-</tr>
-"""
-
-rows += f"""
 <tr>
 <td class="result-label">Lot Size</td>
 <td class="result-value">{lot}</td>
@@ -242,6 +194,8 @@ st.markdown(f"""
 {rows}
 </table>
 """, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown(
