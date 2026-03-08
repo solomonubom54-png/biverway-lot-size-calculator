@@ -40,7 +40,7 @@ st.markdown("""
 /* PAGE WIDTH */
 
 .block-container{
-    padding-top:1.2rem;
+    padding-top:1rem;
     padding-bottom:1rem;
     max-width:600px;
 }
@@ -49,12 +49,12 @@ st.markdown("""
 
 .header{
     background:#f5a623;
-    padding:18px;
+    padding:16px;
     font-size:22px;
     font-weight:bold;
     text-align:center;
-    border-radius:10px;
-    margin-bottom:20px;
+    border-radius:8px;
+    margin-bottom:14px;
     color:#000;
 }
 
@@ -65,8 +65,8 @@ st.markdown("""
     padding:10px;
     font-weight:bold;
     border-radius:8px;
-    margin-top:20px;
-    margin-bottom:12px;
+    margin-top:16px;
+    margin-bottom:10px;
     color:#000;
 }
 
@@ -77,7 +77,7 @@ st.markdown("""
 }
 
 .stSelectbox div[data-baseweb="select"]{
-    border-radius:8px;
+    border-radius:6px;
 }
 
 /* RESULT TABLE */
@@ -89,7 +89,7 @@ st.markdown("""
 }
 
 .result-table td{
-    border:1px solid #dcdcdc;
+    border:1px solid #ccc;
     padding:12px;
     font-size:14px;
     color:#111;
@@ -99,24 +99,24 @@ st.markdown("""
 
 .result-label{
     background:#f7f7f7;
-    color:#111;
     width:50%;
+    color:#111;
 }
 
 .result-value{
     background:#eef6ff;
     font-weight:bold;
-    color:#111;
     width:50%;
+    color:#111;
 }
 
 /* FOOTER */
 
 .footer-note{
-    margin-top:26px;
+    margin-top:24px;
     margin-bottom:40px;
     font-size:12px;
-    color:#666;
+    color:#555;
     text-align:center;
 }
 
@@ -124,10 +124,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------- HEADER ----------
-st.markdown(
-'<div class="header">Biverway | Lot Size Calculator</div>',
-unsafe_allow_html=True
-)
+st.markdown('<div class="header">Biverway | Lot Size Calculator</div>', unsafe_allow_html=True)
 
 # ---------- INPUTS ----------
 st.markdown('<div class="section">Inputs</div>', unsafe_allow_html=True)
@@ -241,6 +238,6 @@ st.markdown(f"""
 
 # ---------- FOOTER ----------
 st.markdown(
-'<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
-unsafe_allow_html=True
+    '<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
+    unsafe_allow_html=True
 )
