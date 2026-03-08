@@ -83,7 +83,7 @@ st.markdown("""
 .result-table{
     width:100%;
     border-collapse:collapse;
-    margin-top:14px;
+    margin-top:6px;
 }
 
 .result-table td{
@@ -92,6 +92,8 @@ st.markdown("""
     font-size:14px;
     color:#111;
 }
+
+/* Equal column widths */
 
 .result-label{
     background:#f7f7f7;
