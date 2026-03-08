@@ -2,8 +2,7 @@ import streamlit as st
 
 # ----------------------------------
 # Biverway Lot Size Calculator
-# Version: v1.5-dev
-# Direction Arrow Update
+# Version: v1.4+
 # ----------------------------------
 
 # ---------- PAGE CONFIG ----------
@@ -11,11 +10,6 @@ st.set_page_config(
     page_title="Biverway | Lot Size Calculator",
     layout="centered"
 )
-
-# ---------- MOBILE VIEWPORT ----------
-st.markdown("""
-<meta name="viewport" content="width=device-width, initial-scale=1">
-""", unsafe_allow_html=True)
 
 # ---------- SESSION STATE INIT ----------
 if "symbol" not in st.session_state:
@@ -98,15 +92,18 @@ st.markdown("""
     border:1px solid #dcdcdc;
     padding:12px;
     font-size:14px;
+    color:#111;
 }
 
 .result-label{
     background:#f7f7f7;
+    color:#111;
 }
 
 .result-value{
     background:#eef6ff;
     font-weight:bold;
+    color:#111;
 }
 
 /* FOOTER */
@@ -248,6 +245,6 @@ st.markdown(f"""
 
 # ---------- FOOTER ----------
 st.markdown(
-'<div class="footer-note">Designed according to Biverway Trading System · v1.5-dev</div>',
+'<div class="footer-note">Designed according to Biverway Trading System · v1.4+</div>',
 unsafe_allow_html=True
 )
