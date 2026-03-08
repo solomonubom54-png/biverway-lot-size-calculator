@@ -37,8 +37,6 @@ header {visibility:hidden;}
 st.markdown("""
 <style>
 
-/* PAGE WIDTH */
-
 .block-container{
     padding-top:1rem;
     padding-bottom:1rem;
@@ -85,7 +83,7 @@ st.markdown("""
 .result-table{
     width:100%;
     border-collapse:collapse;
-    margin-top:8px;
+    margin-top:14px;
 }
 
 .result-table td{
@@ -94,8 +92,6 @@ st.markdown("""
     font-size:14px;
     color:#111;
 }
-
-/* Equal column widths */
 
 .result-label{
     background:#f7f7f7;
