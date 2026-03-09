@@ -58,7 +58,7 @@
     transition: background 0.3s;
   }
 
-  .wrapper { width: 100%; max-width: 520px; animation: fadeIn 0.5s ease; }
+  .wrapper { width: 100%; max-width: 520px; animation: fadeIn 0.5s ease; position: relative; }
 
   @media (min-width: 900px) {
     body { padding: 48px 40px; }
@@ -95,28 +95,32 @@
     100% { transform: scale(1);    opacity: 1; }
   }
 
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: absolute;
+    top: 0; right: 0;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--toggle-bg);
+    border: 1px solid var(--toggle-border);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.25s;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+  .theme-toggle:hover {
+    border-color: #f5a623;
+    transform: scale(1.1) rotate(20deg);
+    box-shadow: 0 0 12px rgba(245,166,35,0.3);
+  }
+
   /* ── HEADER ── */
-  .header { text-align: center; margin-bottom: 28px; }
+  .header { text-align: center; margin-bottom: 28px; padding-top: 4px; }
   .header-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #f5a623; box-shadow: 0 0 10px #f5a623; }
   .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--brand-color); letter-spacing: -0.01em; transition: color 0.3s; }
-  .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; transition: color 0.3s; }
-
-  /* ── THEME TOGGLE ── */
-  .theme-toggle {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--toggle-bg);
-    border: 1px solid var(--toggle-border);
-    border-radius: 20px;
-    padding: 7px 16px;
-    cursor: pointer;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    transition: all 0.2s;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-  }
-  .theme-toggle:hover { border-color: #f5a623; color: #f5a623; }
+  .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
 
   /* ── CARD ── */
   .card {
@@ -188,24 +192,24 @@
   .result-row:hover { background: var(--row-hover); }
   .result-key { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; }
 
-  /* ── COPY BUTTON ── */
+  /* ── COPY BUTTON - ICON ONLY ── */
   .copy-btn {
+    width: 28px; height: 28px;
     background: var(--input-bg);
     border: 1px solid var(--input-border);
     border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 10px;
+    font-size: 13px;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
     cursor: pointer;
     transition: all 0.2s;
-    letter-spacing: 0.06em;
     display: none;
-    align-items: center; gap: 5px;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
   .copy-btn.visible { display: flex; animation: popIn 0.2s ease; }
-  .copy-btn:hover { border-color: #f5a623; color: #f5a623; }
-  .copy-btn.copied { border-color: #34d399; color: #34d399; }
+  .copy-btn:hover { border-color: #f5a623; color: #f5a623; background: rgba(245,166,35,0.08); }
+  .copy-btn.copied { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.08); }
+
   .result-right { display: flex; align-items: center; gap: 10px; }
 
   /* ── TOAST ── */
@@ -233,11 +237,15 @@
   .hidden-row { display: none; }
   .hidden-row.visible { display: flex; animation: fadeIn 0.3s ease; }
 
-  .card-footer { padding: 12px 18px; border-top: 1px solid var(--row-border); text-align: center; font-size: 10px; color: var(--footer-text); letter-spacing: 0.1em; transition: color 0.3s; }
+  .card-footer { padding: 12px 18px; border-top: 1px solid var(--row-border); text-align: center; font-size: 10px; color: var(--footer-text); letter-spacing: 0.1em; }
 </style>
 </head>
 <body>
 <div class="wrapper">
+
+  <!-- THEME TOGGLE: top-right, icon only -->
+  <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">☀️</button>
+
   <div class="header">
     <div class="header-top">
       <div class="dot"></div>
@@ -245,9 +253,6 @@
       <div class="dot"></div>
     </div>
     <div class="subtitle">Lot Size Calculator · v1.4+</div>
-    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
-      ☀️ <span id="theme-label">LIGHT MODE</span>
-    </button>
   </div>
 
   <div class="card">
@@ -301,20 +306,20 @@
         <span class="normal-value" id="actual-risk-val">$0.00</span>
       </div>
 
-      <!-- 3. LOT SIZE + COPY -->
+      <!-- 3. LOT SIZE -->
       <div class="result-row">
         <span class="result-key">LOT SIZE</span>
         <div class="result-right">
-          <button class="copy-btn" id="copy-lot-btn" onclick="copyValue('lot-val', 'copy-lot-btn', 'Lot size')">⧉ COPY</button>
+          <button class="copy-btn" id="copy-lot-btn" onclick="copyValue('lot-val', 'copy-lot-btn', 'Lot size')" title="Copy lot size">⧉</button>
           <span class="lot-value" id="lot-val">0.00</span>
         </div>
       </div>
 
-      <!-- 4. TAKE PROFIT + COPY -->
+      <!-- 4. TAKE PROFIT -->
       <div class="result-row">
         <span class="result-key">TAKE PROFIT (1:3)</span>
         <div class="result-right">
-          <button class="copy-btn" id="copy-tp-btn" onclick="copyValue('tp-val', 'copy-tp-btn', 'Take profit')">⧉ COPY</button>
+          <button class="copy-btn" id="copy-tp-btn" onclick="copyValue('tp-val', 'copy-tp-btn', 'Take profit')" title="Copy take profit">⧉</button>
           <span class="normal-value" id="tp-val">0.00000</span>
         </div>
       </div>
@@ -329,27 +334,23 @@
 <script>
   let currentSymbol = 'EURUSD';
 
-  // ── THEME ──
   function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.getAttribute('data-theme') === 'dark';
     html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('theme-btn').innerHTML = isDark
-      ? '🌙 <span id="theme-label">DARK MODE</span>'
-      : '☀️ <span id="theme-label">LIGHT MODE</span>';
+    document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
   }
 
-  // ── COPY ──
   function copyValue(valId, btnId, label) {
     const text = document.getElementById(valId).textContent;
     if (!text || text === '0.00' || text === '0.00000' || text === '0.000') return;
     navigator.clipboard.writeText(text).then(() => {
       const btn = document.getElementById(btnId);
-      btn.textContent = '✓ COPIED';
+      btn.textContent = '✓';
       btn.classList.add('copied');
       showToast(label + ' copied!');
       setTimeout(() => {
-        btn.innerHTML = '⧉ COPY';
+        btn.textContent = '⧉';
         btn.classList.remove('copied');
       }, 2000);
     });
@@ -362,7 +363,6 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // ── SYMBOL ──
   function selectSymbol(sym, btn) {
     currentSymbol = sym;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
@@ -383,7 +383,6 @@
     recalculate();
   }
 
-  // ── CALCULATE ──
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
@@ -391,15 +390,15 @@
     const fmt = currentSymbol === 'XAUUSD' ? 3 : 5;
     const ready = e > 0 && s > 0 && r > 0 && e !== s;
 
-    const dirBadge    = document.getElementById('direction-badge');
-    const lotVal      = document.getElementById('lot-val');
-    const tpVal       = document.getElementById('tp-val');
-    const actualRow   = document.getElementById('actual-risk-row');
-    const actualVal   = document.getElementById('actual-risk-val');
-    const liveDot     = document.getElementById('live-dot');
-    const liveText    = document.getElementById('live-text');
-    const copyLotBtn  = document.getElementById('copy-lot-btn');
-    const copyTpBtn   = document.getElementById('copy-tp-btn');
+    const dirBadge   = document.getElementById('direction-badge');
+    const lotVal     = document.getElementById('lot-val');
+    const tpVal      = document.getElementById('tp-val');
+    const actualRow  = document.getElementById('actual-risk-row');
+    const actualVal  = document.getElementById('actual-risk-val');
+    const liveDot    = document.getElementById('live-dot');
+    const liveText   = document.getElementById('live-text');
+    const copyLotBtn = document.getElementById('copy-lot-btn');
+    const copyTpBtn  = document.getElementById('copy-tp-btn');
 
     if (!ready) {
       dirBadge.className = 'badge badge-none';
@@ -457,4 +456,4 @@
   }
 </script>
 </body>
-       </html>
+     </html>
