@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
@@ -7,24 +7,56 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    min-height: 100vh;
-    width: 100%;
-    overflow-x: hidden;
-    background: #0a0b0f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    padding: 32px 20px;
+
+  /* ── THEME VARIABLES ── */
+  [data-theme="dark"] {
+    --bg: #0a0b0f;
+    --card-bg: #0d0f17;
+    --card-border: #1a1c28;
+    --input-bg: #13151c;
+    --input-border: #1e2130;
+    --text: #e8eaf2;
+    --muted: #555978;
+    --very-muted: #3a3e52;
+    --footer-text: #2a2c3a;
+    --result-bg: #0b0d14;
+    --row-hover: #0f1118;
+    --row-border: #13151c;
+    --badge-none-bg: #1a1c28;
+    --subtitle-color: #3a3e52;
+    --brand-color: #fff;
+    --shadow: 0 24px 80px rgba(0,0,0,0.6);
   }
-  .wrapper {
-    width: 100%;
-    max-width: 520px;
-    animation: fadeIn 0.5s ease;
+  [data-theme="light"] {
+    --bg: #f0f2f7;
+    --card-bg: #ffffff;
+    --card-border: #e0e4ef;
+    --input-bg: #f7f8fc;
+    --input-border: #d4d8e8;
+    --text: #111827;
+    --muted: #6b7280;
+    --very-muted: #9ca3af;
+    --footer-text: #c0c4d0;
+    --result-bg: #f9fafb;
+    --row-hover: #f3f4f8;
+    --row-border: #e9ecf3;
+    --badge-none-bg: #f0f2f7;
+    --subtitle-color: #9ca3af;
+    --brand-color: #111827;
+    --shadow: 0 24px 80px rgba(0,0,0,0.1);
   }
 
-  /* DESKTOP */
+  html, body {
+    min-height: 100vh; width: 100%; overflow-x: hidden;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    padding: 32px 20px;
+    transition: background 0.3s;
+  }
+
+  .wrapper { width: 100%; max-width: 520px; animation: fadeIn 0.5s ease; }
+
   @media (min-width: 900px) {
     body { padding: 48px 40px; }
     .wrapper { max-width: 640px; }
@@ -44,8 +76,6 @@
     .results-header { padding: 14px 24px !important; }
     .card-footer { font-size: 11px !important; padding: 14px 24px !important; }
   }
-
-  /* TABLET */
   @media (min-width: 600px) and (max-width: 899px) {
     .wrapper { max-width: 560px; }
     .brand { font-size: 24px !important; }
@@ -57,31 +87,53 @@
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  @keyframes popIn {
+    0%   { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1);    opacity: 1; }
+  }
 
-  .header { text-align: center; margin-bottom: 28px; }
+  /* ── HEADER ── */
+  .header { text-align: center; margin-bottom: 28px; position: relative; }
   .header-title { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #f5a623; box-shadow: 0 0 10px #f5a623; }
-  .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
-  .subtitle { color: #3a3e52; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--brand-color); letter-spacing: -0.01em; transition: color 0.3s; }
+  .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
 
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: absolute; top: 0; right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .theme-toggle:hover { border-color: #f5a623; color: #f5a623; }
+
+  /* ── CARD ── */
   .card {
-    background: #0d0f17;
-    border: 1px solid #1a1c28;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: background 0.3s, border-color 0.3s;
   }
 
   .section-pad { padding: 20px 20px 0; }
-
-  .label { font-size: 10px; color: #3a3e52; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
+  .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
   .label.focused { color: #f5a623; }
 
+  /* ── SYMBOL BUTTONS ── */
   .symbol-row { display: flex; gap: 6px; }
   .symbol-btn {
-    flex: 1; padding: 10px 4px;
-    border-radius: 7px; border: 1px solid #1e2130;
-    background: transparent; color: #555978;
+    flex: 1; padding: 10px 4px; border-radius: 7px;
+    border: 1px solid var(--input-border);
+    background: transparent; color: var(--muted);
     font-family: 'DM Mono', monospace; font-size: 11px;
     cursor: pointer; transition: all 0.18s; letter-spacing: 0.02em;
   }
@@ -90,59 +142,98 @@
 
   .glow-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(245,166,35,0.35), transparent); margin: 16px 20px 0; }
 
+  /* ── INPUTS ── */
   .inputs { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
   .input-group { display: flex; flex-direction: column; }
-
   input[type=number] {
-    width: 100%; background: #13151c;
-    border: 1px solid #1e2130; color: #e8eaf2;
+    width: 100%; background: var(--input-bg);
+    border: 1px solid var(--input-border); color: var(--text);
     padding: 14px 16px; font-size: 15px;
     font-family: 'DM Mono', monospace;
     border-radius: 8px; outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
     -moz-appearance: textfield;
   }
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number]:focus { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.12); }
-  input[type=number]::placeholder { color: #3a3e52; }
+  input[type=number]::placeholder { color: var(--very-muted); }
 
   .reset-btn {
-    width: 100%; padding: 13px;
-    border-radius: 8px; border: 1px solid #1e2130;
-    background: transparent; color: #555978;
+    width: 100%; padding: 13px; border-radius: 8px;
+    border: 1px solid var(--input-border);
+    background: transparent; color: var(--muted);
     font-family: 'DM Mono', monospace; font-size: 13px;
     cursor: pointer; transition: all 0.2s;
     letter-spacing: 0.06em; text-transform: uppercase;
   }
   .reset-btn:hover { border-color: #e05252; color: #e05252; }
 
-  .results { border-top: 1px solid #1a1c28; background: #0b0d14; }
+  /* ── RESULTS ── */
+  .results { border-top: 1px solid var(--card-border); background: var(--result-bg); transition: background 0.3s; }
   .results-header { padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
-  .results-label { font-size: 10px; color: #3a3e52; letter-spacing: 0.14em; text-transform: uppercase; }
-  .live-indicator { font-size: 9px; color: #3a3e52; letter-spacing: 0.1em; display: flex; align-items: center; gap: 5px; }
-  .live-dot { width: 5px; height: 5px; border-radius: 50%; background: #1e2130; transition: all 0.3s; }
+  .results-label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; }
+  .live-indicator { font-size: 9px; color: var(--very-muted); letter-spacing: 0.1em; display: flex; align-items: center; gap: 5px; }
+  .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--input-border); transition: all 0.3s; }
   .live-dot.active { background: #34d399; box-shadow: 0 0 6px #34d399; }
 
-  .result-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid #13151c; transition: background 0.2s; }
+  .result-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--row-border);
+    transition: background 0.2s;
+  }
   .result-row:last-child { border-bottom: none; }
-  .result-row:hover { background: #0f1118; }
-  .result-key { font-size: 12px; color: #555978; letter-spacing: 0.06em; }
+  .result-row:hover { background: var(--row-hover); }
+  .result-key { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; }
 
+  /* ── COPY BUTTON ── */
+  .lot-row { position: relative; }
+  .copy-btn {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.06em;
+    display: none;
+    align-items: center; gap: 5px;
+  }
+  .copy-btn.visible { display: flex; animation: popIn 0.2s ease; }
+  .copy-btn:hover { border-color: #f5a623; color: #f5a623; }
+  .copy-btn.copied { border-color: #34d399; color: #34d399; }
+  .lot-right { display: flex; align-items: center; gap: 10px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #34d399; color: #000;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em; opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── BADGES ── */
   .badge { padding: 4px 14px; border-radius: 4px; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; }
   .badge-buy  { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
   .badge-sell { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.25); }
-  .badge-none { background: #1a1c28; color: #555978; border: 1px solid #1e2130; }
+  .badge-none { background: var(--badge-none-bg); color: var(--muted); border: 1px solid var(--input-border); }
 
-  .lot-value { font-size: 22px; font-weight: 500; color: #1e2130; transition: color 0.3s; }
+  .lot-value { font-size: 22px; font-weight: 500; color: var(--input-border); transition: color 0.3s; }
   .lot-value.active { color: #f5a623; }
-  .normal-value { font-size: 15px; color: #1e2130; transition: color 0.3s; }
-  .normal-value.active { color: #e8eaf2; }
+  .normal-value { font-size: 15px; color: var(--input-border); transition: color 0.3s; }
+  .normal-value.active { color: var(--text); }
 
   .actual-risk-row { display: none; }
   .actual-risk-row.visible { display: flex; animation: fadeIn 0.3s ease; }
 
-  .card-footer { padding: 12px 18px; border-top: 1px solid #13151c; text-align: center; font-size: 10px; color: #2a2c3a; letter-spacing: 0.1em; }
+  .card-footer { padding: 12px 18px; border-top: 1px solid var(--row-border); text-align: center; font-size: 10px; color: var(--footer-text); letter-spacing: 0.1em; transition: color 0.3s; }
 </style>
 </head>
 <body>
@@ -154,7 +245,9 @@
       <div class="dot"></div>
     </div>
     <div class="subtitle">Lot Size Calculator · v1.4+</div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">☀️ <span id="theme-label" style="font-size:10px;letter-spacing:0.1em;">LIGHT</span></button>
   </div>
+
   <div class="card">
     <div class="section-pad">
       <div class="label">Instrument</div>
@@ -169,21 +262,22 @@
     <div class="inputs">
       <div class="input-group">
         <div class="label" id="lbl-entry">Entry Price</div>
-        <input type="number" id="entry" step="any" placeholder="0.00000"
+        <input type="number" id="entry" step="any" placeholder="0.00000" inputmode="decimal"
           onfocus="focusLabel('lbl-entry')" onblur="blurLabel('lbl-entry')" oninput="recalculate()" />
       </div>
       <div class="input-group">
         <div class="label" id="lbl-sl">Stop Loss</div>
-        <input type="number" id="sl" step="any" placeholder="0.00000"
+        <input type="number" id="sl" step="any" placeholder="0.00000" inputmode="decimal"
           onfocus="focusLabel('lbl-sl')" onblur="blurLabel('lbl-sl')" oninput="recalculate()" />
       </div>
       <div class="input-group">
         <div class="label" id="lbl-risk">Risk Amount ($)</div>
-        <input type="number" id="risk" step="any" placeholder="0.00"
+        <input type="number" id="risk" step="any" placeholder="0.00" inputmode="decimal"
           onfocus="focusLabel('lbl-risk')" onblur="blurLabel('lbl-risk')" oninput="recalculate()" />
       </div>
       <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
     </div>
+
     <div class="results">
       <div class="results-header">
         <span class="results-label">Results</span>
@@ -192,28 +286,73 @@
           <span id="live-text">WAITING</span>
         </div>
       </div>
+
       <div class="result-row">
         <span class="result-key">DIRECTION</span>
         <span class="badge badge-none" id="direction-badge">—</span>
       </div>
-      <div class="result-row">
+
+      <div class="result-row lot-row">
         <span class="result-key">LOT SIZE</span>
-        <span class="lot-value" id="lot-val">0.00</span>
+        <div class="lot-right">
+          <button class="copy-btn" id="copy-btn" onclick="copyLot()">⧉ COPY</button>
+          <span class="lot-value" id="lot-val">0.00</span>
+        </div>
       </div>
+
       <div class="result-row actual-risk-row" id="actual-risk-row">
         <span class="result-key">ACTUAL RISK</span>
         <span class="normal-value active" id="actual-risk-val">$0.00</span>
       </div>
+
       <div class="result-row">
         <span class="result-key">TAKE PROFIT (1:3)</span>
         <span class="normal-value" id="tp-val">0.00000</span>
       </div>
     </div>
+
     <div class="card-footer">DESIGNED ACCORDING TO BIVERWAY TRADING SYSTEM</div>
   </div>
 </div>
+
+<div class="toast" id="toast">✓ Lot size copied!</div>
+
 <script>
   let currentSymbol = 'EURUSD';
+  let currentLot = null;
+
+  // ── THEME ──
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('theme-btn').innerHTML = isDark
+      ? '🌙 <span style="font-size:10px;letter-spacing:0.1em;">DARK</span>'
+      : '☀️ <span style="font-size:10px;letter-spacing:0.1em;">LIGHT</span>';
+  }
+
+  // ── COPY ──
+  function copyLot() {
+    if (!currentLot) return;
+    navigator.clipboard.writeText(currentLot).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ COPIED';
+      btn.classList.add('copied');
+      showToast();
+      setTimeout(() => {
+        btn.innerHTML = '⧉ COPY';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── SYMBOL ──
   function selectSymbol(sym, btn) {
     currentSymbol = sym;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
@@ -223,14 +362,18 @@
     document.getElementById('entry').placeholder = fmt;
     document.getElementById('sl').placeholder = fmt;
   }
+
   function focusLabel(id) { document.getElementById(id).classList.add('focused'); }
   function blurLabel(id)  { document.getElementById(id).classList.remove('focused'); }
+
   function resetAll() {
     document.getElementById('entry').value = '';
     document.getElementById('sl').value = '';
     document.getElementById('risk').value = '';
     recalculate();
   }
+
+  // ── CALCULATE ──
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
@@ -242,9 +385,12 @@
     const actualVal = document.getElementById('actual-risk-val');
     const liveDot   = document.getElementById('live-dot');
     const liveText  = document.getElementById('live-text');
+    const copyBtn   = document.getElementById('copy-btn');
     const fmt = currentSymbol === 'XAUUSD' ? 3 : 5;
     const ready = e > 0 && s > 0 && r > 0 && e !== s;
+
     if (!ready) {
+      currentLot = null;
       dirBadge.className = 'badge badge-none';
       dirBadge.textContent = '—';
       lotVal.className = 'lot-value';
@@ -254,10 +400,13 @@
       actualRow.classList.remove('visible');
       liveDot.classList.remove('active');
       liveText.textContent = 'WAITING';
+      copyBtn.classList.remove('visible');
       return;
     }
+
     const direction = e > s ? 'BUY' : 'SELL';
     let point, lotRaw, actualRiskVal, tpPrice;
+
     if (currentSymbol === 'XAUUSD') {
       point = Math.abs(e - s) * 100;
       lotRaw = r / point;
@@ -268,8 +417,10 @@
       point = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
       lotRaw = r / point;
     }
+
     const lot = Math.round(lotRaw * 100) / 100;
     actualRiskVal = currentSymbol === 'USDCHF' ? (lot * point) / e : lot * point;
+
     if (currentSymbol === 'XAUUSD') {
       const tpDist = Math.abs(e - s) * 3;
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
@@ -277,17 +428,20 @@
       const tpDist = (point * 3) / 100000;
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
+
+    currentLot = lot.toFixed(2);
     dirBadge.className = `badge badge-${direction.toLowerCase()}`;
     dirBadge.textContent = direction;
     lotVal.className = 'lot-value active';
-    lotVal.textContent = lot.toFixed(2);
+    lotVal.textContent = currentLot;
     tpVal.className = 'normal-value active';
     tpVal.textContent = tpPrice.toFixed(fmt);
     actualVal.textContent = '$' + actualRiskVal.toFixed(2);
     actualRow.classList.add('visible');
     liveDot.classList.add('active');
     liveText.textContent = 'LIVE';
+    copyBtn.classList.add('visible');
   }
 </script>
 </body>
-         </html>
+ </html>
