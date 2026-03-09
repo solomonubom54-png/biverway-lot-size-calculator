@@ -8,7 +8,6 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── THEME VARIABLES ── */
   [data-theme="dark"] {
     --bg: #0a0b0f;
     --card-bg: #0d0f17;
@@ -26,6 +25,8 @@
     --subtitle-color: #3a3e52;
     --brand-color: #fff;
     --shadow: 0 24px 80px rgba(0,0,0,0.6);
+    --toggle-bg: #1a1c28;
+    --toggle-border: #2a2c3a;
   }
   [data-theme="light"] {
     --bg: #f0f2f7;
@@ -44,6 +45,8 @@
     --subtitle-color: #9ca3af;
     --brand-color: #111827;
     --shadow: 0 24px 80px rgba(0,0,0,0.1);
+    --toggle-bg: #e8eaf2;
+    --toggle-border: #d4d8e8;
   }
 
   html, body {
@@ -93,23 +96,23 @@
   }
 
   /* ── HEADER ── */
-  .header { text-align: center; margin-bottom: 28px; position: relative; }
-  .header-title { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #f5a623; box-shadow: 0 0 10px #f5a623; }
   .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--brand-color); letter-spacing: -0.01em; transition: color 0.3s; }
-  .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
+  .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; transition: color 0.3s; }
 
   /* ── THEME TOGGLE ── */
   .theme-toggle {
-    position: absolute; top: 0; right: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--toggle-bg);
+    border: 1px solid var(--toggle-border);
     border-radius: 20px;
-    padding: 6px 12px;
+    padding: 7px 16px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
     transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
     color: var(--muted);
     font-family: 'DM Mono', monospace;
   }
@@ -128,7 +131,6 @@
   .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
   .label.focused { color: #f5a623; }
 
-  /* ── SYMBOL BUTTONS ── */
   .symbol-row { display: flex; gap: 6px; }
   .symbol-btn {
     flex: 1; padding: 10px 4px; border-radius: 7px;
@@ -142,9 +144,9 @@
 
   .glow-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(245,166,35,0.35), transparent); margin: 16px 20px 0; }
 
-  /* ── INPUTS ── */
   .inputs { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
   .input-group { display: flex; flex-direction: column; }
+
   input[type=number] {
     width: 100%; background: var(--input-bg);
     border: 1px solid var(--input-border); color: var(--text);
@@ -187,7 +189,6 @@
   .result-key { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; }
 
   /* ── COPY BUTTON ── */
-  .lot-row { position: relative; }
   .copy-btn {
     background: var(--input-bg);
     border: 1px solid var(--input-border);
@@ -205,7 +206,7 @@
   .copy-btn.visible { display: flex; animation: popIn 0.2s ease; }
   .copy-btn:hover { border-color: #f5a623; color: #f5a623; }
   .copy-btn.copied { border-color: #34d399; color: #34d399; }
-  .lot-right { display: flex; align-items: center; gap: 10px; }
+  .result-right { display: flex; align-items: center; gap: 10px; }
 
   /* ── TOAST ── */
   .toast {
@@ -214,8 +215,7 @@
     padding: 10px 20px; border-radius: 8px;
     font-size: 12px; font-family: 'DM Mono', monospace;
     letter-spacing: 0.06em; opacity: 0;
-    transition: all 0.3s; pointer-events: none;
-    z-index: 999;
+    transition: all 0.3s; pointer-events: none; z-index: 999;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -230,8 +230,8 @@
   .normal-value { font-size: 15px; color: var(--input-border); transition: color 0.3s; }
   .normal-value.active { color: var(--text); }
 
-  .actual-risk-row { display: none; }
-  .actual-risk-row.visible { display: flex; animation: fadeIn 0.3s ease; }
+  .hidden-row { display: none; }
+  .hidden-row.visible { display: flex; animation: fadeIn 0.3s ease; }
 
   .card-footer { padding: 12px 18px; border-top: 1px solid var(--row-border); text-align: center; font-size: 10px; color: var(--footer-text); letter-spacing: 0.1em; transition: color 0.3s; }
 </style>
@@ -239,13 +239,15 @@
 <body>
 <div class="wrapper">
   <div class="header">
-    <div class="header-title">
+    <div class="header-top">
       <div class="dot"></div>
       <span class="brand">BIVERWAY</span>
       <div class="dot"></div>
     </div>
     <div class="subtitle">Lot Size Calculator · v1.4+</div>
-    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">☀️ <span id="theme-label" style="font-size:10px;letter-spacing:0.1em;">LIGHT</span></button>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+      ☀️ <span id="theme-label">LIGHT MODE</span>
+    </button>
   </div>
 
   <div class="card">
@@ -287,27 +289,34 @@
         </div>
       </div>
 
+      <!-- 1. DIRECTION -->
       <div class="result-row">
         <span class="result-key">DIRECTION</span>
         <span class="badge badge-none" id="direction-badge">—</span>
       </div>
 
-      <div class="result-row lot-row">
+      <!-- 2. ACTUAL RISK -->
+      <div class="result-row hidden-row" id="actual-risk-row">
+        <span class="result-key">ACTUAL RISK</span>
+        <span class="normal-value" id="actual-risk-val">$0.00</span>
+      </div>
+
+      <!-- 3. LOT SIZE + COPY -->
+      <div class="result-row">
         <span class="result-key">LOT SIZE</span>
-        <div class="lot-right">
-          <button class="copy-btn" id="copy-btn" onclick="copyLot()">⧉ COPY</button>
+        <div class="result-right">
+          <button class="copy-btn" id="copy-lot-btn" onclick="copyValue('lot-val', 'copy-lot-btn', 'Lot size')">⧉ COPY</button>
           <span class="lot-value" id="lot-val">0.00</span>
         </div>
       </div>
 
-      <div class="result-row actual-risk-row" id="actual-risk-row">
-        <span class="result-key">ACTUAL RISK</span>
-        <span class="normal-value active" id="actual-risk-val">$0.00</span>
-      </div>
-
+      <!-- 4. TAKE PROFIT + COPY -->
       <div class="result-row">
         <span class="result-key">TAKE PROFIT (1:3)</span>
-        <span class="normal-value" id="tp-val">0.00000</span>
+        <div class="result-right">
+          <button class="copy-btn" id="copy-tp-btn" onclick="copyValue('tp-val', 'copy-tp-btn', 'Take profit')">⧉ COPY</button>
+          <span class="normal-value" id="tp-val">0.00000</span>
+        </div>
       </div>
     </div>
 
@@ -315,11 +324,10 @@
   </div>
 </div>
 
-<div class="toast" id="toast">✓ Lot size copied!</div>
+<div class="toast" id="toast"></div>
 
 <script>
   let currentSymbol = 'EURUSD';
-  let currentLot = null;
 
   // ── THEME ──
   function toggleTheme() {
@@ -327,18 +335,19 @@
     const isDark = html.getAttribute('data-theme') === 'dark';
     html.setAttribute('data-theme', isDark ? 'light' : 'dark');
     document.getElementById('theme-btn').innerHTML = isDark
-      ? '🌙 <span style="font-size:10px;letter-spacing:0.1em;">DARK</span>'
-      : '☀️ <span style="font-size:10px;letter-spacing:0.1em;">LIGHT</span>';
+      ? '🌙 <span id="theme-label">DARK MODE</span>'
+      : '☀️ <span id="theme-label">LIGHT MODE</span>';
   }
 
   // ── COPY ──
-  function copyLot() {
-    if (!currentLot) return;
-    navigator.clipboard.writeText(currentLot).then(() => {
-      const btn = document.getElementById('copy-btn');
+  function copyValue(valId, btnId, label) {
+    const text = document.getElementById(valId).textContent;
+    if (!text || text === '0.00' || text === '0.00000' || text === '0.000') return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById(btnId);
       btn.textContent = '✓ COPIED';
       btn.classList.add('copied');
-      showToast();
+      showToast(label + ' copied!');
       setTimeout(() => {
         btn.innerHTML = '⧉ COPY';
         btn.classList.remove('copied');
@@ -346,8 +355,9 @@
     });
   }
 
-  function showToast() {
+  function showToast(msg) {
     const t = document.getElementById('toast');
+    t.textContent = '✓ ' + msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
   }
@@ -378,19 +388,20 @@
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
     const r = parseFloat(document.getElementById('risk').value);
-    const dirBadge  = document.getElementById('direction-badge');
-    const lotVal    = document.getElementById('lot-val');
-    const tpVal     = document.getElementById('tp-val');
-    const actualRow = document.getElementById('actual-risk-row');
-    const actualVal = document.getElementById('actual-risk-val');
-    const liveDot   = document.getElementById('live-dot');
-    const liveText  = document.getElementById('live-text');
-    const copyBtn   = document.getElementById('copy-btn');
     const fmt = currentSymbol === 'XAUUSD' ? 3 : 5;
     const ready = e > 0 && s > 0 && r > 0 && e !== s;
 
+    const dirBadge    = document.getElementById('direction-badge');
+    const lotVal      = document.getElementById('lot-val');
+    const tpVal       = document.getElementById('tp-val');
+    const actualRow   = document.getElementById('actual-risk-row');
+    const actualVal   = document.getElementById('actual-risk-val');
+    const liveDot     = document.getElementById('live-dot');
+    const liveText    = document.getElementById('live-text');
+    const copyLotBtn  = document.getElementById('copy-lot-btn');
+    const copyTpBtn   = document.getElementById('copy-tp-btn');
+
     if (!ready) {
-      currentLot = null;
       dirBadge.className = 'badge badge-none';
       dirBadge.textContent = '—';
       lotVal.className = 'lot-value';
@@ -400,7 +411,8 @@
       actualRow.classList.remove('visible');
       liveDot.classList.remove('active');
       liveText.textContent = 'WAITING';
-      copyBtn.classList.remove('visible');
+      copyLotBtn.classList.remove('visible');
+      copyTpBtn.classList.remove('visible');
       return;
     }
 
@@ -429,19 +441,20 @@
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
 
-    currentLot = lot.toFixed(2);
     dirBadge.className = `badge badge-${direction.toLowerCase()}`;
     dirBadge.textContent = direction;
     lotVal.className = 'lot-value active';
-    lotVal.textContent = currentLot;
+    lotVal.textContent = lot.toFixed(2);
     tpVal.className = 'normal-value active';
     tpVal.textContent = tpPrice.toFixed(fmt);
+    actualVal.className = 'normal-value active';
     actualVal.textContent = '$' + actualRiskVal.toFixed(2);
     actualRow.classList.add('visible');
     liveDot.classList.add('active');
     liveText.textContent = 'LIVE';
-    copyBtn.classList.add('visible');
+    copyLotBtn.classList.add('visible');
+    copyTpBtn.classList.add('visible');
   }
 </script>
 </body>
- </html>
+       </html>
