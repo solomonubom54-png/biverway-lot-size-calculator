@@ -1,7 +1,6 @@
 {
   "name": "Biverway Lot Size Calculator",
   "short_name": "Biverway",
-  "description": "Professional lot size calculator for Biverway Trading System",
   "start_url": "/biverway-lot-size-calculator/index.html",
   "scope": "/biverway-lot-size-calculator/",
   "display": "standalone",
@@ -10,13 +9,13 @@
   "theme_color": "#f5a623",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "icon-512.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "logo.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
