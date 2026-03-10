@@ -266,7 +266,7 @@
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
+<!-- SPLASH -->
 <div id="splash">
   <img src="logo.png" class="splash-logo" alt="Biverway" onerror="this.style.display='none'" />
   <div class="splash-brand">BIVER<span>WAY</span></div>
@@ -370,7 +370,7 @@
             </div>
           </div>
 
-          <!-- SHARE / SAVE BUTTONS -->
+           <!-- SHARE / SAVE BUTTONS -->
           <div class="share-row" id="share-row">
             <button class="share-btn" id="share-btn" onclick="shareSetup()">
               <span class="share-main" id="share-btn-main">SHARE</span>
@@ -471,7 +471,7 @@
     });
   }
 
-  /* ── SHARE SETUP (native share sheet) ── */
+  /* ── SHARE SETUP ── */
   function shareSetup() {
     if (!tradeData) return;
     const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
@@ -500,14 +500,14 @@ Stop Loss: ${tradeData.sl}`;
         setTimeout(() => { main.textContent = 'SHARE'; btn.classList.remove('shared'); }, 2500);
       });
     }
-  } 
+  }
 
-/* ── SAVE AS IMAGE (full trade record) ── */
+  /* ── SAVE AS IMAGE ── */
   function saveAsImage() {
     if (!tradeData) return;
 
     const canvas = document.getElementById('share-canvas');
-    const W = 420, H = 520;
+    const W = 420, H = 400;
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
@@ -515,72 +515,63 @@ Stop Loss: ${tradeData.sl}`;
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const bg      = isDark ? '#0a0b0f' : '#f0f2f7';
     const cardBg  = isDark ? '#0d0f17' : '#ffffff';
-    const cardBg2 = isDark ? '#13151c' : '#f7f8fc';
-    const border  = isDark ? '#1a1c28' : '#e0e4ef';
+    const cellBg  = isDark ? '#13151c' : '#f7f8fc';
+    const border  = isDark ? '#1e2130' : '#e0e4ef';
     const textCol = isDark ? '#e8eaf2' : '#111827';
-    const mutedCol= isDark ? '#555978' : '#9ca3af';
+    const mutedCol= isDark ? '#3a3e52' : '#9ca3af';
     const gold    = '#f5a623';
     const green   = '#34d399';
     const red     = '#f87171';
     const lp = 28;
 
+    // Background
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
+    // Card
     roundRect(ctx, 12, 12, W - 24, H - 24, 14);
     ctx.fillStyle = cardBg; ctx.fill();
     ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
 
-    roundRect(ctx, 12, 12, W - 24, 4, 3);
+    // Gold accent bar
+    roundRect(ctx, 12, 12, W - 24, 3, 3);
     ctx.fillStyle = gold; ctx.fill();
 
-    ctx.font = 'bold 18px sans-serif';
-    ctx.fillStyle = textCol;
-    ctx.textAlign = 'left';
-    const biverW = ctx.measureText('BIVER').width;
-    ctx.fillText('BIVER', lp, 52);
-    ctx.fillStyle = gold;
-    ctx.fillText('WAY', lp + biverW, 52);
-
-    const symW = 80, symH = 24;
-    const symX = W - 16 - symW;
-    roundRect(ctx, symX, 34, symW, symH, 5);
-    ctx.fillStyle = gold; ctx.fill();
+    // Header: BIVERWAY TRADING SYSTEM centered
     ctx.font = 'bold 11px monospace';
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = mutedCol;
     ctx.textAlign = 'center';
-    ctx.fillText(tradeData.symbol, symX + symW / 2, 50);
-    ctx.textAlign = 'left';
+    ctx.fillText('BIVERWAY TRADING SYSTEM', W / 2, 40);
 
+    // Divider
     ctx.strokeStyle = border; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, 68); ctx.lineTo(W - lp, 68); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lp, 50); ctx.lineTo(W - lp, 50); ctx.stroke();
 
+    // SYMBOL — DIRECTION centered, large, colored
     const dir = tradeData.direction;
-    const orderType = dir === 'BUY' ? 'BUY LIMIT' : 'SELL LIMIT';
-    const dirColor  = dir === 'BUY' ? green : red;
-    const dirBg     = dir === 'BUY' ? 'rgba(52,211,153,0.12)' : 'rgba(248,113,113,0.10)';
-    ctx.font = 'bold 10px monospace';
-    const badgeW = ctx.measureText(orderType).width + 24;
-    roundRect(ctx, lp, 76, badgeW, 22, 4);
-    ctx.fillStyle = dirBg; ctx.fill();
-    ctx.strokeStyle = dirColor; ctx.lineWidth = 1; ctx.stroke();
-    ctx.fillStyle = dirColor;
-    ctx.fillText(orderType, lp + 10, 91);
+    const dirColor = dir === 'BUY' ? green : red;
+    const dirLabel = `${tradeData.symbol}  —  ${dir}`;
 
+    ctx.font = 'bold 20px monospace';
+    ctx.fillStyle = dirColor;
+    ctx.textAlign = 'center';
+    ctx.fillText(dirLabel, W / 2, 84);
+
+    // Divider
+    ctx.strokeStyle = border; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(lp, 96); ctx.lineTo(W - lp, 96); ctx.stroke();
+
+    // 4 data cells in 2x2 grid
     const fields = [
-      ['SYMBOL',      tradeData.symbol,           false],
-      ['DIRECTION',   orderType,                  false],
-      ['ENTRY PRICE', tradeData.entry,             false],
-      ['STOP LOSS',   tradeData.sl,                false],
-      ['LOT SIZE',    tradeData.lot,               true ],
-      ['TAKE PROFIT', tradeData.tp,                false],
-      ['ACTUAL RISK', '$' + tradeData.actualRisk,  false],
-      ['RISK/REWARD', '1 : 3',                     false],
+      ['ENTRY PRICE', tradeData.entry, false],
+      ['STOP LOSS',   tradeData.sl,    false],
+      ['LOT SIZE',    tradeData.lot,   true ],
+      ['TAKE PROFIT', tradeData.tp,    false],
     ];
 
     const colW   = (W - lp * 2 - 10) / 2;
-    const rowH   = 52;
-    const startY = 112;
+    const rowH   = 64;
+    const startY = 106;
 
     fields.forEach(([label, value, isGold], i) => {
       const col = i % 2;
@@ -589,62 +580,54 @@ Stop Loss: ${tradeData.sl}`;
       const y   = startY + row * rowH;
 
       roundRect(ctx, x, y, colW, rowH - 6, 6);
-      ctx.fillStyle = cardBg2; ctx.fill();
+      ctx.fillStyle = cellBg; ctx.fill();
       ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
 
       ctx.font = '9px monospace';
       ctx.fillStyle = mutedCol;
       ctx.textAlign = 'left';
-      ctx.fillText(label, x + 10, y + 15);
+      ctx.fillText(label, x + 12, y + 18);
 
       if (isGold) {
-        ctx.font = 'bold 20px monospace';
+        ctx.font = 'bold 24px monospace';
         ctx.fillStyle = gold;
-        ctx.fillText(value, x + 10, y + 39);
+        ctx.fillText(value, x + 12, y + 48);
       } else {
-        ctx.font = 'bold 12px monospace';
-        ctx.fillStyle = label === 'DIRECTION' ? dirColor : textCol;
-        ctx.fillText(value, x + 10, y + 37);
+        ctx.font = 'bold 14px monospace';
+        ctx.fillStyle = textCol;
+        ctx.fillText(value, x + 12, y + 46);
       }
     });
 
-    const barSectionY = startY + 4 * rowH + 6;
-    const barX = lp, barW = W - lp * 2, barH = 8;
+    // RR bar
+    const barY = startY + 2 * rowH + 4;
+    const barX = lp, barW = W - lp * 2, barH = 6;
 
-    ctx.font = '9px monospace';
-    ctx.fillStyle = mutedCol;
-    ctx.textAlign = 'left';
-    ctx.fillText('RISK / REWARD', barX, barSectionY);
-    ctx.fillStyle = gold;
-    ctx.textAlign = 'right';
-    ctx.fillText('1 : 3', W - lp, barSectionY);
-    ctx.textAlign = 'left';
-
-    const barY = barSectionY + 8;
-    roundRect(ctx, barX, barY, barW, barH, 4);
+    roundRect(ctx, barX, barY, barW, barH, 3);
     ctx.fillStyle = isDark ? '#1e2130' : '#e5e7eb'; ctx.fill();
     const riskPx = Math.round(barW * 0.25);
-    roundRect(ctx, barX, barY, riskPx, barH, 4);
+    roundRect(ctx, barX, barY, riskPx, barH, 3);
     ctx.fillStyle = red; ctx.fill();
-    roundRect(ctx, barX + riskPx, barY, barW - riskPx, barH, 4);
+    roundRect(ctx, barX + riskPx, barY, barW - riskPx, barH, 3);
     ctx.fillStyle = green; ctx.fill();
 
     ctx.font = '9px monospace';
-    ctx.fillStyle = red;
+    ctx.fillStyle = isDark ? '#555978' : '#9ca3af';
     ctx.textAlign = 'left';
-    ctx.fillText('RISK $' + tradeData.actualRisk, barX, barY + 20);
-    ctx.fillStyle = green;
+    ctx.fillText('RISK  $' + tradeData.actualRisk, barX, barY + 18);
     ctx.textAlign = 'right';
-    ctx.fillText('REWARD $' + tradeData.reward, barX + barW, barY + 20);
+    ctx.fillText('REWARD  $' + tradeData.reward, barX + barW, barY + 18);
 
-    ctx.font = '9px monospace';
-    ctx.fillStyle = isDark ? '#2a2c3a' : '#c0c4d0';
+    // 1:3 centered below bar
+    ctx.font = 'bold 10px monospace';
+    ctx.fillStyle = gold;
     ctx.textAlign = 'center';
-    ctx.fillText('BIVERWAY TRADING SYSTEM · V2.1+', W / 2, H - 18);
+    ctx.fillText('1 : 3', W / 2, barY + 18);
     ctx.textAlign = 'left';
 
+    // Download
     const link = document.createElement('a');
-    link.download = `biverway-${tradeData.symbol}-${tradeData.direction.toLowerCase()}.png`;
+    link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 
@@ -698,7 +681,7 @@ Stop Loss: ${tradeData.sl}`;
     document.getElementById('risk').value = '';
     recalculate();
   }
-
+ 
   /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
@@ -795,4 +778,4 @@ Stop Loss: ${tradeData.sl}`;
   }
 </script>
 </body>
-</html> 
+</html>
