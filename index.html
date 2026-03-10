@@ -213,14 +213,7 @@
  /* ── SHARE / SAVE BUTTONS ── */
   .share-row { padding:14px 18px; border-top:1px solid var(--row-border); display:none; gap:8px; }
   .share-row.visible { display:flex; animation:fadeIn 0.3s ease; }
-  .share-btn {
-    flex:1; padding:12px 8px; border-radius:8px;
-    border:1px solid var(--input-border);
-    background:transparent; color:var(--muted);
-    font-family:'DM Mono',monospace;
-    cursor:pointer; transition:all 0.2s;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
-  }
+  .share-btn { flex:1; padding:12px 8px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
   .share-btn:hover { border-color:#f5a623; color:#f5a623; background:rgba(245,166,35,0.06); }
   .share-btn:hover .share-sub { color:#f5a623; opacity:0.7; }
   .share-btn.shared { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.06); }
@@ -370,7 +363,7 @@
             </div>
           </div>
 
-           <!-- SHARE / SAVE BUTTONS -->
+          <!-- SHARE / SAVE BUTTONS -->
           <div class="share-row" id="share-row">
             <button class="share-btn" id="share-btn" onclick="shareSetup()">
               <span class="share-main" id="share-btn-main">SHARE</span>
@@ -507,61 +500,68 @@ Stop Loss: ${tradeData.sl}`;
     if (!tradeData) return;
 
     const canvas = document.getElementById('share-canvas');
-    const W = 420, H = 400;
-    canvas.width = W;
+
+    const W       = 420;
+    const lp      = 22;
+    const gap     = 8;
+    const cellH   = 52;
+    const colW    = (W - lp * 2 - gap) / 2;
+    const accentH = 3;
+    const gridH   = cellH * 2 + gap;
+    const edgePad = 14;
+    const H       = edgePad + accentH + 38 + 46 + gridH + gap + 52 + edgePad;
+
+    canvas.width  = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark  = document.documentElement.getAttribute('data-theme') === 'dark';
     const bg      = isDark ? '#0a0b0f' : '#f0f2f7';
     const cardBg  = isDark ? '#0d0f17' : '#ffffff';
     const cellBg  = isDark ? '#13151c' : '#f7f8fc';
     const border  = isDark ? '#1e2130' : '#e0e4ef';
     const textCol = isDark ? '#e8eaf2' : '#111827';
-    const mutedCol= isDark ? '#3a3e52' : '#9ca3af';
+    const mutedCol= isDark ? '#555978' : '#9ca3af';
+    const dimCol  = isDark ? '#2a2c3a' : '#c0c4d0';
     const gold    = '#f5a623';
     const green   = '#34d399';
     const red     = '#f87171';
-    const lp = 28;
 
-    // Background
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // Card
-    roundRect(ctx, 12, 12, W - 24, H - 24, 14);
+    roundRect(ctx, 10, 10, W - 20, H - 20, 12);
     ctx.fillStyle = cardBg; ctx.fill();
     ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
 
-    // Gold accent bar
-    roundRect(ctx, 12, 12, W - 24, 3, 3);
+    roundRect(ctx, 10, 10, W - 20, accentH, 2);
     ctx.fillStyle = gold; ctx.fill();
 
-    // Header: BIVERWAY TRADING SYSTEM centered
-    ctx.font = 'bold 11px monospace';
-    ctx.fillStyle = mutedCol;
+    let y = edgePad + accentH + 4;
+
+    // Header
+    ctx.font = '500 11px monospace';
+    ctx.fillStyle = dimCol;
     ctx.textAlign = 'center';
-    ctx.fillText('BIVERWAY TRADING SYSTEM', W / 2, 40);
-
-    // Divider
+    ctx.fillText('BIVERWAY TRADING SYSTEM', W / 2, y + 13);
+    y += 20;
     ctx.strokeStyle = border; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, 50); ctx.lineTo(W - lp, 50); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lp, y); ctx.lineTo(W - lp, y); ctx.stroke();
+    y += gap;
 
-    // SYMBOL — DIRECTION centered, large, colored
-    const dir = tradeData.direction;
+    // Symbol — Direction
+    const dir      = tradeData.direction;
     const dirColor = dir === 'BUY' ? green : red;
-    const dirLabel = `${tradeData.symbol}  —  ${dir}`;
-
-    ctx.font = 'bold 20px monospace';
+    ctx.font = 'bold 22px monospace';
     ctx.fillStyle = dirColor;
     ctx.textAlign = 'center';
-    ctx.fillText(dirLabel, W / 2, 84);
-
-    // Divider
+    ctx.fillText(`${tradeData.symbol}  —  ${dir}`, W / 2, y + 24);
+    y += 32;
     ctx.strokeStyle = border; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, 96); ctx.lineTo(W - lp, 96); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lp, y); ctx.lineTo(W - lp, y); ctx.stroke();
+    y += gap;
 
-    // 4 data cells in 2x2 grid
+    // 4 cells
     const fields = [
       ['ENTRY PRICE', tradeData.entry, false],
       ['STOP LOSS',   tradeData.sl,    false],
@@ -569,63 +569,65 @@ Stop Loss: ${tradeData.sl}`;
       ['TAKE PROFIT', tradeData.tp,    false],
     ];
 
-    const colW   = (W - lp * 2 - 10) / 2;
-    const rowH   = 64;
-    const startY = 106;
-
     fields.forEach(([label, value, isGold], i) => {
       const col = i % 2;
       const row = Math.floor(i / 2);
-      const x   = lp + col * (colW + 10);
-      const y   = startY + row * rowH;
+      const cx  = lp + col * (colW + gap);
+      const cy  = y + row * (cellH + gap);
 
-      roundRect(ctx, x, y, colW, rowH - 6, 6);
+      roundRect(ctx, cx, cy, colW, cellH, 6);
       ctx.fillStyle = cellBg; ctx.fill();
       ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
 
-      ctx.font = '9px monospace';
+      ctx.font = '10px monospace';
       ctx.fillStyle = mutedCol;
       ctx.textAlign = 'left';
-      ctx.fillText(label, x + 12, y + 18);
+      ctx.fillText(label, cx + 10, cy + 16);
 
       if (isGold) {
-        ctx.font = 'bold 24px monospace';
+        ctx.font = 'bold 20px monospace';
         ctx.fillStyle = gold;
-        ctx.fillText(value, x + 12, y + 48);
       } else {
-        ctx.font = 'bold 14px monospace';
+        ctx.font = 'bold 15px monospace';
         ctx.fillStyle = textCol;
-        ctx.fillText(value, x + 12, y + 46);
       }
+      ctx.fillText(value, cx + 10, cy + cellH - 10);
     });
 
-    // RR bar
-    const barY = startY + 2 * rowH + 4;
-    const barX = lp, barW = W - lp * 2, barH = 6;
+    y += gridH + gap + 4;
 
-    roundRect(ctx, barX, barY, barW, barH, 3);
+    // RR bar
+    const barW = W - lp * 2;
+    const barH = 10;
+
+    ctx.font = '11px monospace';
+    ctx.fillStyle = mutedCol;
+    ctx.textAlign = 'left';
+    ctx.fillText('RISK / REWARD', lp, y + 12);
+    ctx.font = 'bold 12px monospace';
+    ctx.fillStyle = gold;
+    ctx.textAlign = 'right';
+    ctx.fillText('1 : 3', W - lp, y + 12);
+    y += 18;
+
+    roundRect(ctx, lp, y, barW, barH, 4);
     ctx.fillStyle = isDark ? '#1e2130' : '#e5e7eb'; ctx.fill();
     const riskPx = Math.round(barW * 0.25);
-    roundRect(ctx, barX, barY, riskPx, barH, 3);
+    roundRect(ctx, lp, y, riskPx, barH, 4);
     ctx.fillStyle = red; ctx.fill();
-    roundRect(ctx, barX + riskPx, barY, barW - riskPx, barH, 3);
+    roundRect(ctx, lp + riskPx, y, barW - riskPx, barH, 4);
     ctx.fillStyle = green; ctx.fill();
+    y += barH + 10;
 
-    ctx.font = '9px monospace';
-    ctx.fillStyle = isDark ? '#555978' : '#9ca3af';
+    ctx.font = '11px monospace';
+    ctx.fillStyle = red;
     ctx.textAlign = 'left';
-    ctx.fillText('RISK  $' + tradeData.actualRisk, barX, barY + 18);
+    ctx.fillText('RISK  $' + tradeData.actualRisk, lp, y + 2);
+    ctx.fillStyle = green;
     ctx.textAlign = 'right';
-    ctx.fillText('REWARD  $' + tradeData.reward, barX + barW, barY + 18);
-
-    // 1:3 centered below bar
-    ctx.font = 'bold 10px monospace';
-    ctx.fillStyle = gold;
-    ctx.textAlign = 'center';
-    ctx.fillText('1 : 3', W / 2, barY + 18);
+    ctx.fillText('REWARD  $' + tradeData.reward, W - lp, y + 2);
     ctx.textAlign = 'left';
 
-    // Download
     const link = document.createElement('a');
     link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
     link.href = canvas.toDataURL('image/png');
@@ -681,7 +683,7 @@ Stop Loss: ${tradeData.sl}`;
     document.getElementById('risk').value = '';
     recalculate();
   }
- 
+
   /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
@@ -778,4 +780,4 @@ Stop Loss: ${tradeData.sl}`;
   }
 </script>
 </body>
-</html>
+</html> 
