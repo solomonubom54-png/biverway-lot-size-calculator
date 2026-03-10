@@ -1,6 +1,6 @@
 {
   "name": "Biverway Lot Size Calculator",
-  "short_name": "Biverway",
+  "short_name": "Biverway Lotsize Calc",
   "start_url": "/biverway-lot-size-calculator/index.html",
   "scope": "/biverway-lot-size-calculator/",
   "display": "standalone",
