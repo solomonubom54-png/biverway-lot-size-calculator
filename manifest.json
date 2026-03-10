@@ -4,7 +4,7 @@
   "start_url": "/biverway-lot-size-calculator/index.html",
   "scope": "/biverway-lot-size-calculator/",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait",
   "background_color": "#0a0b0f",
   "theme_color": "#f5a623",
   "icons": [
