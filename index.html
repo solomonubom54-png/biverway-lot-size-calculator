@@ -62,30 +62,21 @@
   @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   @keyframes popIn  { 0% { transform:scale(0.92); opacity:0; } 100% { transform:scale(1); opacity:1; } }
 
-  /* ── HEADER ── */
   .header { text-align: center; margin-bottom: 28px; }
-
-  /* Toggle on its own row at top right */
-  .header-topbar {
-    display: flex; justify-content: flex-end; margin-bottom: 12px;
-  }
+  .header-topbar { display: flex; justify-content: flex-end; margin-bottom: 12px; }
   .theme-toggle {
     width: 36px; height: 36px; border-radius: 50%;
     background: var(--toggle-bg); border: 1px solid var(--toggle-border);
     cursor: pointer; font-size: 16px; transition: all 0.25s;
     display: flex; align-items: center; justify-content: center;
   }
-  .theme-toggle:hover {
-    border-color: #f5a623; transform: scale(1.1) rotate(20deg);
-    box-shadow: 0 0 12px rgba(245,166,35,0.3);
-  }
+  .theme-toggle:hover { border-color: #f5a623; transform: scale(1.1) rotate(20deg); box-shadow: 0 0 12px rgba(245,166,35,0.3); }
 
   .header-main { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
   .logo-icon { width: 30px; height: 30px; border-radius: 6px; object-fit: contain; }
   .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--brand-color); letter-spacing: -0.01em; transition: color 0.3s; }
   .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
 
-  /* ── CARD ── */
   .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: background 0.3s, border-color 0.3s; }
   .section-pad { padding: 20px 20px 0; }
   .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
@@ -110,7 +101,6 @@
   .reset-btn { width:100%; padding:13px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:13px; cursor:pointer; transition:all 0.2s; letter-spacing:0.06em; text-transform:uppercase; }
   .reset-btn:hover { border-color:#e05252; color:#e05252; }
 
-  /* ── RESULTS ── */
   .results { border-top:1px solid var(--card-border); background:var(--result-bg); transition:background 0.3s; }
   .results-header { padding:12px 18px; display:flex; align-items:center; justify-content:space-between; }
   .results-label { font-size:10px; color:var(--very-muted); letter-spacing:0.14em; text-transform:uppercase; }
@@ -157,16 +147,11 @@
 <body>
 <div class="wrapper">
   <div class="header">
-
-    <!-- Toggle: own row, top right -->
     <div class="header-topbar">
       <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">☀️</button>
     </div>
-
-    <!-- Logo + Brand -->
     <div class="header-main">
-      <img src="logo.png" alt="Biverway Logo" class="logo-icon"
-        onerror="this.style.display='none'" />
+      <img src="logo.png" alt="Biverway Logo" class="logo-icon" onerror="this.style.display='none'" />
       <span class="brand">BIVERWAY</span>
     </div>
     <div class="subtitle">Lot Size Calculator · v1.4+</div>
@@ -275,12 +260,12 @@
 
   function shareSetup() {
     if (!tradeData) return;
+    const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
     const text =
-`📊 Biverway Trade Setup
-Symbol: ${tradeData.symbol}
-Direction: ${tradeData.direction}
-Entry: ${tradeData.entry}
-Stop Loss: ${tradeData.sl}`;
+`📊 ${tradeData.symbol}
+${orderType}
+EP: ${tradeData.entry}
+SL: ${tradeData.sl}`;
     navigator.clipboard.writeText(text).then(() => {
       const btn = document.getElementById('share-btn');
       btn.innerHTML = '<span>✓</span> COPIED TO CLIPBOARD';
@@ -379,7 +364,12 @@ Stop Loss: ${tradeData.sl}`;
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
 
-    tradeData = { symbol: currentSymbol, direction, entry: e.toFixed(decFmt), sl: s.toFixed(decFmt) };
+    tradeData = {
+      symbol: currentSymbol,
+      direction,
+      entry: e.toFixed(decFmt),
+      sl: s.toFixed(decFmt)
+    };
 
     dirBadge.className = `badge badge-${direction.toLowerCase()}`;
     dirBadge.textContent = direction;
