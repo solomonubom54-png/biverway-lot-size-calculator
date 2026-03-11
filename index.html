@@ -76,92 +76,38 @@
     transition: background 0.3s;
   }
 
-  /* ── MAIN WRAPPER (max width container) ── */
-  .wrapper {
-    width: 100%;
-    max-width: 520px;
-    animation: fadeIn 0.5s ease;
-  }
+  /* ── MAIN WRAPPER ── */
+  .wrapper { width: 100%; max-width: 520px; animation: fadeIn 0.5s ease; }
 
   /* ── SPLASH SCREEN OVERLAY ── */
   #splash {
-    position: fixed;
-    inset: 0;
-    background: #0a0b0f;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    gap: 20px;
+    position: fixed; inset: 0; background: #0a0b0f;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 9999; gap: 20px;
     transition: opacity 0.6s ease, visibility 0.6s ease;
   }
   #splash.hide { opacity: 0; visibility: hidden; }
 
   /* ── SPLASH: LOGO ── */
-  .splash-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 16px;
-    object-fit: contain;
-    animation: splashLogoIn 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    opacity: 0;
-  }
+  .splash-logo { width: 80px; height: 80px; border-radius: 16px; object-fit: contain; animation: splashLogoIn 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; }
 
   /* ── SPLASH: BRAND NAME ── */
-  .splash-brand {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.01em;
-    animation: splashTextIn 0.6s ease 0.4s forwards;
-    opacity: 0;
-  }
-  .splash-brand span { color: #f5a623; } /* Gold "WAY" */
+  .splash-brand { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.01em; animation: splashTextIn 0.6s ease 0.4s forwards; opacity: 0; }
+  .splash-brand span { color: #f5a623; }
 
   /* ── SPLASH: SUBTITLE ── */
-  .splash-sub {
-    font-size: 10px;
-    color: #3a3e52;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    animation: splashTextIn 0.6s ease 0.6s forwards;
-    opacity: 0;
-  }
+  .splash-sub { font-size: 10px; color: #3a3e52; letter-spacing: 0.2em; text-transform: uppercase; animation: splashTextIn 0.6s ease 0.6s forwards; opacity: 0; }
 
-  /* ── SPLASH: LOADING BAR WRAPPER ── */
-  .splash-bar-wrap {
-    width: 60px;
-    height: 2px;
-    background: #1a1c28;
-    border-radius: 2px;
-    overflow: hidden;
-    animation: splashTextIn 0.6s ease 0.7s forwards;
-    opacity: 0;
-  }
-
-  /* ── SPLASH: LOADING BAR FILL ── */
-  .splash-bar-fill {
-    height: 100%;
-    background: #f5a623;
-    border-radius: 2px;
-    animation: splashBarGrow 1s ease 0.8s forwards;
-    width: 0%;
-  }
+  /* ── SPLASH: LOADING BAR ── */
+  .splash-bar-wrap { width: 60px; height: 2px; background: #1a1c28; border-radius: 2px; overflow: hidden; animation: splashTextIn 0.6s ease 0.7s forwards; opacity: 0; }
+  .splash-bar-fill { height: 100%; background: #f5a623; border-radius: 2px; animation: splashBarGrow 1s ease 0.8s forwards; width: 0%; }
 
   /* ── SPLASH ANIMATIONS ── */
-  @keyframes splashLogoIn {
-    0%   { opacity: 0; transform: scale(0.7) translateY(10px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  @keyframes splashTextIn {
-    0%   { opacity: 0; transform: translateY(8px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes splashBarGrow { 0% { width: 0%; } 100% { width: 100%; } }
+  @keyframes splashLogoIn { 0% { opacity:0; transform:scale(0.7) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+  @keyframes splashTextIn { 0% { opacity:0; transform:translateY(8px); } 100% { opacity:1; transform:translateY(0); } }
+  @keyframes splashBarGrow { 0% { width:0%; } 100% { width:100%; } }
 
-  /* ── LANDSCAPE MODE (phone rotated sideways) ── */
+  /* ── LANDSCAPE MODE ── */
   @media screen and (orientation: landscape) and (max-height: 500px) {
     html, body { align-items: flex-start; padding: 12px; }
     .wrapper { max-width: 100%; }
@@ -170,7 +116,6 @@
     .subtitle { font-size: 9px !important; }
     .card { border-radius: 10px; }
     .card-topbar { padding: 8px 12px 0; }
-    /* Split inputs left / results right in landscape */
     .landscape-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0; }
     .left-col { border-right: 1px solid var(--card-border); }
     .right-col .results { border-top: none; height: 100%; }
@@ -193,7 +138,7 @@
     .rr-bar-wrap { padding: 8px 12px !important; }
   }
 
-  /* ── DESKTOP (screens 900px and wider) ── */
+  /* ── DESKTOP (900px+) ── */
   @media (min-width: 900px) {
     body { padding: 48px 40px; }
     .wrapper { max-width: 640px; }
@@ -234,52 +179,31 @@
   .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
 
   /* ── MAIN CARD ── */
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: background 0.3s, border-color 0.3s;
-  }
+  .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: background 0.3s, border-color 0.3s; }
 
-  /* ── LANDSCAPE GRID (single column by default, 2-col in landscape) ── */
+  /* ── LANDSCAPE GRID (block by default, 2-col in landscape) ── */
   .landscape-grid { display: block; }
 
-  /* ── CARD TOP BAR (label + theme toggle) ── */
-  .card-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px 0;
-  }
+  /* ── CARD TOP BAR ── */
+  .card-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 0; }
   .card-topbar-label { font-size: 9px; color: var(--very-muted); letter-spacing: 0.18em; text-transform: uppercase; }
 
-  /* ── THEME TOGGLE BUTTON (☀️ / 🌙) ── */
-  .theme-toggle {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    background: var(--toggle-bg);
-    border: 1px solid var(--toggle-border);
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.25s;
-    display: flex; align-items: center; justify-content: center;
-  }
+  /* ── THEME TOGGLE BUTTON ── */
+  .theme-toggle { width: 30px; height: 30px; border-radius: 50%; background: var(--toggle-bg); border: 1px solid var(--toggle-border); cursor: pointer; font-size: 14px; transition: all 0.25s; display: flex; align-items: center; justify-content: center; }
   .theme-toggle:hover { border-color: #f5a623; transform: scale(1.1) rotate(20deg); box-shadow: 0 0 10px rgba(245,166,35,0.3); }
 
-  /* ── SECTION PADDING (wraps symbol selector) ── */
+  /* ── SECTION PADDING ── */
   .section-pad { padding: 14px 20px 0; }
 
   /* ── INPUT LABELS ── */
   .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
-  .label.focused { color: #f5a623; } /* Gold when input is active */
+  .label.focused { color: #f5a623; }
 
   /* ── SYMBOL SELECTOR PILLS ── */
   .symbol-row { display: flex; gap: 6px; }
   .symbol-btn { flex:1; padding:10px 4px; border-radius:7px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.18s; letter-spacing:0.02em; }
   .symbol-btn:hover { border-color:rgba(245,166,35,0.3); color:#f5a623; }
-  .symbol-btn.active { background:#f5a623; border-color:#f5a623; color:#000; font-weight:500; } /* Active = gold filled */
+  .symbol-btn.active { background:#f5a623; border-color:#f5a623; color:#000; font-weight:500; }
 
   /* ── GOLD GLOW DIVIDER LINE ── */
   .glow-line { height:1px; background:linear-gradient(90deg,transparent,rgba(245,166,35,0.35),transparent); margin:14px 20px 0; }
@@ -289,14 +213,7 @@
   .input-group { display:flex; flex-direction:column; }
 
   /* ── NUMBER INPUT FIELDS ── */
-  input[type=number] {
-    width:100%; background:var(--input-bg); border:1px solid var(--input-border);
-    color:var(--text); padding:14px 16px; font-size:15px;
-    font-family:'DM Mono',monospace; border-radius:8px; outline:none;
-    transition:border-color 0.2s,box-shadow 0.2s,background 0.3s;
-    -moz-appearance:textfield;
-  }
-  /* Hide browser spin arrows on number inputs */
+  input[type=number] { width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); padding:14px 16px; font-size:15px; font-family:'DM Mono',monospace; border-radius:8px; outline:none; transition:border-color 0.2s,box-shadow 0.2s,background 0.3s; -moz-appearance:textfield; }
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   input[type=number]:focus { border-color:#f5a623; box-shadow:0 0 0 3px rgba(245,166,35,0.12); }
@@ -306,40 +223,40 @@
   .reset-btn { width:100%; padding:13px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:13px; cursor:pointer; transition:all 0.2s; letter-spacing:0.06em; text-transform:uppercase; }
   .reset-btn:hover { border-color:#e05252; color:#e05252; }
 
-  /* ── RESULTS PANEL (right side / bottom of card) ── */
+  /* ── RESULTS PANEL ── */
   .results { border-top:1px solid var(--card-border); background:var(--result-bg); transition:background 0.3s; }
 
-  /* ── RESULTS HEADER (title + live indicator) ── */
+  /* ── RESULTS HEADER ── */
   .results-header { padding:12px 18px; display:flex; align-items:center; justify-content:space-between; }
   .results-label { font-size:10px; color:var(--very-muted); letter-spacing:0.14em; text-transform:uppercase; }
 
-  /* ── LIVE INDICATOR DOT + TEXT ── */
+  /* ── LIVE INDICATOR ── */
   .live-indicator { font-size:9px; color:var(--very-muted); letter-spacing:0.1em; display:flex; align-items:center; gap:5px; }
   .live-dot { width:5px; height:5px; border-radius:50%; background:var(--input-border); transition:all 0.3s; }
-  .live-dot.active { background:#34d399; box-shadow:0 0 6px #34d399; } /* Glowing green when LIVE */
+  .live-dot.active { background:#34d399; box-shadow:0 0 6px #34d399; }
 
-  /* ── INDIVIDUAL RESULT ROW ── */
+  /* ── RESULT ROW ── */
   .result-row { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--row-border); transition:background 0.2s; }
   .result-row:last-child { border-bottom:none; }
   .result-row:hover { background:var(--row-hover); }
-  .result-key { font-size:12px; color:var(--muted); letter-spacing:0.06em; } /* Left label */
+  .result-key { font-size:12px; color:var(--muted); letter-spacing:0.06em; }
 
-  /* ── COPY ICON BUTTONS (⧉ on lot size & take profit) ── */
+  /* ── COPY ICON BUTTONS ── */
   .icon-btn { width:28px; height:28px; background:var(--input-bg); border:1px solid var(--input-border); border-radius:6px; font-size:13px; color:var(--muted); cursor:pointer; transition:all 0.2s; display:none; align-items:center; justify-content:center; flex-shrink:0; }
-  .icon-btn.visible { display:flex; animation:popIn 0.2s ease; } /* Appears after calculation */
+  .icon-btn.visible { display:flex; animation:popIn 0.2s ease; }
   .icon-btn:hover { border-color:#f5a623; color:#f5a623; background:rgba(245,166,35,0.08); }
-  .icon-btn.copied { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.08); } /* Green tick after copy */
+  .icon-btn.copied { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.08); }
   .result-right { display:flex; align-items:center; gap:10px; }
 
-  /* ── RISK / REWARD BAR (in-app, above share buttons) ── */
+  /* ── RISK / REWARD BAR (in-app) ── */
   .rr-bar-wrap { padding: 12px 18px; border-bottom: 1px solid var(--row-border); display: none; }
   .rr-bar-wrap.visible { display: block; animation: fadeIn 0.3s ease; }
   .rr-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .rr-bar-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
-  .rr-bar-ratio { font-size: 11px; color: #f5a623; letter-spacing: 0.08em; } /* "1 : 3" in gold */
+  .rr-bar-ratio { font-size: 11px; color: #f5a623; letter-spacing: 0.08em; }
   .rr-bar-track { height: 6px; background: var(--input-bg); border-radius: 6px; overflow: hidden; display: flex; }
-  .rr-bar-risk   { height: 100%; background: #f87171; border-radius: 6px 0 0 6px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); } /* Red segment = 25% */
-  .rr-bar-reward { height: 100%; background: #34d399; border-radius: 0 6px 6px 0; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); } /* Green segment = 75% */
+  .rr-bar-risk   { height: 100%; background: #f87171; border-radius: 6px 0 0 6px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .rr-bar-reward { height: 100%; background: #34d399; border-radius: 0 6px 6px 0; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
   .rr-bar-labels { display: flex; justify-content: space-between; margin-top: 5px; }
   .rr-bar-risk-lbl   { font-size: 9px; color: #f87171; letter-spacing: 0.06em; }
   .rr-bar-reward-lbl { font-size: 9px; color: #34d399; letter-spacing: 0.06em; }
@@ -347,42 +264,40 @@
   /* ── SHARE / SAVE BUTTONS ROW ── */
   .share-row { padding:14px 18px; border-top:1px solid var(--row-border); display:none; gap:8px; }
   .share-row.visible { display:flex; animation:fadeIn 0.3s ease; }
-
-  /* ── INDIVIDUAL SHARE / SAVE BUTTON ── */
   .share-btn { flex:1; padding:12px 8px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
   .share-btn:hover { border-color:#f5a623; color:#f5a623; background:rgba(245,166,35,0.06); }
   .share-btn:hover .share-sub { color:#f5a623; opacity:0.7; }
-  .share-btn.shared { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.06); } /* Green after action */
+  .share-btn.shared { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.06); }
   .share-btn.shared .share-sub { color:#34d399; opacity:0.7; }
-  .share-main { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; } /* Top line e.g. "SHARE" */
-  .share-sub  { font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--very-muted); transition:color 0.2s; } /* Bottom line e.g. "SETUP" */
+  .share-main { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; }
+  .share-sub  { font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--very-muted); transition:color 0.2s; }
 
-  /* ── TOAST NOTIFICATION (bottom pop-up message) ── */
+  /* ── TOAST NOTIFICATION ── */
   .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:#34d399; color:#000; padding:10px 20px; border-radius:8px; font-size:12px; font-family:'DM Mono',monospace; letter-spacing:0.06em; opacity:0; transition:all 0.3s; pointer-events:none; z-index:9998; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ── DIRECTION BADGES (BUY / SELL / —) ── */
+  /* ── DIRECTION BADGES ── */
   .badge { padding:4px 14px; border-radius:4px; font-size:13px; font-weight:500; letter-spacing:0.08em; }
   .badge-buy  { background:rgba(52,211,153,0.12); color:#34d399; border:1px solid rgba(52,211,153,0.25); }
   .badge-sell { background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25); }
   .badge-none { background:var(--badge-none-bg); color:var(--muted); border:1px solid var(--input-border); }
 
-  /* ── LOT SIZE VALUE (large gold number) ── */
+  /* ── LOT SIZE VALUE ── */
   .lot-value { font-size:22px; font-weight:500; color:var(--input-border); transition:color 0.3s; }
-  .lot-value.active { color:#f5a623; } /* Gold when calculated */
+  .lot-value.active { color:#f5a623; }
 
-  /* ── NORMAL VALUE (entry, sl, tp, actual risk) ── */
+  /* ── NORMAL VALUE (entry, sl, tp, risk) ── */
   .normal-value { font-size:15px; color:var(--input-border); transition:color 0.3s; }
   .normal-value.active { color:var(--text); }
 
-  /* ── HIDDEN ROW (actual risk — only shows after calculation) ── */
+  /* ── HIDDEN ROW (actual risk) ── */
   .hidden-row { display:none; }
   .hidden-row.visible { display:flex; animation:fadeIn 0.3s ease; }
 
-  /* ── CARD FOOTER (version / credit line) ── */
+  /* ── CARD FOOTER ── */
   .card-footer { padding:12px 18px; border-top:1px solid var(--row-border); text-align:center; font-size:10px; color:var(--footer-text); letter-spacing:0.1em; }
 
-  /* ── PWA INSTALL BANNER (bottom of screen) ── */
+  /* ── PWA INSTALL BANNER ── */
   .install-banner { display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card-bg); border:1px solid #f5a623; border-radius:12px; padding:12px 16px; width:calc(100% - 40px); max-width:480px; box-shadow:0 8px 32px rgba(0,0,0,0.4); z-index:1000; animation:fadeIn 0.3s ease; align-items:center; justify-content:space-between; gap:12px; }
   .install-banner.show { display:flex; }
   .install-banner-left { display:flex; align-items:center; gap:10px; }
@@ -397,7 +312,7 @@
   .install-btn-dismiss { background:transparent; border:1px solid var(--input-border); color:var(--muted); }
   .install-btn-dismiss:hover { border-color:#e05252; color:#e05252; }
 
-  /* ── HIDDEN CANVAS (used to generate the save image) ── */
+  /* ── HIDDEN CANVAS (used only for image generation) ── */
   #share-canvas { display:none; }
 
 </style>
@@ -409,9 +324,7 @@
   <img src="logo.png" class="splash-logo" alt="Biverway" onerror="this.style.display='none'" />
   <div class="splash-brand">BIVER<span>WAY</span></div>
   <div class="splash-sub">Lot Size Calculator</div>
-  <div class="splash-bar-wrap">
-    <div class="splash-bar-fill"></div>
-  </div>
+  <div class="splash-bar-wrap"><div class="splash-bar-fill"></div></div>
 </div>
 
 <!-- ── MAIN APP WRAPPER ── -->
@@ -435,7 +348,7 @@
       <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">☀️</button>
     </div>
 
-    <!-- ── LANDSCAPE GRID WRAPPER (1 col mobile, 2 col landscape) ── -->
+    <!-- ── LANDSCAPE GRID WRAPPER ── -->
     <div class="landscape-grid">
 
       <!-- ── LEFT COLUMN: INPUTS ── -->
@@ -456,32 +369,27 @@
 
         <!-- ── INPUT FIELDS ── -->
         <div class="inputs">
-
           <!-- Entry Price -->
           <div class="input-group">
             <div class="label" id="lbl-entry">Entry Price</div>
             <input type="number" id="entry" step="any" placeholder="0.00000" inputmode="decimal"
               onfocus="focusLabel('lbl-entry')" onblur="blurLabel('lbl-entry')" oninput="recalculate()" />
           </div>
-
           <!-- Stop Loss -->
           <div class="input-group">
             <div class="label" id="lbl-sl">Stop Loss</div>
             <input type="number" id="sl" step="any" placeholder="0.00000" inputmode="decimal"
               onfocus="focusLabel('lbl-sl')" onblur="blurLabel('lbl-sl')" oninput="recalculate()" />
           </div>
-
           <!-- Risk Amount -->
           <div class="input-group">
             <div class="label" id="lbl-risk">Risk Amount ($)</div>
             <input type="number" id="risk" step="any" placeholder="0.00" inputmode="decimal"
               onfocus="focusLabel('lbl-risk')" onblur="blurLabel('lbl-risk')" oninput="recalculate()" />
           </div>
-
           <!-- Reset Button -->
           <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
-
-        </div><!-- end .inputs -->
+        </div>
       </div><!-- end .left-col -->
 
       <!-- ── RIGHT COLUMN: RESULTS ── -->
@@ -527,7 +435,7 @@
             </div>
           </div>
 
-         <!-- ── RISK / REWARD BAR ── -->
+          <!-- ── RISK / REWARD BAR ── -->
           <div class="rr-bar-wrap" id="rr-bar-wrap">
             <div class="rr-bar-header">
               <span class="rr-bar-label">Risk / Reward</span>
@@ -545,12 +453,12 @@
 
           <!-- ── SHARE / SAVE BUTTONS ── -->
           <div class="share-row" id="share-row">
-            <!-- Share Setup: opens native share sheet with trade details -->
+            <!-- Share Setup: sends trade details via native share sheet -->
             <button class="share-btn" id="share-btn" onclick="shareSetup()">
               <span class="share-main" id="share-btn-main">SHARE</span>
               <span class="share-sub">SETUP</span>
             </button>
-            <!-- Save Image: generates and downloads trade card PNG -->
+            <!-- Save Image: generates and downloads PNG trade card -->
             <button class="share-btn" id="share-img-btn" onclick="saveAsImage()">
               <span class="share-main" id="share-img-main">SAVE</span>
               <span class="share-sub">IMAGE</span>
@@ -561,13 +469,13 @@
       </div><!-- end .right-col -->
     </div><!-- end .landscape-grid -->
 
-    <!-- ── CARD FOOTER: VERSION / CREDIT ── -->
+    <!-- ── CARD FOOTER ── -->
     <div class="card-footer">DESIGNED ACCORDING TO BIVERWAY TRADING SYSTEM · V2.1+</div>
 
   </div><!-- end .card -->
 </div><!-- end .wrapper -->
 
-<!-- ── HIDDEN CANVAS (for image generation) ── -->
+<!-- ── HIDDEN CANVAS (image generation) ── -->
 <canvas id="share-canvas"></canvas>
 
 <!-- ── PWA INSTALL BANNER ── -->
@@ -591,18 +499,16 @@
 <script>
 
   /* ── STATE VARIABLES ── */
-  let currentSymbol = 'EURUSD'; // Active trading symbol
-  let tradeData     = null;     // Holds last calculated trade object
-  let deferredPrompt = null;    // Holds PWA install prompt event
+  let currentSymbol  = 'EURUSD'; // Active symbol
+  let tradeData      = null;     // Last calculated trade
+  let deferredPrompt = null;     // PWA install prompt
 
-  /* ── SPLASH: Auto-hide after 2 seconds ── */
+  /* ── SPLASH: Hide after 2 seconds ── */
   window.addEventListener('load', () => {
-    setTimeout(() => {
-      document.getElementById('splash').classList.add('hide');
-    }, 2000);
+    setTimeout(() => { document.getElementById('splash').classList.add('hide'); }, 2000);
   });
 
-  /* ── PWA: Capture install prompt ── */
+  /* ── PWA: Capture install prompt event ── */
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
@@ -624,12 +530,10 @@
     document.getElementById('install-banner').classList.remove('show');
   }
 
-  /* ── PWA: Show toast on successful install ── */
-  window.addEventListener('appinstalled', () => {
-    showToast('App installed successfully!');
-  });
+  /* ── PWA: Toast on successful install ── */
+  window.addEventListener('appinstalled', () => { showToast('App installed successfully!'); });
 
-  /* ── PWA: Register service worker for offline support ── */
+  /* ── PWA: Register service worker for offline ── */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/biverway-lot-size-calculator/sw.js')
@@ -637,7 +541,7 @@
     });
   }
 
-  /* ── THEME: Toggle dark / light mode ── */
+  /* ── THEME: Toggle dark / light ── */
   function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.getAttribute('data-theme') === 'dark';
@@ -658,7 +562,7 @@
     });
   }
 
-  /* ── SHARE SETUP: Open native share sheet with trade entry details ── */
+  /* ── SHARE SETUP: Native share sheet with trade entry details ── */
   function shareSetup() {
     if (!tradeData) return;
     const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
@@ -672,19 +576,16 @@ Stop Loss: ${tradeData.sl}`;
     const main = document.getElementById('share-btn-main');
 
     if (navigator.share) {
-      // Native share sheet (Android / iOS)
+      /* Native share sheet (Android / iOS) */
       navigator.share({ text })
         .then(() => {
-          main.textContent = '✓ SHARED';
-          btn.classList.add('shared');
+          main.textContent = '✓ SHARED'; btn.classList.add('shared');
           setTimeout(() => { main.textContent = 'SHARE'; btn.classList.remove('shared'); }, 2500);
-        })
-        .catch(() => {});
+        }).catch(() => {});
     } else {
-      // Fallback: copy to clipboard
+      /* Fallback: copy to clipboard */
       navigator.clipboard.writeText(text).then(() => {
-        main.textContent = '✓ COPIED';
-        btn.classList.add('shared');
+        main.textContent = '✓ COPIED'; btn.classList.add('shared');
         showToast('Trade setup copied!');
         setTimeout(() => { main.textContent = 'SHARE'; btn.classList.remove('shared'); }, 2500);
       });
@@ -698,22 +599,22 @@ Stop Loss: ${tradeData.sl}`;
     const canvas = document.getElementById('share-canvas');
 
     /* ── Canvas dimensions ── */
-    const W  = 900;  // Width
-    const H  = 560;  // Height
-    const lp = 52;   // Left padding
-    const rp = 52;   // Right padding
+    const W  = 900;   // Width
+    const H  = 580;   // Height
+    const lp = 52;    // Left padding — all labels start here
+    const rp = 52;    // Right padding — all values/badge/ratio end here (one optical line)
 
     /* ── Color palette ── */
-    const gold      = '#f5a623';
-    const green     = '#22c55e';
-    const red       = '#ef4444';
-    const bg        = '#0a0a0a';   // Outer background
-    const cardBg    = '#111111';   // Card fill
-    const textW     = '#ffffff';   // White text (symbol, values)
-    const labelCol  = '#9ca3af';   // Grey labels
-    const rowDiv    = '#1f1f1f';   // Row divider lines
+    const gold     = '#f5a623';
+    const green    = '#22c55e';
+    const red      = '#ef4444';
+    const bg       = '#0a0a0a';   // Outer background
+    const cardBg   = '#111111';   // Card fill
+    const textW    = '#ffffff';   // White — symbol + values
+    const labelCol = '#b1b6bf';   // Labels (+15% brightness: was #9ca3af)
+    const rowDiv   = '#1f1f1f';   // Row divider lines
 
-    /* ── Direction colors ── */
+    /* ── Direction-specific colors ── */
     const dir        = tradeData.direction;
     const dirColor   = dir === 'BUY' ? green : red;
     const dirBgColor = dir === 'BUY' ? 'rgba(34,197,94,0.18)'  : 'rgba(239,68,68,0.18)';
@@ -731,7 +632,7 @@ Stop Loss: ${tradeData.sl}`;
     roundRect(ctx, 20, 20, W - 40, H - 40, 16);
     ctx.fillStyle = cardBg; ctx.fill();
 
-    /* ── Draw gold glowing border around card ── */
+    /* ── Gold glowing border around card ── */
     ctx.save();
     ctx.shadowColor = gold;
     ctx.shadowBlur  = 24;
@@ -741,20 +642,19 @@ Stop Loss: ${tradeData.sl}`;
     ctx.stroke();
     ctx.restore();
 
-    /* ── Draw symbol (e.g. EURUSD) large top-left ── */
-    const symY = 88;
+    /* ── Symbol: large top-left ── */
+    const symY = 90;
     ctx.font      = 'bold 52px sans-serif';
     ctx.fillStyle = textW;
     ctx.textAlign = 'left';
     ctx.fillText(tradeData.symbol, lp, symY);
 
-    /* ── Draw direction badge (BUY / SELL) top-right ── */
+    /* ── Direction badge — right edge at W - rp (optical column) ── */
     const bW = 140, bH = 52;
-    const bx = W - rp - bW;
+    const bx = W - rp - bW;   // Badge right edge = W - rp
     const by = symY - bH + 6;
     ctx.save();
-    ctx.shadowColor = dirColor;
-    ctx.shadowBlur  = 28;
+    ctx.shadowColor = dirColor; ctx.shadowBlur = 28;
     roundRect(ctx, bx, by, bW, bH, 10);
     ctx.fillStyle   = dirBgColor; ctx.fill();
     ctx.strokeStyle = dirBorder;  ctx.lineWidth = 2.5; ctx.stroke();
@@ -764,104 +664,115 @@ Stop Loss: ${tradeData.sl}`;
     ctx.textAlign = 'center';
     ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 9);
 
-    /* ── Divider line below symbol row ── */
+    /* ── Divider below symbol row ── */
     const d1y = symY + 22;
     ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(lp, d1y); ctx.lineTo(W - rp, d1y); ctx.stroke();
 
-    /* ── Data rows: label left, value right ── */
+    /* ── Data rows ── */
     const rows = [
-      ['ENTRY PRICE',   tradeData.entry, textW, false, false],
-      ['STOP LOSS',     tradeData.sl,    textW, false, false],
-      ['LOT SIZE',      tradeData.lot,   gold,  true,  false], // Big gold
-      ['RISK / REWARD', '1 : 3',         gold,  false, true ], // Gold, RR label
+      // [ label,          value,           color,  bigLot, isRR  ]
+      ['ENTRY PRICE',   tradeData.entry,  textW,  false,  false],
+      ['STOP LOSS',     tradeData.sl,     textW,  false,  false],
+      ['LOT SIZE',      tradeData.lot,    gold,   true,   false],  // Large gold
+      ['RISK / REWARD', '1 : 3',          gold,   false,  true ],  // Gold RR ratio
     ];
 
     const rowStartY = d1y + 10;
-    const rowH      = 72; // Height of each row
+    const rowH      = 88;   // Row height — generous spacing (~88px per row)
 
     rows.forEach(([label, value, valColor, isBig, isRR], i) => {
       const ry  = rowStartY + i * rowH;
-      const mid = ry + rowH / 2;
+      const mid = ry + rowH / 2;   // Vertical center of each row
 
-      /* Label */
-      ctx.font      = '500 15px sans-serif';
-      ctx.fillStyle = labelCol;
+      /* Label: left-aligned to lp */
+      ctx.font      = '500 16px sans-serif';
+      ctx.fillStyle = labelCol;   // #b1b6bf — 15% brighter than original
       ctx.textAlign = 'left';
-      ctx.fillText(label, lp, mid + 5);
+      ctx.fillText(label, lp, mid + 6);
 
-      /* Value — large for lot size, gold glow for RR */
+      /* Value: right-aligned to W - rp (optical column) */
       if (isBig) {
+        /* LOT SIZE — large gold + glow */
         ctx.save();
         ctx.shadowColor = gold; ctx.shadowBlur = 18;
-        ctx.font = 'bold 38px sans-serif';
-        ctx.fillStyle = valColor; ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 13);
+        ctx.font = 'bold 40px sans-serif'; ctx.fillStyle = valColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 14);   // W - rp = optical right line
         ctx.restore();
       } else if (isRR) {
+        /* RISK / REWARD — gold ratio + glow */
         ctx.save();
         ctx.shadowColor = gold; ctx.shadowBlur = 10;
-        ctx.font = 'bold 22px sans-serif';
-        ctx.fillStyle = valColor; ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 7);
+        ctx.font = 'bold 22px sans-serif'; ctx.fillStyle = valColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 8);    // W - rp = optical right line
         ctx.restore();
       } else {
-        ctx.font = 'bold 22px sans-serif';
-        ctx.fillStyle = valColor; ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 7);
+        /* ENTRY PRICE / STOP LOSS — plain white */
+        ctx.font = 'bold 22px sans-serif'; ctx.fillStyle = valColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 8);    // W - rp = optical right line
       }
 
       /* Row divider (skip after last row) */
       if (i < rows.length - 1) {
         ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH); ctx.stroke();
       }
     });
 
-    /* ── RR Bar: strict 25% red / 75% green split ── */
-    const barY   = rowStartY + rows.length * rowH + 4;
-    const barW   = W - lp - rp;
+    /* ── RR Bar: strict 25% red / 75% green with soft blended join ── */
+    const barY   = rowStartY + rows.length * rowH + 6;
+    const barW   = W - lp - rp;              // Full bar width
     const barH   = 22;
-    const riskPx = Math.round(barW * 0.25); // Exactly 25%
-    const gap    = 4; // Gap between red and green segments
+    const riskPx = Math.round(barW * 0.25);  // Exactly 25% for risk
+    const blendW = 18;                       // Width of soft blend zone at join
 
     /* Track background */
     roundRect(ctx, lp, barY, barW, barH, 6);
     ctx.fillStyle = '#1a1a1a'; ctx.fill();
 
-    /* Red risk segment (25%) */
+    /* Red risk segment (0% → 25%) */
     ctx.save();
     ctx.shadowColor = red; ctx.shadowBlur = 12;
     roundRect(ctx, lp, barY, riskPx, barH, 6);
     ctx.fillStyle = red; ctx.fill();
     ctx.restore();
 
-    /* Green reward segment (75%) */
+    /* Green reward segment (25% → 100%) — flush start, no hard gap */
     ctx.save();
     ctx.shadowColor = green; ctx.shadowBlur = 16;
-    roundRect(ctx, lp + riskPx + gap, barY, barW - riskPx - gap, barH, 6);
+    roundRect(ctx, lp + riskPx, barY, barW - riskPx, barH, 6);
     ctx.fillStyle = green; ctx.fill();
     ctx.restore();
 
-    /* ── Risk / Reward dollar amounts below bar ── */
+    /* Soft gradient blend at join — 18px wide, red → dark mid → green */
+    const blendGrad = ctx.createLinearGradient(lp + riskPx - blendW / 2, 0, lp + riskPx + blendW / 2, 0);
+    blendGrad.addColorStop(0,   red);
+    blendGrad.addColorStop(0.4, '#c0392b');   // Warm dark mid-tone
+    blendGrad.addColorStop(0.6, '#1a6b3a');   // Dark green mid-tone
+    blendGrad.addColorStop(1,   green);
+    roundRect(ctx, lp + riskPx - blendW / 2, barY, blendW, barH, 0);
+    ctx.fillStyle = blendGrad; ctx.fill();
+
+    /* ── Risk / Reward amounts below bar — optically aligned ── */
     const amtY = barY + barH + 22;
     ctx.font      = 'bold 18px sans-serif';
     ctx.fillStyle = red;
     ctx.textAlign = 'left';
-    ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);
+    ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);      // lp = left optical line
     ctx.fillStyle = green;
     ctx.textAlign = 'right';
-    ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);
+    ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);    // W - rp = right optical line
 
-    /* ── Download the canvas as PNG ── */
+    /* ── Download as PNG ── */
     const link = document.createElement('a');
     link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 
-    /* ── Button feedback after save ── */
+    /* ── Button feedback ── */
     const btn  = document.getElementById('share-img-btn');
     const main = document.getElementById('share-img-main');
     main.textContent = '✓ SAVED';
@@ -885,7 +796,7 @@ Stop Loss: ${tradeData.sl}`;
     ctx.closePath();
   }
 
-  /* ── TOAST: Show bottom notification message ── */
+  /* ── TOAST: Show bottom notification ── */
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = '✓ ' + msg;
@@ -899,13 +810,13 @@ Stop Loss: ${tradeData.sl}`;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     resetAll();
-    // Update placeholder format: XAUUSD uses 3 decimals, others use 5
+    /* XAUUSD uses 3 decimal places, others use 5 */
     const fmt = sym === 'XAUUSD' ? '0.000' : '0.00000';
     document.getElementById('entry').placeholder = fmt;
     document.getElementById('sl').placeholder = fmt;
   }
 
-  /* ── LABEL FOCUS: Gold label when input is focused ── */
+  /* ── LABEL FOCUS: Gold label when input is active ── */
   function focusLabel(id) { document.getElementById(id).classList.add('focused'); }
   function blurLabel(id)  { document.getElementById(id).classList.remove('focused'); }
 
@@ -917,14 +828,14 @@ Stop Loss: ${tradeData.sl}`;
     recalculate();
   }
 
-  /* ── CALCULATE: Main calculation logic (runs on every input change) ── */
+  /* ── CALCULATE: Runs on every input change ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
     const r = parseFloat(document.getElementById('risk').value);
-    const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5; // Decimal places for prices
+    const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5; // Price decimal places
 
-    // All 3 inputs must be valid and non-zero and entry ≠ SL
+    /* All 3 inputs must be valid, non-zero, and entry ≠ SL */
     const ready = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
 
     /* DOM references */
@@ -943,12 +854,12 @@ Stop Loss: ${tradeData.sl}`;
     /* ── Reset UI if inputs incomplete ── */
     if (!ready) {
       tradeData = null;
-      dirBadge.className = 'badge badge-none';
+      dirBadge.className   = 'badge badge-none';
       dirBadge.textContent = '—';
-      lotVal.className = 'lot-value';
-      lotVal.textContent = '0.00';
-      tpVal.className = 'normal-value';
-      tpVal.textContent = currentSymbol === 'XAUUSD' ? '0.000' : '0.00000';
+      lotVal.className     = 'lot-value';
+      lotVal.textContent   = '0.00';
+      tpVal.className      = 'normal-value';
+      tpVal.textContent    = currentSymbol === 'XAUUSD' ? '0.000' : '0.00000';
       actualRow.classList.remove('visible');
       liveDot.classList.remove('active');
       liveText.textContent = 'WAITING';
@@ -965,15 +876,15 @@ Stop Loss: ${tradeData.sl}`;
 
     /* ── Lot size formula per symbol ── */
     if (currentSymbol === 'XAUUSD') {
-      // Gold: point = price difference × 100
+      /* Gold: point = price diff × 100 */
       point  = Math.abs(e - s) * 100;
       lotRaw = r / point;
     } else if (currentSymbol === 'USDCHF') {
-      // USDCHF: adjusted for quote currency
+      /* USDCHF: adjusted for quote currency */
       point  = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
       lotRaw = (r * e) / point;
     } else {
-      // EURUSD / GBPUSD: standard formula
+      /* EURUSD / GBPUSD: standard formula */
       point  = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
       lotRaw = r / point;
     }
@@ -984,10 +895,10 @@ Stop Loss: ${tradeData.sl}`;
     /* ── Actual risk in dollars ── */
     actualRiskVal = currentSymbol === 'USDCHF' ? (lot * point) / e : lot * point;
 
-    /* ── Reward = 3× risk ── */
+    /* ── Reward = 3× actual risk ── */
     const reward = actualRiskVal * 3;
 
-    /* ── Take Profit price (1:3 ratio) ── */
+    /* ── Take Profit price at 1:3 ── */
     if (currentSymbol === 'XAUUSD') {
       tpPrice = direction === 'BUY'
         ? e + Math.abs(e - s) * 3
@@ -999,24 +910,23 @@ Stop Loss: ${tradeData.sl}`;
 
     /* ── Store trade data for share/save functions ── */
     tradeData = {
-      symbol:     currentSymbol,
-      direction,
-      entry:      e.toFixed(decFmt),
-      sl:         s.toFixed(decFmt),
-      tp:         tpPrice.toFixed(decFmt),
-      lot:        lot.toFixed(2),
+      symbol: currentSymbol, direction,
+      entry:  e.toFixed(decFmt),
+      sl:     s.toFixed(decFmt),
+      tp:     tpPrice.toFixed(decFmt),
+      lot:    lot.toFixed(2),
       actualRisk: actualRiskVal.toFixed(2),
       reward:     reward.toFixed(2)
     };
 
-    /* ── Update UI with results ── */
-    dirBadge.className   = `badge badge-${direction.toLowerCase()}`;
-    dirBadge.textContent = direction;
-    lotVal.className     = 'lot-value active';
-    lotVal.textContent   = lot.toFixed(2);
-    tpVal.className      = 'normal-value active';
-    tpVal.textContent    = tpPrice.toFixed(decFmt);
-    actualVal.className  = 'normal-value active';
+    /* ── Update result UI ── */
+    dirBadge.className    = `badge badge-${direction.toLowerCase()}`;
+    dirBadge.textContent  = direction;
+    lotVal.className      = 'lot-value active';
+    lotVal.textContent    = lot.toFixed(2);
+    tpVal.className       = 'normal-value active';
+    tpVal.textContent     = tpPrice.toFixed(decFmt);
+    actualVal.className   = 'normal-value active';
     actualVal.textContent = '$' + actualRiskVal.toFixed(2);
     actualRow.classList.add('visible');
     liveDot.classList.add('active');
@@ -1025,14 +935,14 @@ Stop Loss: ${tradeData.sl}`;
     copyTpBtn.classList.add('visible');
     shareRow.classList.add('visible');
 
-    /* ── Update RR bar ── */
+    /* ── Update RR bar — always 25% / 75% for 1:3 ── */
     rrWrap.classList.add('visible');
-    document.getElementById('rr-risk-bar').style.width   = '25%'; // Always 25% for 1:3
-    document.getElementById('rr-reward-bar').style.width = '75%'; // Always 75% for 1:3
+    document.getElementById('rr-risk-bar').style.width   = '25%';
+    document.getElementById('rr-reward-bar').style.width = '75%';
     document.getElementById('rr-risk-lbl').textContent   = 'RISK $'   + actualRiskVal.toFixed(2);
     document.getElementById('rr-reward-lbl').textContent = 'REWARD $' + reward.toFixed(2);
   }
 
 </script>
 </body>
-</html> 
+</html>                                                  
