@@ -40,7 +40,7 @@
 
   .wrapper { width: 100%; max-width: 520px; animation: fadeIn 0.5s ease; }
 
-  /* ── SPLASH ── */
+  /* ── SPLASH SCREEN ── */
   #splash {
     position: fixed; inset: 0; background: #0a0b0f;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -210,7 +210,7 @@
   .rr-bar-risk-lbl   { font-size: 9px; color: #f87171; letter-spacing: 0.06em; }
   .rr-bar-reward-lbl { font-size: 9px; color: #34d399; letter-spacing: 0.06em; }
 
- /* ── SHARE / SAVE BUTTONS ── */
+  /* ── SHARE / SAVE BUTTONS ── */
   .share-row { padding:14px 18px; border-top:1px solid var(--row-border); display:none; gap:8px; }
   .share-row.visible { display:flex; animation:fadeIn 0.3s ease; }
   .share-btn { flex:1; padding:12px 8px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
@@ -259,7 +259,7 @@
 </head>
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN -->
 <div id="splash">
   <img src="logo.png" class="splash-logo" alt="Biverway" onerror="this.style.display='none'" />
   <div class="splash-brand">BIVER<span>WAY</span></div>
@@ -501,131 +501,201 @@ Stop Loss: ${tradeData.sl}`;
 
     const canvas = document.getElementById('share-canvas');
 
-    const W       = 420;
-    const lp      = 22;
-    const gap     = 8;
-    const cellH   = 52;
-    const colW    = (W - lp * 2 - gap) / 2;
-    const accentH = 3;
-    const gridH   = cellH * 2 + gap;
-    const edgePad = 14;
-    const H       = edgePad + accentH + 38 + 46 + gridH + gap + 52 + edgePad;
+    const W        = 480;
+    const lp       = 28;
+    const gold     = '#f5a623';
+    const green    = '#34d399';
+    const red      = '#f87171';
+    const bg       = '#070810';
+    const cardBg   = '#0d0f1a';
+    const rowBg    = '#090b14';
+    const border   = '#1a1d2e';
+    const rowDiv   = '#111422';
+    const textCol  = '#e8eaf2';
+    const muted    = '#4a4e6a';
+    const dimCol   = '#252838';
+
+    const dir       = tradeData.direction;
+    const dirColor  = dir === 'BUY' ? green : red;
+    const dirGlow   = dir === 'BUY' ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)';
+    const dirBorder = dir === 'BUY' ? 'rgba(52,211,153,0.45)' : 'rgba(248,113,113,0.45)';
+
+    const accentH  = 3;
+    const headerH  = 52;
+    const symRowH  = 64;
+    const rowH     = 52;
+    const rrGap    = 14;
+    const rrLabelH = 30;
+    const barH     = 12;
+    const rrAmtH   = 32;
+    const padV     = 18;
+
+    const H = padV + accentH + headerH + symRowH + (rowH * 3) + rrGap + rrLabelH + barH + rrAmtH + padV;
 
     canvas.width  = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    const isDark  = document.documentElement.getAttribute('data-theme') === 'dark';
-    const bg      = isDark ? '#0a0b0f' : '#f0f2f7';
-    const cardBg  = isDark ? '#0d0f17' : '#ffffff';
-    const cellBg  = isDark ? '#13151c' : '#f7f8fc';
-    const border  = isDark ? '#1e2130' : '#e0e4ef';
-    const textCol = isDark ? '#e8eaf2' : '#111827';
-    const mutedCol= isDark ? '#555978' : '#9ca3af';
-    const dimCol  = isDark ? '#2a2c3a' : '#c0c4d0';
-    const gold    = '#f5a623';
-    const green   = '#34d399';
-    const red     = '#f87171';
-
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    roundRect(ctx, 10, 10, W - 20, H - 20, 12);
+    roundRect(ctx, 10, 10, W - 20, H - 20, 14);
     ctx.fillStyle = cardBg; ctx.fill();
     ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
 
+    // Gold accent bar with glow
+    const goldGrad = ctx.createLinearGradient(10, 0, W - 10, 0);
+    goldGrad.addColorStop(0,   'transparent');
+    goldGrad.addColorStop(0.2, gold);
+    goldGrad.addColorStop(0.8, gold);
+    goldGrad.addColorStop(1,   'transparent');
+    ctx.save();
+    ctx.shadowColor = gold;
+    ctx.shadowBlur  = 20;
     roundRect(ctx, 10, 10, W - 20, accentH, 2);
-    ctx.fillStyle = gold; ctx.fill();
+    ctx.fillStyle = goldGrad; ctx.fill();
+    ctx.restore();
 
-    let y = edgePad + accentH + 4;
+    let y = padV + accentH + 4;
 
     // Header
     ctx.font = '500 11px monospace';
     ctx.fillStyle = dimCol;
     ctx.textAlign = 'center';
-    ctx.fillText('BIVERWAY TRADING SYSTEM', W / 2, y + 13);
-    y += 20;
-    ctx.strokeStyle = border; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, y); ctx.lineTo(W - lp, y); ctx.stroke();
-    y += gap;
+    ctx.fillText('BIVERWAY TRADE SETUP', W / 2, y + 16);
 
-    // Symbol — Direction
-    const dir      = tradeData.direction;
-    const dirColor = dir === 'BUY' ? green : red;
-    ctx.font = 'bold 22px monospace';
+    // Center-glow divider
+    const divGrad = ctx.createLinearGradient(lp, 0, W - lp, 0);
+    divGrad.addColorStop(0,    'transparent');
+    divGrad.addColorStop(0.35, '#1e2235');
+    divGrad.addColorStop(0.5,  'rgba(245,166,35,0.2)');
+    divGrad.addColorStop(0.65, '#1e2235');
+    divGrad.addColorStop(1,    'transparent');
+    ctx.strokeStyle = divGrad; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(lp, y + 30); ctx.lineTo(W - lp, y + 30); ctx.stroke();
+
+    y += headerH;
+
+    // Symbol
+    ctx.font = 'bold 20px monospace';
+    ctx.fillStyle = textCol;
+    ctx.textAlign = 'left';
+    ctx.fillText(tradeData.symbol, lp, y + symRowH / 2 + 7);
+
+    // Direction badge with glow
+    const badgeW = 88, badgeH = 34;
+    const bx = W - lp - badgeW;
+    const by = y + (symRowH - badgeH) / 2;
+    ctx.save();
+    ctx.shadowColor = dirColor;
+    ctx.shadowBlur  = 18;
+    roundRect(ctx, bx, by, badgeW, badgeH, 7);
+    ctx.fillStyle = dirGlow; ctx.fill();
+    ctx.restore();
+    roundRect(ctx, bx, by, badgeW, badgeH, 7);
+    ctx.fillStyle = dirGlow; ctx.fill();
+    ctx.strokeStyle = dirBorder; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.font = 'bold 14px monospace';
     ctx.fillStyle = dirColor;
     ctx.textAlign = 'center';
-    ctx.fillText(`${tradeData.symbol}  —  ${dir}`, W / 2, y + 24);
-    y += 32;
-    ctx.strokeStyle = border; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, y); ctx.lineTo(W - lp, y); ctx.stroke();
-    y += gap;
+    ctx.fillText(dir, bx + badgeW / 2, by + badgeH / 2 + 5);
 
-    // 4 cells
-    const fields = [
-      ['ENTRY PRICE', tradeData.entry, false],
-      ['STOP LOSS',   tradeData.sl,    false],
-      ['LOT SIZE',    tradeData.lot,   true ],
-      ['TAKE PROFIT', tradeData.tp,    false],
+    y += symRowH;
+
+    ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+
+    // Data rows
+    const dataRows = [
+      ['ENTRY PRICE', tradeData.entry, textCol, false],
+      ['STOP LOSS',   tradeData.sl,    textCol, false],
+      ['LOT SIZE',    tradeData.lot,   gold,    true ],
     ];
 
-    fields.forEach(([label, value, isGold], i) => {
-      const col = i % 2;
-      const row = Math.floor(i / 2);
-      const cx  = lp + col * (colW + gap);
-      const cy  = y + row * (cellH + gap);
-
-      roundRect(ctx, cx, cy, colW, cellH, 6);
-      ctx.fillStyle = cellBg; ctx.fill();
-      ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
-
-      ctx.font = '10px monospace';
-      ctx.fillStyle = mutedCol;
-      ctx.textAlign = 'left';
-      ctx.fillText(label, cx + 10, cy + 16);
-
-      if (isGold) {
-        ctx.font = 'bold 20px monospace';
-        ctx.fillStyle = gold;
-      } else {
-        ctx.font = 'bold 15px monospace';
-        ctx.fillStyle = textCol;
+    dataRows.forEach(([label, value, valueColor, isBig], i) => {
+      const ry = y + i * rowH;
+      if (i % 2 === 1) {
+        ctx.fillStyle = 'rgba(255,255,255,0.013)';
+        ctx.fillRect(0, ry, W, rowH);
       }
-      ctx.fillText(value, cx + 10, cy + cellH - 10);
+      ctx.font = '11px monospace';
+      ctx.fillStyle = muted;
+      ctx.textAlign = 'left';
+      ctx.fillText(label, lp, ry + rowH / 2 + 4);
+      if (isBig) {
+        ctx.save();
+        ctx.shadowColor = gold;
+        ctx.shadowBlur  = 14;
+        ctx.font = 'bold 26px monospace';
+        ctx.fillStyle = valueColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - lp, ry + rowH / 2 + 9);
+        ctx.restore();
+      } else {
+        ctx.font = 'bold 16px monospace';
+        ctx.fillStyle = valueColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - lp, ry + rowH / 2 + 6);
+      }
+      ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, ry + rowH); ctx.lineTo(W, ry + rowH); ctx.stroke();
     });
 
-    y += gridH + gap + 4;
+    y += rowH * 3 + rrGap;
 
-    // RR bar
-    const barW = W - lp * 2;
-    const barH = 10;
+    // RR section bg
+    ctx.fillStyle = rowBg;
+    ctx.fillRect(0, y - rrGap / 2, W, rrLabelH + barH + rrAmtH + rrGap + 4);
 
-    ctx.font = '11px monospace';
-    ctx.fillStyle = mutedCol;
+    ctx.font = '500 11px monospace';
+    ctx.fillStyle = muted;
     ctx.textAlign = 'left';
-    ctx.fillText('RISK / REWARD', lp, y + 12);
-    ctx.font = 'bold 12px monospace';
+    ctx.fillText('RISK / REWARD', lp, y + 20);
+    ctx.save();
+    ctx.shadowColor = gold;
+    ctx.shadowBlur  = 10;
+    ctx.font = 'bold 13px monospace';
     ctx.fillStyle = gold;
     ctx.textAlign = 'right';
-    ctx.fillText('1 : 3', W - lp, y + 12);
-    y += 18;
+    ctx.fillText('1 : 3', W - lp, y + 20);
+    ctx.restore();
 
-    roundRect(ctx, lp, y, barW, barH, 4);
-    ctx.fillStyle = isDark ? '#1e2130' : '#e5e7eb'; ctx.fill();
+    y += rrLabelH;
+
+    const barW   = W - lp * 2;
     const riskPx = Math.round(barW * 0.25);
-    roundRect(ctx, lp, y, riskPx, barH, 4);
-    ctx.fillStyle = red; ctx.fill();
-    roundRect(ctx, lp + riskPx, y, barW - riskPx, barH, 4);
-    ctx.fillStyle = green; ctx.fill();
-    y += barH + 10;
 
-    ctx.font = '11px monospace';
+    roundRect(ctx, lp, y, barW, barH, 5);
+    ctx.fillStyle = '#141728'; ctx.fill();
+
+    const riskGrad = ctx.createLinearGradient(lp, 0, lp + riskPx, 0);
+    riskGrad.addColorStop(0, '#b91c1c');
+    riskGrad.addColorStop(1, '#f87171');
+    roundRect(ctx, lp, y, riskPx, barH, 5);
+    ctx.fillStyle = riskGrad; ctx.fill();
+
+    const rewardGrad = ctx.createLinearGradient(lp + riskPx, 0, lp + barW, 0);
+    rewardGrad.addColorStop(0, '#34d399');
+    rewardGrad.addColorStop(1, '#065f46');
+    roundRect(ctx, lp + riskPx, y, barW - riskPx, barH, 5);
+    ctx.fillStyle = rewardGrad; ctx.fill();
+
+    ctx.save();
+    ctx.shadowColor = green;
+    ctx.shadowBlur  = 12;
+    roundRect(ctx, lp + riskPx, y, barW - riskPx, barH, 5);
+    ctx.fillStyle = 'rgba(52,211,153,0.06)'; ctx.fill();
+    ctx.restore();
+
+    y += barH + 12;
+
+    ctx.font = 'bold 12px monospace';
     ctx.fillStyle = red;
     ctx.textAlign = 'left';
-    ctx.fillText('RISK  $' + tradeData.actualRisk, lp, y + 2);
+    ctx.fillText('RISK  $' + tradeData.actualRisk, lp, y + 6);
     ctx.fillStyle = green;
     ctx.textAlign = 'right';
-    ctx.fillText('REWARD  $' + tradeData.reward, W - lp, y + 2);
+    ctx.fillText('REWARD  $' + tradeData.reward, W - lp, y + 6);
     ctx.textAlign = 'left';
 
     const link = document.createElement('a');
@@ -684,7 +754,7 @@ Stop Loss: ${tradeData.sl}`;
     recalculate();
   }
 
-  /* ── CALCULATE ── */
+   /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
@@ -772,6 +842,7 @@ Stop Loss: ${tradeData.sl}`;
     copyLotBtn.classList.add('visible');
     copyTpBtn.classList.add('visible');
     shareRow.classList.add('visible');
+
     rrWrap.classList.add('visible');
     document.getElementById('rr-risk-bar').style.width = '25%';
     document.getElementById('rr-reward-bar').style.width = '75%';
@@ -780,4 +851,4 @@ Stop Loss: ${tradeData.sl}`;
   }
 </script>
 </body>
-</html> 
+</html>
