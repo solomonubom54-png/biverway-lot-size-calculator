@@ -12,64 +12,145 @@
 <link rel="icon" type="image/png" href="logo.png" />
 <link rel="apple-touch-icon" href="logo.png" />
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+
 <style>
+
+  /* ── RESET ── */
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ── DARK THEME VARIABLES ── */
   [data-theme="dark"] {
-    --bg: #0a0b0f; --card-bg: #0d0f17; --card-border: #1a1c28;
-    --input-bg: #13151c; --input-border: #1e2130; --text: #e8eaf2;
-    --muted: #555978; --very-muted: #3a3e52; --footer-text: #2a2c3a;
-    --result-bg: #0b0d14; --row-hover: #0f1118; --row-border: #13151c;
-    --badge-none-bg: #1a1c28; --subtitle-color: #3a3e52; --brand-color: #fff;
-    --shadow: 0 24px 80px rgba(0,0,0,0.6); --toggle-bg: #1a1c28; --toggle-border: #2a2c3a;
+    --bg: #0a0b0f;
+    --card-bg: #0d0f17;
+    --card-border: #1a1c28;
+    --input-bg: #13151c;
+    --input-border: #1e2130;
+    --text: #e8eaf2;
+    --muted: #555978;
+    --very-muted: #3a3e52;
+    --footer-text: #2a2c3a;
+    --result-bg: #0b0d14;
+    --row-hover: #0f1118;
+    --row-border: #13151c;
+    --badge-none-bg: #1a1c28;
+    --subtitle-color: #3a3e52;
+    --brand-color: #fff;
+    --shadow: 0 24px 80px rgba(0,0,0,0.6);
+    --toggle-bg: #1a1c28;
+    --toggle-border: #2a2c3a;
   }
+
+  /* ── LIGHT THEME VARIABLES ── */
   [data-theme="light"] {
-    --bg: #f0f2f7; --card-bg: #ffffff; --card-border: #e0e4ef;
-    --input-bg: #f7f8fc; --input-border: #d4d8e8; --text: #111827;
-    --muted: #6b7280; --very-muted: #9ca3af; --footer-text: #c0c4d0;
-    --result-bg: #f9fafb; --row-hover: #f3f4f8; --row-border: #e9ecf3;
-    --badge-none-bg: #f0f2f7; --subtitle-color: #9ca3af; --brand-color: #111827;
-    --shadow: 0 24px 80px rgba(0,0,0,0.1); --toggle-bg: #1e2130; --toggle-border: #d4d8e8;
+    --bg: #f0f2f7;
+    --card-bg: #ffffff;
+    --card-border: #e0e4ef;
+    --input-bg: #f7f8fc;
+    --input-border: #d4d8e8;
+    --text: #111827;
+    --muted: #6b7280;
+    --very-muted: #9ca3af;
+    --footer-text: #c0c4d0;
+    --result-bg: #f9fafb;
+    --row-hover: #f3f4f8;
+    --row-border: #e9ecf3;
+    --badge-none-bg: #f0f2f7;
+    --subtitle-color: #9ca3af;
+    --brand-color: #111827;
+    --shadow: 0 24px 80px rgba(0,0,0,0.1);
+    --toggle-bg: #1e2130;
+    --toggle-border: #d4d8e8;
   }
 
+  /* ── BASE BODY & PAGE LAYOUT ── */
   html, body {
-    min-height: 100vh; width: 100%; overflow-x: hidden;
-    background: var(--bg); display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace; padding: 32px 20px; transition: background 0.3s;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    padding: 32px 20px;
+    transition: background 0.3s;
   }
 
-  .wrapper { width: 100%; max-width: 520px; animation: fadeIn 0.5s ease; }
+  /* ── MAIN WRAPPER (max width container) ── */
+  .wrapper {
+    width: 100%;
+    max-width: 520px;
+    animation: fadeIn 0.5s ease;
+  }
 
-  /* ── SPLASH SCREEN ── */
+  /* ── SPLASH SCREEN OVERLAY ── */
   #splash {
-    position: fixed; inset: 0; background: #0a0b0f;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 9999; gap: 20px;
+    position: fixed;
+    inset: 0;
+    background: #0a0b0f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    gap: 20px;
     transition: opacity 0.6s ease, visibility 0.6s ease;
   }
   #splash.hide { opacity: 0; visibility: hidden; }
+
+  /* ── SPLASH: LOGO ── */
   .splash-logo {
-    width: 80px; height: 80px; border-radius: 16px; object-fit: contain;
-    animation: splashLogoIn 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    object-fit: contain;
+    animation: splashLogoIn 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    opacity: 0;
   }
+
+  /* ── SPLASH: BRAND NAME ── */
   .splash-brand {
-    font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
-    color: #fff; letter-spacing: -0.01em;
-    animation: splashTextIn 0.6s ease 0.4s forwards; opacity: 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+    animation: splashTextIn 0.6s ease 0.4s forwards;
+    opacity: 0;
   }
-  .splash-brand span { color: #f5a623; }
+  .splash-brand span { color: #f5a623; } /* Gold "WAY" */
+
+  /* ── SPLASH: SUBTITLE ── */
   .splash-sub {
-    font-size: 10px; color: #3a3e52; letter-spacing: 0.2em; text-transform: uppercase;
-    animation: splashTextIn 0.6s ease 0.6s forwards; opacity: 0;
+    font-size: 10px;
+    color: #3a3e52;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: splashTextIn 0.6s ease 0.6s forwards;
+    opacity: 0;
   }
+
+  /* ── SPLASH: LOADING BAR WRAPPER ── */
   .splash-bar-wrap {
-    width: 60px; height: 2px; background: #1a1c28; border-radius: 2px; overflow: hidden;
-    animation: splashTextIn 0.6s ease 0.7s forwards; opacity: 0;
+    width: 60px;
+    height: 2px;
+    background: #1a1c28;
+    border-radius: 2px;
+    overflow: hidden;
+    animation: splashTextIn 0.6s ease 0.7s forwards;
+    opacity: 0;
   }
+
+  /* ── SPLASH: LOADING BAR FILL ── */
   .splash-bar-fill {
-    height: 100%; background: #f5a623; border-radius: 2px;
-    animation: splashBarGrow 1s ease 0.8s forwards; width: 0%;
+    height: 100%;
+    background: #f5a623;
+    border-radius: 2px;
+    animation: splashBarGrow 1s ease 0.8s forwards;
+    width: 0%;
   }
+
+  /* ── SPLASH ANIMATIONS ── */
   @keyframes splashLogoIn {
     0%   { opacity: 0; transform: scale(0.7) translateY(10px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -80,7 +161,7 @@
   }
   @keyframes splashBarGrow { 0% { width: 0%; } 100% { width: 100%; } }
 
-  /* ── LANDSCAPE ── */
+  /* ── LANDSCAPE MODE (phone rotated sideways) ── */
   @media screen and (orientation: landscape) and (max-height: 500px) {
     html, body { align-items: flex-start; padding: 12px; }
     .wrapper { max-width: 100%; }
@@ -89,6 +170,7 @@
     .subtitle { font-size: 9px !important; }
     .card { border-radius: 10px; }
     .card-topbar { padding: 8px 12px 0; }
+    /* Split inputs left / results right in landscape */
     .landscape-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0; }
     .left-col { border-right: 1px solid var(--card-border); }
     .right-col .results { border-top: none; height: 100%; }
@@ -111,7 +193,7 @@
     .rr-bar-wrap { padding: 8px 12px !important; }
   }
 
-  /* ── DESKTOP ── */
+  /* ── DESKTOP (screens 900px and wider) ── */
   @media (min-width: 900px) {
     body { padding: 48px 40px; }
     .wrapper { max-width: 640px; }
@@ -132,6 +214,7 @@
     .rr-bar-wrap { padding: 14px 24px !important; }
   }
 
+  /* ── TABLET (600px–899px) ── */
   @media (min-width: 600px) and (max-width: 899px) {
     .wrapper { max-width: 560px; }
     .brand { font-size: 24px !important; }
@@ -139,107 +222,167 @@
     .lot-value { font-size: 24px !important; }
   }
 
+  /* ── SHARED ANIMATIONS ── */
   @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   @keyframes popIn  { 0% { transform:scale(0.92); opacity:0; } 100% { transform:scale(1); opacity:1; } }
 
+  /* ── HEADER (logo + brand above card) ── */
   .header { text-align: center; margin-bottom: 28px; }
   .header-main { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px; }
   .logo-icon { width: 30px; height: 30px; border-radius: 6px; object-fit: contain; }
   .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--brand-color); letter-spacing: -0.01em; transition: color 0.3s; }
   .subtitle { color: var(--subtitle-color); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
 
-  .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: background 0.3s, border-color 0.3s; }
+  /* ── MAIN CARD ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  /* ── LANDSCAPE GRID (single column by default, 2-col in landscape) ── */
   .landscape-grid { display: block; }
 
-  .card-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 0; }
+  /* ── CARD TOP BAR (label + theme toggle) ── */
+  .card-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 0;
+  }
   .card-topbar-label { font-size: 9px; color: var(--very-muted); letter-spacing: 0.18em; text-transform: uppercase; }
-  .theme-toggle { width: 30px; height: 30px; border-radius: 50%; background: var(--toggle-bg); border: 1px solid var(--toggle-border); cursor: pointer; font-size: 14px; transition: all 0.25s; display: flex; align-items: center; justify-content: center; }
+
+  /* ── THEME TOGGLE BUTTON (☀️ / 🌙) ── */
+  .theme-toggle {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--toggle-bg);
+    border: 1px solid var(--toggle-border);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.25s;
+    display: flex; align-items: center; justify-content: center;
+  }
   .theme-toggle:hover { border-color: #f5a623; transform: scale(1.1) rotate(20deg); box-shadow: 0 0 10px rgba(245,166,35,0.3); }
 
+  /* ── SECTION PADDING (wraps symbol selector) ── */
   .section-pad { padding: 14px 20px 0; }
-  .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
-  .label.focused { color: #f5a623; }
 
+  /* ── INPUT LABELS ── */
+  .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; transition: color 0.2s; }
+  .label.focused { color: #f5a623; } /* Gold when input is active */
+
+  /* ── SYMBOL SELECTOR PILLS ── */
   .symbol-row { display: flex; gap: 6px; }
   .symbol-btn { flex:1; padding:10px 4px; border-radius:7px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.18s; letter-spacing:0.02em; }
   .symbol-btn:hover { border-color:rgba(245,166,35,0.3); color:#f5a623; }
-  .symbol-btn.active { background:#f5a623; border-color:#f5a623; color:#000; font-weight:500; }
+  .symbol-btn.active { background:#f5a623; border-color:#f5a623; color:#000; font-weight:500; } /* Active = gold filled */
 
+  /* ── GOLD GLOW DIVIDER LINE ── */
   .glow-line { height:1px; background:linear-gradient(90deg,transparent,rgba(245,166,35,0.35),transparent); margin:14px 20px 0; }
 
+  /* ── INPUT FIELDS WRAPPER ── */
   .inputs { padding:14px 20px 20px; display:flex; flex-direction:column; gap:14px; }
   .input-group { display:flex; flex-direction:column; }
 
-  input[type=number] { width:100%; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); padding:14px 16px; font-size:15px; font-family:'DM Mono',monospace; border-radius:8px; outline:none; transition:border-color 0.2s,box-shadow 0.2s,background 0.3s; -moz-appearance:textfield; }
+  /* ── NUMBER INPUT FIELDS ── */
+  input[type=number] {
+    width:100%; background:var(--input-bg); border:1px solid var(--input-border);
+    color:var(--text); padding:14px 16px; font-size:15px;
+    font-family:'DM Mono',monospace; border-radius:8px; outline:none;
+    transition:border-color 0.2s,box-shadow 0.2s,background 0.3s;
+    -moz-appearance:textfield;
+  }
+  /* Hide browser spin arrows on number inputs */
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   input[type=number]:focus { border-color:#f5a623; box-shadow:0 0 0 3px rgba(245,166,35,0.12); }
   input[type=number]::placeholder { color:var(--very-muted); }
 
+  /* ── RESET ALL BUTTON ── */
   .reset-btn { width:100%; padding:13px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:13px; cursor:pointer; transition:all 0.2s; letter-spacing:0.06em; text-transform:uppercase; }
   .reset-btn:hover { border-color:#e05252; color:#e05252; }
 
+  /* ── RESULTS PANEL (right side / bottom of card) ── */
   .results { border-top:1px solid var(--card-border); background:var(--result-bg); transition:background 0.3s; }
+
+  /* ── RESULTS HEADER (title + live indicator) ── */
   .results-header { padding:12px 18px; display:flex; align-items:center; justify-content:space-between; }
   .results-label { font-size:10px; color:var(--very-muted); letter-spacing:0.14em; text-transform:uppercase; }
+
+  /* ── LIVE INDICATOR DOT + TEXT ── */
   .live-indicator { font-size:9px; color:var(--very-muted); letter-spacing:0.1em; display:flex; align-items:center; gap:5px; }
   .live-dot { width:5px; height:5px; border-radius:50%; background:var(--input-border); transition:all 0.3s; }
-  .live-dot.active { background:#34d399; box-shadow:0 0 6px #34d399; }
+  .live-dot.active { background:#34d399; box-shadow:0 0 6px #34d399; } /* Glowing green when LIVE */
 
+  /* ── INDIVIDUAL RESULT ROW ── */
   .result-row { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--row-border); transition:background 0.2s; }
   .result-row:last-child { border-bottom:none; }
   .result-row:hover { background:var(--row-hover); }
-  .result-key { font-size:12px; color:var(--muted); letter-spacing:0.06em; }
+  .result-key { font-size:12px; color:var(--muted); letter-spacing:0.06em; } /* Left label */
 
+  /* ── COPY ICON BUTTONS (⧉ on lot size & take profit) ── */
   .icon-btn { width:28px; height:28px; background:var(--input-bg); border:1px solid var(--input-border); border-radius:6px; font-size:13px; color:var(--muted); cursor:pointer; transition:all 0.2s; display:none; align-items:center; justify-content:center; flex-shrink:0; }
-  .icon-btn.visible { display:flex; animation:popIn 0.2s ease; }
+  .icon-btn.visible { display:flex; animation:popIn 0.2s ease; } /* Appears after calculation */
   .icon-btn:hover { border-color:#f5a623; color:#f5a623; background:rgba(245,166,35,0.08); }
-  .icon-btn.copied { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.08); }
+  .icon-btn.copied { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.08); } /* Green tick after copy */
   .result-right { display:flex; align-items:center; gap:10px; }
 
-  /* ── RISK/REWARD BAR ── */
+  /* ── RISK / REWARD BAR (in-app, above share buttons) ── */
   .rr-bar-wrap { padding: 12px 18px; border-bottom: 1px solid var(--row-border); display: none; }
   .rr-bar-wrap.visible { display: block; animation: fadeIn 0.3s ease; }
   .rr-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .rr-bar-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
-  .rr-bar-ratio { font-size: 11px; color: #f5a623; letter-spacing: 0.08em; }
+  .rr-bar-ratio { font-size: 11px; color: #f5a623; letter-spacing: 0.08em; } /* "1 : 3" in gold */
   .rr-bar-track { height: 6px; background: var(--input-bg); border-radius: 6px; overflow: hidden; display: flex; }
-  .rr-bar-risk   { height: 100%; background: #f87171; border-radius: 6px 0 0 6px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-  .rr-bar-reward { height: 100%; background: #34d399; border-radius: 0 6px 6px 0; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .rr-bar-risk   { height: 100%; background: #f87171; border-radius: 6px 0 0 6px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); } /* Red segment = 25% */
+  .rr-bar-reward { height: 100%; background: #34d399; border-radius: 0 6px 6px 0; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); } /* Green segment = 75% */
   .rr-bar-labels { display: flex; justify-content: space-between; margin-top: 5px; }
   .rr-bar-risk-lbl   { font-size: 9px; color: #f87171; letter-spacing: 0.06em; }
   .rr-bar-reward-lbl { font-size: 9px; color: #34d399; letter-spacing: 0.06em; }
 
-  /* ── SHARE / SAVE BUTTONS ── */
+  /* ── SHARE / SAVE BUTTONS ROW ── */
   .share-row { padding:14px 18px; border-top:1px solid var(--row-border); display:none; gap:8px; }
   .share-row.visible { display:flex; animation:fadeIn 0.3s ease; }
+
+  /* ── INDIVIDUAL SHARE / SAVE BUTTON ── */
   .share-btn { flex:1; padding:12px 8px; border-radius:8px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
   .share-btn:hover { border-color:#f5a623; color:#f5a623; background:rgba(245,166,35,0.06); }
   .share-btn:hover .share-sub { color:#f5a623; opacity:0.7; }
-  .share-btn.shared { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.06); }
+  .share-btn.shared { border-color:#34d399; color:#34d399; background:rgba(52,211,153,0.06); } /* Green after action */
   .share-btn.shared .share-sub { color:#34d399; opacity:0.7; }
-  .share-main { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; }
-  .share-sub  { font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--very-muted); transition:color 0.2s; }
+  .share-main { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; } /* Top line e.g. "SHARE" */
+  .share-sub  { font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--very-muted); transition:color 0.2s; } /* Bottom line e.g. "SETUP" */
 
+  /* ── TOAST NOTIFICATION (bottom pop-up message) ── */
   .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:#34d399; color:#000; padding:10px 20px; border-radius:8px; font-size:12px; font-family:'DM Mono',monospace; letter-spacing:0.06em; opacity:0; transition:all 0.3s; pointer-events:none; z-index:9998; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
+  /* ── DIRECTION BADGES (BUY / SELL / —) ── */
   .badge { padding:4px 14px; border-radius:4px; font-size:13px; font-weight:500; letter-spacing:0.08em; }
   .badge-buy  { background:rgba(52,211,153,0.12); color:#34d399; border:1px solid rgba(52,211,153,0.25); }
   .badge-sell { background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25); }
   .badge-none { background:var(--badge-none-bg); color:var(--muted); border:1px solid var(--input-border); }
 
+  /* ── LOT SIZE VALUE (large gold number) ── */
   .lot-value { font-size:22px; font-weight:500; color:var(--input-border); transition:color 0.3s; }
-  .lot-value.active { color:#f5a623; }
+  .lot-value.active { color:#f5a623; } /* Gold when calculated */
+
+  /* ── NORMAL VALUE (entry, sl, tp, actual risk) ── */
   .normal-value { font-size:15px; color:var(--input-border); transition:color 0.3s; }
   .normal-value.active { color:var(--text); }
 
+  /* ── HIDDEN ROW (actual risk — only shows after calculation) ── */
   .hidden-row { display:none; }
   .hidden-row.visible { display:flex; animation:fadeIn 0.3s ease; }
 
+  /* ── CARD FOOTER (version / credit line) ── */
   .card-footer { padding:12px 18px; border-top:1px solid var(--row-border); text-align:center; font-size:10px; color:var(--footer-text); letter-spacing:0.1em; }
 
-  /* ── INSTALL BANNER ── */
+  /* ── PWA INSTALL BANNER (bottom of screen) ── */
   .install-banner { display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--card-bg); border:1px solid #f5a623; border-radius:12px; padding:12px 16px; width:calc(100% - 40px); max-width:480px; box-shadow:0 8px 32px rgba(0,0,0,0.4); z-index:1000; animation:fadeIn 0.3s ease; align-items:center; justify-content:space-between; gap:12px; }
   .install-banner.show { display:flex; }
   .install-banner-left { display:flex; align-items:center; gap:10px; }
@@ -254,12 +397,14 @@
   .install-btn-dismiss { background:transparent; border:1px solid var(--input-border); color:var(--muted); }
   .install-btn-dismiss:hover { border-color:#e05252; color:#e05252; }
 
+  /* ── HIDDEN CANVAS (used to generate the save image) ── */
   #share-canvas { display:none; }
+
 </style>
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
+<!-- ── SPLASH SCREEN ── -->
 <div id="splash">
   <img src="logo.png" class="splash-logo" alt="Biverway" onerror="this.style.display='none'" />
   <div class="splash-brand">BIVER<span>WAY</span></div>
@@ -269,7 +414,10 @@
   </div>
 </div>
 
+<!-- ── MAIN APP WRAPPER ── -->
 <div class="wrapper">
+
+  <!-- ── PAGE HEADER: LOGO + BRAND ── -->
   <div class="header">
     <div class="header-main">
       <img src="logo.png" alt="Biverway Logo" class="logo-icon" onerror="this.style.display='none'" />
@@ -278,14 +426,22 @@
     <div class="subtitle">Lot Size Calculator</div>
   </div>
 
+  <!-- ── MAIN CARD ── -->
   <div class="card">
+
+    <!-- ── CARD TOP BAR: INSTRUMENT LABEL + THEME TOGGLE ── -->
     <div class="card-topbar">
       <span class="card-topbar-label">Instrument</span>
       <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">☀️</button>
     </div>
 
+    <!-- ── LANDSCAPE GRID WRAPPER (1 col mobile, 2 col landscape) ── -->
     <div class="landscape-grid">
+
+      <!-- ── LEFT COLUMN: INPUTS ── -->
       <div class="left-col">
+
+        <!-- ── SYMBOL SELECTOR ── -->
         <div class="section-pad">
           <div class="symbol-row">
             <button class="symbol-btn active" onclick="selectSymbol('EURUSD',this)">EURUSD</button>
@@ -294,29 +450,45 @@
             <button class="symbol-btn" onclick="selectSymbol('XAUUSD',this)">XAUUSD</button>
           </div>
         </div>
+
+        <!-- ── GOLD DIVIDER LINE ── -->
         <div class="glow-line"></div>
+
+        <!-- ── INPUT FIELDS ── -->
         <div class="inputs">
+
+          <!-- Entry Price -->
           <div class="input-group">
             <div class="label" id="lbl-entry">Entry Price</div>
             <input type="number" id="entry" step="any" placeholder="0.00000" inputmode="decimal"
               onfocus="focusLabel('lbl-entry')" onblur="blurLabel('lbl-entry')" oninput="recalculate()" />
           </div>
+
+          <!-- Stop Loss -->
           <div class="input-group">
             <div class="label" id="lbl-sl">Stop Loss</div>
             <input type="number" id="sl" step="any" placeholder="0.00000" inputmode="decimal"
               onfocus="focusLabel('lbl-sl')" onblur="blurLabel('lbl-sl')" oninput="recalculate()" />
           </div>
+
+          <!-- Risk Amount -->
           <div class="input-group">
             <div class="label" id="lbl-risk">Risk Amount ($)</div>
             <input type="number" id="risk" step="any" placeholder="0.00" inputmode="decimal"
               onfocus="focusLabel('lbl-risk')" onblur="blurLabel('lbl-risk')" oninput="recalculate()" />
           </div>
-          <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
-        </div>
-      </div>
 
+          <!-- Reset Button -->
+          <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
+
+        </div><!-- end .inputs -->
+      </div><!-- end .left-col -->
+
+      <!-- ── RIGHT COLUMN: RESULTS ── -->
       <div class="right-col">
         <div class="results">
+
+          <!-- Results Header + Live Dot -->
           <div class="results-header">
             <span class="results-label">Results</span>
             <div class="live-indicator">
@@ -324,14 +496,20 @@
               <span id="live-text">WAITING</span>
             </div>
           </div>
+
+          <!-- Direction Row -->
           <div class="result-row">
             <span class="result-key">DIRECTION</span>
             <span class="badge badge-none" id="direction-badge">—</span>
           </div>
+
+          <!-- Actual Risk Row (hidden until calculated) -->
           <div class="result-row hidden-row" id="actual-risk-row">
             <span class="result-key">ACTUAL RISK</span>
             <span class="normal-value" id="actual-risk-val">$0.00</span>
           </div>
+
+          <!-- Lot Size Row + Copy Button -->
           <div class="result-row">
             <span class="result-key">LOT SIZE</span>
             <div class="result-right">
@@ -339,6 +517,8 @@
               <span class="lot-value" id="lot-val">0.00</span>
             </div>
           </div>
+
+          <!-- Take Profit Row + Copy Button -->
           <div class="result-row">
             <span class="result-key">TAKE PROFIT (1:3)</span>
             <div class="result-right">
@@ -347,15 +527,15 @@
             </div>
           </div>
 
-          <!-- RISK/REWARD BAR -->
+         <!-- ── RISK / REWARD BAR ── -->
           <div class="rr-bar-wrap" id="rr-bar-wrap">
             <div class="rr-bar-header">
               <span class="rr-bar-label">Risk / Reward</span>
               <span class="rr-bar-ratio" id="rr-ratio">1 : 3</span>
             </div>
             <div class="rr-bar-track">
-              <div class="rr-bar-risk"   id="rr-risk-bar"   style="width:25%"></div>
-              <div class="rr-bar-reward" id="rr-reward-bar" style="width:75%"></div>
+              <div class="rr-bar-risk"   id="rr-risk-bar"   style="width:25%"></div><!-- Red 25% -->
+              <div class="rr-bar-reward" id="rr-reward-bar" style="width:75%"></div><!-- Green 75% -->
             </div>
             <div class="rr-bar-labels">
               <span class="rr-bar-risk-lbl"   id="rr-risk-lbl">RISK $0.00</span>
@@ -363,27 +543,34 @@
             </div>
           </div>
 
-          <!-- SHARE / SAVE BUTTONS -->
+          <!-- ── SHARE / SAVE BUTTONS ── -->
           <div class="share-row" id="share-row">
+            <!-- Share Setup: opens native share sheet with trade details -->
             <button class="share-btn" id="share-btn" onclick="shareSetup()">
               <span class="share-main" id="share-btn-main">SHARE</span>
               <span class="share-sub">SETUP</span>
             </button>
+            <!-- Save Image: generates and downloads trade card PNG -->
             <button class="share-btn" id="share-img-btn" onclick="saveAsImage()">
               <span class="share-main" id="share-img-main">SAVE</span>
               <span class="share-sub">IMAGE</span>
             </button>
           </div>
-        </div>
-      </div>
-    </div>
 
+        </div><!-- end .results -->
+      </div><!-- end .right-col -->
+    </div><!-- end .landscape-grid -->
+
+    <!-- ── CARD FOOTER: VERSION / CREDIT ── -->
     <div class="card-footer">DESIGNED ACCORDING TO BIVERWAY TRADING SYSTEM · V2.1+</div>
-  </div>
-</div>
 
+  </div><!-- end .card -->
+</div><!-- end .wrapper -->
+
+<!-- ── HIDDEN CANVAS (for image generation) ── -->
 <canvas id="share-canvas"></canvas>
 
+<!-- ── PWA INSTALL BANNER ── -->
 <div class="install-banner" id="install-banner">
   <div class="install-banner-left">
     <img src="logo.png" class="install-banner-icon" onerror="this.style.display='none'" />
@@ -398,27 +585,31 @@
   </div>
 </div>
 
+<!-- ── TOAST NOTIFICATION ── -->
 <div class="toast" id="toast"></div>
 
 <script>
-  let currentSymbol = 'EURUSD';
-  let tradeData = null;
-  let deferredPrompt = null;
 
-  /* ── SPLASH ── */
+  /* ── STATE VARIABLES ── */
+  let currentSymbol = 'EURUSD'; // Active trading symbol
+  let tradeData     = null;     // Holds last calculated trade object
+  let deferredPrompt = null;    // Holds PWA install prompt event
+
+  /* ── SPLASH: Auto-hide after 2 seconds ── */
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('splash').classList.add('hide');
     }, 2000);
   });
 
-  /* ── PWA ── */
+  /* ── PWA: Capture install prompt ── */
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
     document.getElementById('install-banner').classList.add('show');
   });
 
+  /* ── PWA: Trigger install ── */
   function installApp() {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
@@ -428,14 +619,17 @@
     });
   }
 
+  /* ── PWA: Dismiss install banner ── */
   function dismissInstall() {
     document.getElementById('install-banner').classList.remove('show');
   }
 
+  /* ── PWA: Show toast on successful install ── */
   window.addEventListener('appinstalled', () => {
     showToast('App installed successfully!');
   });
 
+  /* ── PWA: Register service worker for offline support ── */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/biverway-lot-size-calculator/sw.js')
@@ -443,15 +637,15 @@
     });
   }
 
-  /* ── THEME ── */
+  /* ── THEME: Toggle dark / light mode ── */
   function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.getAttribute('data-theme') === 'dark';
     html.setAttribute('data-theme', isDark ? 'light' : 'dark');
     document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
- }
+  }
 
-  /* ── COPY ── */
+  /* ── COPY: Copy value to clipboard, show tick + toast ── */
   function copyValue(valId, btnId, label) {
     const text = document.getElementById(valId).textContent.trim();
     if (!text || text === '0.00' || text === '0.00000' || text === '0.000') return;
@@ -464,7 +658,7 @@
     });
   }
 
-  /* ── SHARE SETUP ── */
+  /* ── SHARE SETUP: Open native share sheet with trade entry details ── */
   function shareSetup() {
     if (!tradeData) return;
     const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
@@ -478,6 +672,7 @@ Stop Loss: ${tradeData.sl}`;
     const main = document.getElementById('share-btn-main');
 
     if (navigator.share) {
+      // Native share sheet (Android / iOS)
       navigator.share({ text })
         .then(() => {
           main.textContent = '✓ SHARED';
@@ -486,6 +681,7 @@ Stop Loss: ${tradeData.sl}`;
         })
         .catch(() => {});
     } else {
+      // Fallback: copy to clipboard
       navigator.clipboard.writeText(text).then(() => {
         main.textContent = '✓ COPIED';
         btn.classList.add('shared');
@@ -495,214 +691,177 @@ Stop Loss: ${tradeData.sl}`;
     }
   }
 
-  /* ── SAVE AS IMAGE ── */
+  /* ── SAVE AS IMAGE: Draw trade card on canvas and download as PNG ── */
   function saveAsImage() {
     if (!tradeData) return;
 
     const canvas = document.getElementById('share-canvas');
 
-    const W        = 480;
-    const lp       = 28;
-    const gold     = '#f5a623';
-    const green    = '#34d399';
-    const red      = '#f87171';
-    const bg       = '#070810';
-    const cardBg   = '#0d0f1a';
-    const rowBg    = '#090b14';
-    const border   = '#1a1d2e';
-    const rowDiv   = '#111422';
-    const textCol  = '#e8eaf2';
-    const muted    = '#8a8fa8';
-    const dimCol   = '#6b7090';
+    /* ── Canvas dimensions ── */
+    const W  = 900;  // Width
+    const H  = 560;  // Height
+    const lp = 52;   // Left padding
+    const rp = 52;   // Right padding
 
-    const dir       = tradeData.direction;
-    const dirColor  = dir === 'BUY' ? green : red;
-    const dirGlow   = dir === 'BUY' ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)';
-    const dirBorder = dir === 'BUY' ? 'rgba(52,211,153,0.45)' : 'rgba(248,113,113,0.45)';
+    /* ── Color palette ── */
+    const gold      = '#f5a623';
+    const green     = '#22c55e';
+    const red       = '#ef4444';
+    const bg        = '#0a0a0a';   // Outer background
+    const cardBg    = '#111111';   // Card fill
+    const textW     = '#ffffff';   // White text (symbol, values)
+    const labelCol  = '#9ca3af';   // Grey labels
+    const rowDiv    = '#1f1f1f';   // Row divider lines
 
-    const accentH  = 3;
-    const headerH  = 52;
-    const symRowH  = 64;
-    const rowH     = 52;
-    const rrGap    = 14;
-    const rrLabelH = 30;
-    const barH     = 12;
-    const rrAmtH   = 32;
-    const padV     = 18;
-
-    const H = padV + accentH + headerH + symRowH + (rowH * 3) + rrGap + rrLabelH + barH + rrAmtH + padV;
+    /* ── Direction colors ── */
+    const dir        = tradeData.direction;
+    const dirColor   = dir === 'BUY' ? green : red;
+    const dirBgColor = dir === 'BUY' ? 'rgba(34,197,94,0.18)'  : 'rgba(239,68,68,0.18)';
+    const dirBorder  = dir === 'BUY' ? 'rgba(34,197,94,0.7)'   : 'rgba(239,68,68,0.7)';
 
     canvas.width  = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
 
+    /* ── Draw outer background ── */
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    roundRect(ctx, 10, 10, W - 20, H - 20, 14);
+    /* ── Draw card background ── */
+    roundRect(ctx, 20, 20, W - 40, H - 40, 16);
     ctx.fillStyle = cardBg; ctx.fill();
-    ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.stroke();
 
-    // Gold accent bar with glow
-    const goldGrad = ctx.createLinearGradient(10, 0, W - 10, 0);
-    goldGrad.addColorStop(0,   'transparent');
-    goldGrad.addColorStop(0.2, gold);
-    goldGrad.addColorStop(0.8, gold);
-    goldGrad.addColorStop(1,   'transparent');
+    /* ── Draw gold glowing border around card ── */
     ctx.save();
     ctx.shadowColor = gold;
-    ctx.shadowBlur  = 20;
-    roundRect(ctx, 10, 10, W - 20, accentH, 2);
-    ctx.fillStyle = goldGrad; ctx.fill();
+    ctx.shadowBlur  = 24;
+    roundRect(ctx, 20, 20, W - 40, H - 40, 16);
+    ctx.strokeStyle = gold;
+    ctx.lineWidth   = 2;
+    ctx.stroke();
     ctx.restore();
 
-    let y = padV + accentH + 4;
-
-    // Header
-    ctx.font = '500 11px monospace';
-    ctx.fillStyle = dimCol;
-    ctx.textAlign = 'center';
-    ctx.fillText('BIVERWAY TRADE SETUP', W / 2, y + 16);
-
-    // Center-glow divider
-    const divGrad = ctx.createLinearGradient(lp, 0, W - lp, 0);
-    divGrad.addColorStop(0,    'transparent');
-    divGrad.addColorStop(0.35, '#1e2235');
-    divGrad.addColorStop(0.5,  'rgba(245,166,35,0.2)');
-    divGrad.addColorStop(0.65, '#1e2235');
-    divGrad.addColorStop(1,    'transparent');
-    ctx.strokeStyle = divGrad; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, y + 30); ctx.lineTo(W - lp, y + 30); ctx.stroke();
-
-    y += headerH;
-
-    // Symbol
-    ctx.font = 'bold 20px monospace';
-    ctx.fillStyle = textCol;
+    /* ── Draw symbol (e.g. EURUSD) large top-left ── */
+    const symY = 88;
+    ctx.font      = 'bold 52px sans-serif';
+    ctx.fillStyle = textW;
     ctx.textAlign = 'left';
-    ctx.fillText(tradeData.symbol, lp, y + symRowH / 2 + 7);
+    ctx.fillText(tradeData.symbol, lp, symY);
 
-    // Direction badge with glow
-    const badgeW = 88, badgeH = 34;
-    const bx = W - lp - badgeW;
-    const by = y + (symRowH - badgeH) / 2;
+    /* ── Draw direction badge (BUY / SELL) top-right ── */
+    const bW = 140, bH = 52;
+    const bx = W - rp - bW;
+    const by = symY - bH + 6;
     ctx.save();
     ctx.shadowColor = dirColor;
-    ctx.shadowBlur  = 18;
-    roundRect(ctx, bx, by, badgeW, badgeH, 7);
-    ctx.fillStyle = dirGlow; ctx.fill();
+    ctx.shadowBlur  = 28;
+    roundRect(ctx, bx, by, bW, bH, 10);
+    ctx.fillStyle   = dirBgColor; ctx.fill();
+    ctx.strokeStyle = dirBorder;  ctx.lineWidth = 2.5; ctx.stroke();
     ctx.restore();
-    roundRect(ctx, bx, by, badgeW, badgeH, 7);
-    ctx.fillStyle = dirGlow; ctx.fill();
-    ctx.strokeStyle = dirBorder; ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.font = 'bold 14px monospace';
+    ctx.font      = 'bold 26px sans-serif';
     ctx.fillStyle = dirColor;
     ctx.textAlign = 'center';
-    ctx.fillText(dir, bx + badgeW / 2, by + badgeH / 2 + 5);
+    ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 9);
 
-    y += symRowH;
-
+    /* ── Divider line below symbol row ── */
+    const d1y = symY + 22;
     ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lp, d1y); ctx.lineTo(W - rp, d1y); ctx.stroke();
 
-    // Data rows
-    const dataRows = [
-      ['ENTRY PRICE', tradeData.entry, textCol, false],
-      ['STOP LOSS',   tradeData.sl,    textCol, false],
-      ['LOT SIZE',    tradeData.lot,   gold,    true ],
+    /* ── Data rows: label left, value right ── */
+    const rows = [
+      ['ENTRY PRICE',   tradeData.entry, textW, false, false],
+      ['STOP LOSS',     tradeData.sl,    textW, false, false],
+      ['LOT SIZE',      tradeData.lot,   gold,  true,  false], // Big gold
+      ['RISK / REWARD', '1 : 3',         gold,  false, true ], // Gold, RR label
     ];
 
-    dataRows.forEach(([label, value, valueColor, isBig], i) => {
-      const ry = y + i * rowH;
-      if (i % 2 === 1) {
-        ctx.fillStyle = 'rgba(255,255,255,0.013)';
-        ctx.fillRect(0, ry, W, rowH);
-      }
-      ctx.font = '11px monospace';
-      ctx.fillStyle = muted;
+    const rowStartY = d1y + 10;
+    const rowH      = 72; // Height of each row
+
+    rows.forEach(([label, value, valColor, isBig, isRR], i) => {
+      const ry  = rowStartY + i * rowH;
+      const mid = ry + rowH / 2;
+
+      /* Label */
+      ctx.font      = '500 15px sans-serif';
+      ctx.fillStyle = labelCol;
       ctx.textAlign = 'left';
-      ctx.fillText(label, lp, ry + rowH / 2 + 4);
+      ctx.fillText(label, lp, mid + 5);
+
+      /* Value — large for lot size, gold glow for RR */
       if (isBig) {
         ctx.save();
-        ctx.shadowColor = gold;
-        ctx.shadowBlur  = 14;
-        ctx.font = 'bold 26px monospace';
-        ctx.fillStyle = valueColor;
-        ctx.textAlign = 'right';
-        ctx.fillText(value, W - lp, ry + rowH / 2 + 9);
+        ctx.shadowColor = gold; ctx.shadowBlur = 18;
+        ctx.font = 'bold 38px sans-serif';
+        ctx.fillStyle = valColor; ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 13);
+        ctx.restore();
+      } else if (isRR) {
+        ctx.save();
+        ctx.shadowColor = gold; ctx.shadowBlur = 10;
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillStyle = valColor; ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 7);
         ctx.restore();
       } else {
-        ctx.font = 'bold 16px monospace';
-        ctx.fillStyle = valueColor;
-        ctx.textAlign = 'right';
-        ctx.fillText(value, W - lp, ry + rowH / 2 + 6);
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillStyle = valColor; ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 7);
       }
-      ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, ry + rowH); ctx.lineTo(W, ry + rowH); ctx.stroke();
+
+      /* Row divider (skip after last row) */
+      if (i < rows.length - 1) {
+        ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH);
+        ctx.stroke();
+      }
     });
 
-    y += rowH * 3 + rrGap;
+    /* ── RR Bar: strict 25% red / 75% green split ── */
+    const barY   = rowStartY + rows.length * rowH + 4;
+    const barW   = W - lp - rp;
+    const barH   = 22;
+    const riskPx = Math.round(barW * 0.25); // Exactly 25%
+    const gap    = 4; // Gap between red and green segments
 
-    // RR section bg
-    ctx.fillStyle = rowBg;
-    ctx.fillRect(0, y - rrGap / 2, W, rrLabelH + barH + rrAmtH + rrGap + 4);
+    /* Track background */
+    roundRect(ctx, lp, barY, barW, barH, 6);
+    ctx.fillStyle = '#1a1a1a'; ctx.fill();
 
-    ctx.font = '500 11px monospace';
-    ctx.fillStyle = muted;
-    ctx.textAlign = 'left';
-    ctx.fillText('RISK / REWARD', lp, y + 20);
+    /* Red risk segment (25%) */
     ctx.save();
-    ctx.shadowColor = gold;
-    ctx.shadowBlur  = 10;
-    ctx.font = 'bold 13px monospace';
-    ctx.fillStyle = gold;
-    ctx.textAlign = 'right';
-    ctx.fillText('1 : 3', W - lp, y + 20);
+    ctx.shadowColor = red; ctx.shadowBlur = 12;
+    roundRect(ctx, lp, barY, riskPx, barH, 6);
+    ctx.fillStyle = red; ctx.fill();
     ctx.restore();
 
-    y += rrLabelH;
-
-    const barW   = W - lp * 2;
-    const riskPx = Math.round(barW * 0.25);
-
-    roundRect(ctx, lp, y, barW, barH, 5);
-    ctx.fillStyle = '#141728'; ctx.fill();
-
-    const riskGrad = ctx.createLinearGradient(lp, 0, lp + riskPx, 0);
-    riskGrad.addColorStop(0, '#b91c1c');
-    riskGrad.addColorStop(1, '#f87171');
-    roundRect(ctx, lp, y, riskPx, barH, 5);
-    ctx.fillStyle = riskGrad; ctx.fill();
-
-    const rewardGrad = ctx.createLinearGradient(lp + riskPx, 0, lp + barW, 0);
-    rewardGrad.addColorStop(0, '#34d399');
-    rewardGrad.addColorStop(1, '#065f46');
-    roundRect(ctx, lp + riskPx, y, barW - riskPx, barH, 5);
-    ctx.fillStyle = rewardGrad; ctx.fill();
-
+    /* Green reward segment (75%) */
     ctx.save();
-    ctx.shadowColor = green;
-    ctx.shadowBlur  = 12;
-    roundRect(ctx, lp + riskPx, y, barW - riskPx, barH, 5);
-    ctx.fillStyle = 'rgba(52,211,153,0.06)'; ctx.fill();
+    ctx.shadowColor = green; ctx.shadowBlur = 16;
+    roundRect(ctx, lp + riskPx + gap, barY, barW - riskPx - gap, barH, 6);
+    ctx.fillStyle = green; ctx.fill();
     ctx.restore();
 
-    y += barH + 12;
-
-    ctx.font = 'bold 12px monospace';
+    /* ── Risk / Reward dollar amounts below bar ── */
+    const amtY = barY + barH + 22;
+    ctx.font      = 'bold 18px sans-serif';
     ctx.fillStyle = red;
     ctx.textAlign = 'left';
-    ctx.fillText('RISK  $' + tradeData.actualRisk, lp, y + 6);
+    ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);
     ctx.fillStyle = green;
     ctx.textAlign = 'right';
-    ctx.fillText('REWARD  $' + tradeData.reward, W - lp, y + 6);
-    ctx.textAlign = 'left';
+    ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);
 
+    /* ── Download the canvas as PNG ── */
     const link = document.createElement('a');
     link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 
+    /* ── Button feedback after save ── */
     const btn  = document.getElementById('share-img-btn');
     const main = document.getElementById('share-img-main');
     main.textContent = '✓ SAVED';
@@ -711,6 +870,7 @@ Stop Loss: ${tradeData.sl}`;
     setTimeout(() => { main.textContent = 'SAVE'; btn.classList.remove('shared'); }, 2500);
   }
 
+  /* ── HELPER: Draw rounded rectangle path ── */
   function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -725,7 +885,7 @@ Stop Loss: ${tradeData.sl}`;
     ctx.closePath();
   }
 
-  /* ── TOAST ── */
+  /* ── TOAST: Show bottom notification message ── */
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = '✓ ' + msg;
@@ -733,35 +893,41 @@ Stop Loss: ${tradeData.sl}`;
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  /* ── SYMBOL ── */
+  /* ── SYMBOL: Switch active trading symbol ── */
   function selectSymbol(sym, btn) {
     currentSymbol = sym;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     resetAll();
+    // Update placeholder format: XAUUSD uses 3 decimals, others use 5
     const fmt = sym === 'XAUUSD' ? '0.000' : '0.00000';
     document.getElementById('entry').placeholder = fmt;
     document.getElementById('sl').placeholder = fmt;
   }
 
+  /* ── LABEL FOCUS: Gold label when input is focused ── */
   function focusLabel(id) { document.getElementById(id).classList.add('focused'); }
   function blurLabel(id)  { document.getElementById(id).classList.remove('focused'); }
 
+  /* ── RESET: Clear all inputs and results ── */
   function resetAll() {
     document.getElementById('entry').value = '';
     document.getElementById('sl').value = '';
     document.getElementById('risk').value = '';
     recalculate();
- }
+  }
 
-  /* ── CALCULATE ── */
+  /* ── CALCULATE: Main calculation logic (runs on every input change) ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
     const r = parseFloat(document.getElementById('risk').value);
-    const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5;
+    const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5; // Decimal places for prices
+
+    // All 3 inputs must be valid and non-zero and entry ≠ SL
     const ready = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
 
+    /* DOM references */
     const dirBadge   = document.getElementById('direction-badge');
     const lotVal     = document.getElementById('lot-val');
     const tpVal      = document.getElementById('tp-val');
@@ -774,6 +940,7 @@ Stop Loss: ${tradeData.sl}`;
     const shareRow   = document.getElementById('share-row');
     const rrWrap     = document.getElementById('rr-bar-wrap');
 
+    /* ── Reset UI if inputs incomplete ── */
     if (!ready) {
       tradeData = null;
       dirBadge.className = 'badge badge-none';
@@ -792,49 +959,64 @@ Stop Loss: ${tradeData.sl}`;
       return;
     }
 
+    /* ── Direction: BUY if entry > SL, SELL if entry < SL ── */
     const direction = e > s ? 'BUY' : 'SELL';
     let point, lotRaw, actualRiskVal, tpPrice;
 
+    /* ── Lot size formula per symbol ── */
     if (currentSymbol === 'XAUUSD') {
-      point = Math.abs(e - s) * 100;
+      // Gold: point = price difference × 100
+      point  = Math.abs(e - s) * 100;
       lotRaw = r / point;
     } else if (currentSymbol === 'USDCHF') {
-      point = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
+      // USDCHF: adjusted for quote currency
+      point  = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
       lotRaw = (r * e) / point;
     } else {
-      point = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
+      // EURUSD / GBPUSD: standard formula
+      point  = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
       lotRaw = r / point;
     }
 
+    /* ── Round lot to 2 decimal places ── */
     const lot = Math.round(lotRaw * 100) / 100;
+
+    /* ── Actual risk in dollars ── */
     actualRiskVal = currentSymbol === 'USDCHF' ? (lot * point) / e : lot * point;
+
+    /* ── Reward = 3× risk ── */
     const reward = actualRiskVal * 3;
 
+    /* ── Take Profit price (1:3 ratio) ── */
     if (currentSymbol === 'XAUUSD') {
-      tpPrice = direction === 'BUY' ? e + Math.abs(e - s) * 3 : e - Math.abs(e - s) * 3;
+      tpPrice = direction === 'BUY'
+        ? e + Math.abs(e - s) * 3
+        : e - Math.abs(e - s) * 3;
     } else {
       const tpDist = (point * 3) / 100000;
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
 
+    /* ── Store trade data for share/save functions ── */
     tradeData = {
-      symbol: currentSymbol,
+      symbol:     currentSymbol,
       direction,
-      entry: e.toFixed(decFmt),
-      sl: s.toFixed(decFmt),
-      tp: tpPrice.toFixed(decFmt),
-      lot: lot.toFixed(2),
+      entry:      e.toFixed(decFmt),
+      sl:         s.toFixed(decFmt),
+      tp:         tpPrice.toFixed(decFmt),
+      lot:        lot.toFixed(2),
       actualRisk: actualRiskVal.toFixed(2),
-      reward: reward.toFixed(2)
+      reward:     reward.toFixed(2)
     };
 
-    dirBadge.className = `badge badge-${direction.toLowerCase()}`;
+    /* ── Update UI with results ── */
+    dirBadge.className   = `badge badge-${direction.toLowerCase()}`;
     dirBadge.textContent = direction;
-    lotVal.className = 'lot-value active';
-    lotVal.textContent = lot.toFixed(2);
-    tpVal.className = 'normal-value active';
-    tpVal.textContent = tpPrice.toFixed(decFmt);
-    actualVal.className = 'normal-value active';
+    lotVal.className     = 'lot-value active';
+    lotVal.textContent   = lot.toFixed(2);
+    tpVal.className      = 'normal-value active';
+    tpVal.textContent    = tpPrice.toFixed(decFmt);
+    actualVal.className  = 'normal-value active';
     actualVal.textContent = '$' + actualRiskVal.toFixed(2);
     actualRow.classList.add('visible');
     liveDot.classList.add('active');
@@ -843,12 +1025,14 @@ Stop Loss: ${tradeData.sl}`;
     copyTpBtn.classList.add('visible');
     shareRow.classList.add('visible');
 
+    /* ── Update RR bar ── */
     rrWrap.classList.add('visible');
-    document.getElementById('rr-risk-bar').style.width = '25%';
-    document.getElementById('rr-reward-bar').style.width = '75%';
-    document.getElementById('rr-risk-lbl').textContent = 'RISK $' + actualRiskVal.toFixed(2);
+    document.getElementById('rr-risk-bar').style.width   = '25%'; // Always 25% for 1:3
+    document.getElementById('rr-reward-bar').style.width = '75%'; // Always 75% for 1:3
+    document.getElementById('rr-risk-lbl').textContent   = 'RISK $'   + actualRiskVal.toFixed(2);
     document.getElementById('rr-reward-lbl').textContent = 'REWARD $' + reward.toFixed(2);
   }
+
 </script>
 </body>
 </html> 
