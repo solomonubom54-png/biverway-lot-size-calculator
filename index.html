@@ -449,7 +449,7 @@
     const isDark = html.getAttribute('data-theme') === 'dark';
     html.setAttribute('data-theme', isDark ? 'light' : 'dark');
     document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
-  }
+ }
 
   /* ── COPY ── */
   function copyValue(valId, btnId, label) {
@@ -512,8 +512,8 @@ Stop Loss: ${tradeData.sl}`;
     const border   = '#1a1d2e';
     const rowDiv   = '#111422';
     const textCol  = '#e8eaf2';
-    const muted    = '#4a4e6a';
-    const dimCol   = '#252838';
+    const muted    = '#8a8fa8';
+    const dimCol   = '#6b7090';
 
     const dir       = tradeData.direction;
     const dirColor  = dir === 'BUY' ? green : red;
@@ -752,9 +752,9 @@ Stop Loss: ${tradeData.sl}`;
     document.getElementById('sl').value = '';
     document.getElementById('risk').value = '';
     recalculate();
-  }
+ }
 
-   /* ── CALCULATE ── */
+  /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
@@ -851,4 +851,4 @@ Stop Loss: ${tradeData.sl}`;
   }
 </script>
 </body>
-</html>
+</html> 
