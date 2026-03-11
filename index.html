@@ -64,16 +64,9 @@
 
   /* ── BASE BODY & PAGE LAYOUT ── */
   html, body {
-    min-height: 100vh;
-    width: 100%;
-    overflow-x: hidden;
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Mono', monospace;
-    padding: 32px 20px;
-    transition: background 0.3s;
+    min-height: 100vh; width: 100%; overflow-x: hidden;
+    background: var(--bg); display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; padding: 32px 20px; transition: background 0.3s;
   }
 
   /* ── MAIN WRAPPER ── */
@@ -83,8 +76,7 @@
   #splash {
     position: fixed; inset: 0; background: #0a0b0f;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 9999; gap: 20px;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
+    z-index: 9999; gap: 20px; transition: opacity 0.6s ease, visibility 0.6s ease;
   }
   #splash.hide { opacity: 0; visibility: hidden; }
 
@@ -290,7 +282,7 @@
   .normal-value { font-size:15px; color:var(--input-border); transition:color 0.3s; }
   .normal-value.active { color:var(--text); }
 
-  /* ── HIDDEN ROW (actual risk) ── */
+  /* ── HIDDEN ROW (actual risk — shows after calculation) ── */
   .hidden-row { display:none; }
   .hidden-row.visible { display:flex; animation:fadeIn 0.3s ease; }
 
@@ -453,12 +445,12 @@
 
           <!-- ── SHARE / SAVE BUTTONS ── -->
           <div class="share-row" id="share-row">
-            <!-- Share Setup: sends trade details via native share sheet -->
+            <!-- Share Setup: native share sheet with trade entry details -->
             <button class="share-btn" id="share-btn" onclick="shareSetup()">
               <span class="share-main" id="share-btn-main">SHARE</span>
               <span class="share-sub">SETUP</span>
             </button>
-            <!-- Save Image: generates and downloads PNG trade card -->
+            <!-- Save Image: generates and downloads 1080×1350 PNG trade card -->
             <button class="share-btn" id="share-img-btn" onclick="saveAsImage()">
               <span class="share-main" id="share-img-main">SAVE</span>
               <span class="share-sub">IMAGE</span>
@@ -475,7 +467,7 @@
   </div><!-- end .card -->
 </div><!-- end .wrapper -->
 
-<!-- ── HIDDEN CANVAS (image generation) ── -->
+<!-- ── HIDDEN CANVAS (image generation only) ── -->
 <canvas id="share-canvas"></canvas>
 
 <!-- ── PWA INSTALL BANNER ── -->
@@ -508,7 +500,7 @@
     setTimeout(() => { document.getElementById('splash').classList.add('hide'); }, 2000);
   });
 
-  /* ── PWA: Capture install prompt event ── */
+  /* ── PWA: Capture install prompt ── */
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
@@ -530,10 +522,10 @@
     document.getElementById('install-banner').classList.remove('show');
   }
 
-  /* ── PWA: Toast on successful install ── */
+  /* ── PWA: Toast on install ── */
   window.addEventListener('appinstalled', () => { showToast('App installed successfully!'); });
 
-  /* ── PWA: Register service worker for offline ── */
+  /* ── PWA: Register service worker ── */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/biverway-lot-size-calculator/sw.js')
@@ -549,7 +541,7 @@
     document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
   }
 
-  /* ── COPY: Copy value to clipboard, show tick + toast ── */
+  /* ── COPY: Copy value to clipboard ── */
   function copyValue(valId, btnId, label) {
     const text = document.getElementById(valId).textContent.trim();
     if (!text || text === '0.00' || text === '0.00000' || text === '0.000') return;
@@ -562,7 +554,7 @@
     });
   }
 
-  /* ── SHARE SETUP: Native share sheet with trade entry details ── */
+  /* ── SHARE SETUP: Native share sheet ── */
   function shareSetup() {
     if (!tradeData) return;
     const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
@@ -576,14 +568,12 @@ Stop Loss: ${tradeData.sl}`;
     const main = document.getElementById('share-btn-main');
 
     if (navigator.share) {
-      /* Native share sheet (Android / iOS) */
       navigator.share({ text })
         .then(() => {
           main.textContent = '✓ SHARED'; btn.classList.add('shared');
           setTimeout(() => { main.textContent = 'SHARE'; btn.classList.remove('shared'); }, 2500);
         }).catch(() => {});
     } else {
-      /* Fallback: copy to clipboard */
       navigator.clipboard.writeText(text).then(() => {
         main.textContent = '✓ COPIED'; btn.classList.add('shared');
         showToast('Trade setup copied!');
@@ -592,17 +582,19 @@ Stop Loss: ${tradeData.sl}`;
     }
   }
 
-  /* ── SAVE AS IMAGE: Draw trade card on canvas and download as PNG ── */
+  /* ── SAVE AS IMAGE: 1080 × 1350 px trade card ── */
   function saveAsImage() {
     if (!tradeData) return;
 
     const canvas = document.getElementById('share-canvas');
 
-    /* ── Canvas dimensions ── */
-    const W  = 900;   // Width
-    const H  = 580;   // Height
-    const lp = 52;    // Left padding — all labels start here
-    const rp = 52;    // Right padding — all values/badge/ratio end here (one optical line)
+    /* ── Canvas dimensions (1080 × 1350 — 4:5 portrait) ── */
+    const W  = 1080;  // Width
+    const H  = 1350;  // Height
+    const lp = 100;   // Left margin — nothing clips on left
+    const rp = 100;   // Right margin — all values align to W - rp
+    const mt = 120;   // Top margin
+    const mb = 120;   // Bottom margin (reserved — content stays above)
 
     /* ── Color palette ── */
     const gold     = '#f5a623';
@@ -611,160 +603,174 @@ Stop Loss: ${tradeData.sl}`;
     const bg       = '#0a0a0a';   // Outer background
     const cardBg   = '#111111';   // Card fill
     const textW    = '#ffffff';   // White — symbol + values
-    const labelCol = '#b1b6bf';   // Labels (+15% brightness: was #9ca3af)
-    const rowDiv   = '#1f1f1f';   // Row divider lines
+    const labelCol = '#b8bec7';   // Labels — slightly brighter
+    const rowDiv   = '#222222';   // Row divider lines
 
     /* ── Direction-specific colors ── */
     const dir        = tradeData.direction;
     const dirColor   = dir === 'BUY' ? green : red;
     const dirBgColor = dir === 'BUY' ? 'rgba(34,197,94,0.18)'  : 'rgba(239,68,68,0.18)';
-    const dirBorder  = dir === 'BUY' ? 'rgba(34,197,94,0.7)'   : 'rgba(239,68,68,0.7)';
+    const dirBorder  = dir === 'BUY' ? 'rgba(34,197,94,0.75)'  : 'rgba(239,68,68,0.75)';
 
     canvas.width  = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    /* ── Draw outer background ── */
+    /* ── Outer background ── */
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    /* ── Draw card background ── */
-    roundRect(ctx, 20, 20, W - 40, H - 40, 16);
+    /* ── Card background (inset 20px) ── */
+    roundRect(ctx, 20, 20, W - 40, H - 40, 22);
     ctx.fillStyle = cardBg; ctx.fill();
 
-    /* ── Gold glowing border around card ── */
+    /* ── Gold glowing border ── */
     ctx.save();
     ctx.shadowColor = gold;
-    ctx.shadowBlur  = 24;
-    roundRect(ctx, 20, 20, W - 40, H - 40, 16);
+    ctx.shadowBlur  = 32;
+    roundRect(ctx, 20, 20, W - 40, H - 40, 22);
     ctx.strokeStyle = gold;
-    ctx.lineWidth   = 2;
+    ctx.lineWidth   = 2.5;
     ctx.stroke();
     ctx.restore();
 
-    /* ── Symbol: large top-left ── */
-    const symY = 90;
-    ctx.font      = 'bold 52px sans-serif';
+    /* ── BIVERWAY watermark header — top center ── */
+    ctx.font      = '600 18px sans-serif';
+    ctx.fillStyle = '#444a5a';
+    ctx.textAlign = 'center';
+    ctx.fillText('BIVERWAY TRADE SETUP', W / 2, mt - 30);
+
+    /* ── Symbol — large, left-aligned to lp ── */
+    const symY = mt + 42;
+    ctx.font      = 'bold 64px sans-serif';
     ctx.fillStyle = textW;
     ctx.textAlign = 'left';
     ctx.fillText(tradeData.symbol, lp, symY);
 
-    /* ── Direction badge — right edge at W - rp (optical column) ── */
-    const bW = 140, bH = 52;
-    const bx = W - rp - bW;   // Badge right edge = W - rp
-    const by = symY - bH + 6;
+    /* ── Direction badge — right edge flush at W - rp ── */
+    const bW = 160, bH = 60;
+    const bx = W - rp - bW;      // Right edge = W - rp (optical column)
+    const by = symY - bH + 4;
     ctx.save();
-    ctx.shadowColor = dirColor; ctx.shadowBlur = 28;
-    roundRect(ctx, bx, by, bW, bH, 10);
+    ctx.shadowColor = dirColor; ctx.shadowBlur = 32;
+    roundRect(ctx, bx, by, bW, bH, 12);
     ctx.fillStyle   = dirBgColor; ctx.fill();
     ctx.strokeStyle = dirBorder;  ctx.lineWidth = 2.5; ctx.stroke();
     ctx.restore();
-    ctx.font      = 'bold 26px sans-serif';
+    ctx.font      = 'bold 28px sans-serif';
     ctx.fillStyle = dirColor;
     ctx.textAlign = 'center';
-    ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 9);
+    ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 10);
 
     /* ── Divider below symbol row ── */
-    const d1y = symY + 22;
+    const divY = symY + 28;
     ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, d1y); ctx.lineTo(W - rp, d1y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lp, divY); ctx.lineTo(W - rp, divY); ctx.stroke();
 
     /* ── Data rows ── */
     const rows = [
-      // [ label,          value,           color,  bigLot, isRR  ]
-      ['ENTRY PRICE',   tradeData.entry,  textW,  false,  false],
-      ['STOP LOSS',     tradeData.sl,     textW,  false,  false],
-      ['LOT SIZE',      tradeData.lot,    gold,   true,   false],  // Large gold
-      ['RISK / REWARD', '1 : 3',          gold,   false,  true ],  // Gold RR ratio
+      // [ label,           value,            color,  bigLot, isRR  ]
+      ['ENTRY PRICE',    tradeData.entry,   textW,  false,  false],
+      ['STOP LOSS',      tradeData.sl,      textW,  false,  false],
+      ['LOT SIZE',       tradeData.lot,     gold,   true,   false],
+      ['RISK / REWARD',  '1 : 3',           gold,   false,  true ],
     ];
 
-    const rowStartY = d1y + 10;
-    const rowH      = 88;   // Row height — generous spacing (~88px per row)
+    const rowStartY = divY + 12;
+    const rowH      = 148;   // Generous row spacing
 
     rows.forEach(([label, value, valColor, isBig, isRR], i) => {
       const ry  = rowStartY + i * rowH;
-      const mid = ry + rowH / 2;   // Vertical center of each row
+      const mid = ry + rowH / 2;
 
-      /* Label: left-aligned to lp */
-      ctx.font      = '500 16px sans-serif';
-      ctx.fillStyle = labelCol;   // #b1b6bf — 15% brighter than original
+      /* Label — left-aligned to lp, brighter grey */
+      ctx.font      = '500 20px sans-serif';
+      ctx.fillStyle = labelCol;
       ctx.textAlign = 'left';
-      ctx.fillText(label, lp, mid + 6);
+      ctx.fillText(label, lp, mid + 7);
 
-      /* Value: right-aligned to W - rp (optical column) */
+      /* Value — right-aligned to W - rp (optical column) */
       if (isBig) {
-        /* LOT SIZE — large gold + glow */
+        /* LOT SIZE: 48px gold + glow */
         ctx.save();
-        ctx.shadowColor = gold; ctx.shadowBlur = 18;
-        ctx.font = 'bold 40px sans-serif'; ctx.fillStyle = valColor;
+        ctx.shadowColor = gold; ctx.shadowBlur = 22;
+        ctx.font      = 'bold 48px sans-serif';
+        ctx.fillStyle = valColor;
         ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 14);   // W - rp = optical right line
+        ctx.fillText(value, W - rp, mid + 17);
         ctx.restore();
       } else if (isRR) {
-        /* RISK / REWARD — gold ratio + glow */
+        /* RISK / REWARD: 26px gold + glow */
         ctx.save();
-        ctx.shadowColor = gold; ctx.shadowBlur = 10;
-        ctx.font = 'bold 22px sans-serif'; ctx.fillStyle = valColor;
+        ctx.shadowColor = gold; ctx.shadowBlur = 12;
+        ctx.font      = 'bold 26px sans-serif';
+        ctx.fillStyle = valColor;
         ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 8);    // W - rp = optical right line
+        ctx.fillText(value, W - rp, mid + 9);
         ctx.restore();
       } else {
-        /* ENTRY PRICE / STOP LOSS — plain white */
-        ctx.font = 'bold 22px sans-serif'; ctx.fillStyle = valColor;
+        /* ENTRY / STOP LOSS: 26px white */
+        ctx.font      = 'bold 26px sans-serif';
+        ctx.fillStyle = valColor;
         ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 8);    // W - rp = optical right line
+        ctx.fillText(value, W - rp, mid + 9);
       }
 
-      /* Row divider (skip after last row) */
+      /* Row divider (skip after last) */
       if (i < rows.length - 1) {
         ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH);
+        ctx.stroke();
       }
     });
 
-    /* ── RR Bar: strict 25% red / 75% green with soft blended join ── */
-    const barY   = rowStartY + rows.length * rowH + 6;
-    const barW   = W - lp - rp;              // Full bar width
-    const barH   = 22;
-    const riskPx = Math.round(barW * 0.25);  // Exactly 25% for risk
-    const blendW = 18;                       // Width of soft blend zone at join
+    /* ── RR Bar: strict 25% red / 75% green + soft blend at join ── */
+    const barAreaY = rowStartY + rows.length * rowH + 10;
+    const barW     = W - lp - rp;              // Full width between margins
+    const barH     = 28;                        // Bar thickness
+    const riskPx   = Math.round(barW * 0.25);  // Exactly 25%
+    const blendW   = 22;                        // Soft blend zone
 
-    /* Track background */
-    roundRect(ctx, lp, barY, barW, barH, 6);
+    /* Track */
+    roundRect(ctx, lp, barAreaY, barW, barH, 8);
     ctx.fillStyle = '#1a1a1a'; ctx.fill();
 
-    /* Red risk segment (0% → 25%) */
+    /* Red — 0% to 25% */
     ctx.save();
-    ctx.shadowColor = red; ctx.shadowBlur = 12;
-    roundRect(ctx, lp, barY, riskPx, barH, 6);
+    ctx.shadowColor = red; ctx.shadowBlur = 14;
+    roundRect(ctx, lp, barAreaY, riskPx, barH, 8);
     ctx.fillStyle = red; ctx.fill();
     ctx.restore();
 
-    /* Green reward segment (25% → 100%) — flush start, no hard gap */
+    /* Green — 25% to 100%, flush */
     ctx.save();
-    ctx.shadowColor = green; ctx.shadowBlur = 16;
-    roundRect(ctx, lp + riskPx, barY, barW - riskPx, barH, 6);
+    ctx.shadowColor = green; ctx.shadowBlur = 20;
+    roundRect(ctx, lp + riskPx, barAreaY, barW - riskPx, barH, 8);
     ctx.fillStyle = green; ctx.fill();
     ctx.restore();
 
-    /* Soft gradient blend at join — 18px wide, red → dark mid → green */
-    const blendGrad = ctx.createLinearGradient(lp + riskPx - blendW / 2, 0, lp + riskPx + blendW / 2, 0);
-    blendGrad.addColorStop(0,   red);
-    blendGrad.addColorStop(0.4, '#c0392b');   // Warm dark mid-tone
-    blendGrad.addColorStop(0.6, '#1a6b3a');   // Dark green mid-tone
-    blendGrad.addColorStop(1,   green);
-    roundRect(ctx, lp + riskPx - blendW / 2, barY, blendW, barH, 0);
+    /* Soft blend gradient at join */
+    const blendGrad = ctx.createLinearGradient(
+      lp + riskPx - blendW / 2, 0,
+      lp + riskPx + blendW / 2, 0
+    );
+    blendGrad.addColorStop(0,    red);
+    blendGrad.addColorStop(0.38, '#c0392b');
+    blendGrad.addColorStop(0.62, '#145a32');
+    blendGrad.addColorStop(1,    green);
+    roundRect(ctx, lp + riskPx - blendW / 2, barAreaY, blendW, barH, 0);
     ctx.fillStyle = blendGrad; ctx.fill();
 
-    /* ── Risk / Reward amounts below bar — optically aligned ── */
-    const amtY = barY + barH + 22;
-    ctx.font      = 'bold 18px sans-serif';
+    /* ── Risk / Reward amounts below bar ── */
+    const amtY = barAreaY + barH + 30;
+    ctx.font      = 'bold 22px sans-serif';
     ctx.fillStyle = red;
     ctx.textAlign = 'left';
-    ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);      // lp = left optical line
+    ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);
     ctx.fillStyle = green;
     ctx.textAlign = 'right';
-    ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);    // W - rp = right optical line
+    ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);
 
     /* ── Download as PNG ── */
     const link = document.createElement('a');
@@ -804,19 +810,19 @@ Stop Loss: ${tradeData.sl}`;
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  /* ── SYMBOL: Switch active trading symbol ── */
+  /* ── SYMBOL: Switch active symbol ── */
   function selectSymbol(sym, btn) {
     currentSymbol = sym;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     resetAll();
-    /* XAUUSD uses 3 decimal places, others use 5 */
+    /* XAUUSD = 3 decimal places, others = 5 */
     const fmt = sym === 'XAUUSD' ? '0.000' : '0.00000';
     document.getElementById('entry').placeholder = fmt;
     document.getElementById('sl').placeholder = fmt;
   }
 
-  /* ── LABEL FOCUS: Gold label when input is active ── */
+  /* ── LABEL FOCUS: Gold on active input ── */
   function focusLabel(id) { document.getElementById(id).classList.add('focused'); }
   function blurLabel(id)  { document.getElementById(id).classList.remove('focused'); }
 
@@ -833,9 +839,9 @@ Stop Loss: ${tradeData.sl}`;
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
     const r = parseFloat(document.getElementById('risk').value);
-    const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5; // Price decimal places
+    const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5;
 
-    /* All 3 inputs must be valid, non-zero, and entry ≠ SL */
+    /* All 3 inputs must be valid, non-zero, entry ≠ SL */
     const ready = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
 
     /* DOM references */
@@ -898,7 +904,7 @@ Stop Loss: ${tradeData.sl}`;
     /* ── Reward = 3× actual risk ── */
     const reward = actualRiskVal * 3;
 
-    /* ── Take Profit price at 1:3 ── */
+    /* ── Take Profit at 1:3 ── */
     if (currentSymbol === 'XAUUSD') {
       tpPrice = direction === 'BUY'
         ? e + Math.abs(e - s) * 3
@@ -908,7 +914,7 @@ Stop Loss: ${tradeData.sl}`;
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
 
-    /* ── Store trade data for share/save functions ── */
+    /* ── Store trade data ── */
     tradeData = {
       symbol: currentSymbol, direction,
       entry:  e.toFixed(decFmt),
@@ -935,7 +941,7 @@ Stop Loss: ${tradeData.sl}`;
     copyTpBtn.classList.add('visible');
     shareRow.classList.add('visible');
 
-    /* ── Update RR bar — always 25% / 75% for 1:3 ── */
+    /* ── Update RR bar — always 25% / 75% ── */
     rrWrap.classList.add('visible');
     document.getElementById('rr-risk-bar').style.width   = '25%';
     document.getElementById('rr-reward-bar').style.width = '75%';
@@ -945,4 +951,4 @@ Stop Loss: ${tradeData.sl}`;
 
 </script>
 </body>
-</html>                                                  
+</html>              
