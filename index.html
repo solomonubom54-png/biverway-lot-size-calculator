@@ -439,7 +439,7 @@
       </div>
     </div>
 
-    <!-- ── CARD FOOTER ── */
+    <!-- ── CARD FOOTER ── -->
     <div class="card-footer">DESIGNED ACCORDING TO BIVERWAY TRADING SYSTEM · V2.1+</div>
 
   </div>
@@ -503,7 +503,7 @@
   /* ── PWA: Toast on successful install ── */
   window.addEventListener('appinstalled', () => { showToast('App installed successfully!'); });
 
-  /* ── PWA: Register service worker for offline support ── */
+  /* ── PWA: Register service worker ── */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/biverway-lot-size-calculator/sw.js')
@@ -531,7 +531,7 @@
     });
   }
 
-  /* ── SHARE SETUP: Native share sheet with trade entry details ── */
+  /* ── SHARE SETUP: Native share sheet ── */
   function shareSetup() {
     if (!tradeData) return;
     const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
@@ -557,7 +557,7 @@ Stop Loss: ${tradeData.sl}`;
     }
   }
 
-  /* ── SAVE AS IMAGE: auto-fitted height, equal margins, logo watermark ── */
+  /* ── SAVE AS IMAGE: auto-fitted height, equal margins, no watermark ── */
   function saveAsImage() {
     if (!tradeData) return;
 
@@ -594,7 +594,7 @@ Stop Loss: ${tradeData.sl}`;
     const barGapTop = 24;   // Space above RR bar
     const amtH      = 48;   // Risk/Reward amounts row below bar
 
-    /* ── Auto-calculate canvas height — content fits exactly, equal top/bottom padding ── */
+    /* ── Auto-calculate canvas height — equal top and bottom padding ── */
     const contentH = symBlockH + divH + (numRows * rowH) + barGapTop + barH + amtH;
     const H = pad + contentH + pad;
 
@@ -617,163 +617,138 @@ Stop Loss: ${tradeData.sl}`;
     ctx.strokeStyle = gold; ctx.lineWidth = 2.5; ctx.stroke();
     ctx.restore();
 
-    /* ── Watermark: load logo via absolute URL (required for canvas CORS) ── */
-    const logo       = new Image();
-    logo.crossOrigin = 'anonymous';
-    logo.src = 'https://solomonubom54-png.github.io/biverway-lot-size-calculator/logo.png?v=' + Date.now();
+    /* ── Symbol — left-aligned to lp ── */
+    const symY = pad + 56;
+    ctx.font      = 'bold 64px sans-serif';
+    ctx.fillStyle = textW;
+    ctx.textAlign = 'left';
+    ctx.fillText(tradeData.symbol, lp, symY);
 
-    logo.onload = () => {
-      /* Draw faint watermark centered behind all content */
-      ctx.save();
-      ctx.globalAlpha = 0.06;   // 6% opacity — subtle, not distracting
-      const wSize = 300;        // Watermark size in px
-      ctx.drawImage(logo, (W - wSize) / 2, (H - wSize) / 2, wSize, wSize);
-      ctx.restore();
-      /* Draw foreground content on top */
-      drawContent();
-    };
+    /* ── Direction badge — right edge flush at W - rp ── */
+    const bW = 160, bH = 60;
+    const bx = W - rp - bW;
+    const by = symY - bH + 4;
+    ctx.save();
+    ctx.shadowColor = dirColor; ctx.shadowBlur = 32;
+    roundRect(ctx, bx, by, bW, bH, 12);
+    ctx.fillStyle   = dirBgColor; ctx.fill();
+    ctx.strokeStyle = dirBorder;  ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.restore();
+    ctx.font      = 'bold 28px sans-serif';
+    ctx.fillStyle = dirColor;
+    ctx.textAlign = 'center';
+    ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 10);
 
-    logo.onerror = () => {
-      /* Logo failed to load — draw content without watermark */
-      drawContent();
-    };
+    /* ── Divider below symbol row ── */
+    const divY = symY + divH + 18;
+    ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(lp, divY); ctx.lineTo(W - rp, divY); ctx.stroke();
 
-    /* ── Draw all foreground content ── */
-    function drawContent() {
+    /* ── Data rows ── */
+    const rows = [
+      // [ label,           value,            color,  bigLot, isRR  ]
+      ['ENTRY PRICE',    tradeData.entry,   textW,  false,  false],
+      ['STOP LOSS',      tradeData.sl,      textW,  false,  false],
+      ['LOT SIZE',       tradeData.lot,     gold,   true,   false],
+      ['RISK / REWARD',  '1 : 3',           gold,   false,  true ],
+    ];
 
-      /* Symbol — left-aligned to lp */
-      const symY = pad + 56;
-      ctx.font      = 'bold 64px sans-serif';
-      ctx.fillStyle = textW;
+    const rowStartY = divY + 8;
+
+    rows.forEach(([label, value, valColor, isBig, isRR], i) => {
+      const ry  = rowStartY + i * rowH;
+      const mid = ry + rowH / 2;
+
+      /* Label — left-aligned, brighter grey */
+      ctx.font      = '500 20px sans-serif';
+      ctx.fillStyle = labelCol;
       ctx.textAlign = 'left';
-      ctx.fillText(tradeData.symbol, lp, symY);
+      ctx.fillText(label, lp, mid + 7);
 
-      /* Direction badge — right edge flush at W - rp (optical column) */
-      const bW = 160, bH = 60;
-      const bx = W - rp - bW;   // Right edge of badge = W - rp
-      const by = symY - bH + 4;
-      ctx.save();
-      ctx.shadowColor = dirColor; ctx.shadowBlur = 32;
-      roundRect(ctx, bx, by, bW, bH, 12);
-      ctx.fillStyle   = dirBgColor; ctx.fill();
-      ctx.strokeStyle = dirBorder;  ctx.lineWidth = 2.5; ctx.stroke();
-      ctx.restore();
-      ctx.font      = 'bold 28px sans-serif';
-      ctx.fillStyle = dirColor;
-      ctx.textAlign = 'center';
-      ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 10);
+      /* Value — all right-aligned to W - rp (one optical column) */
+      if (isBig) {
+        /* LOT SIZE — large 48px gold + glow */
+        ctx.save();
+        ctx.shadowColor = gold; ctx.shadowBlur = 22;
+        ctx.font = 'bold 48px sans-serif'; ctx.fillStyle = valColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 17);
+        ctx.restore();
+      } else if (isRR) {
+        /* RISK / REWARD — 26px gold + glow */
+        ctx.save();
+        ctx.shadowColor = gold; ctx.shadowBlur = 12;
+        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 9);
+        ctx.restore();
+      } else {
+        /* ENTRY PRICE / STOP LOSS — 26px white */
+        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor;
+        ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 9);
+      }
 
-      /* Divider below symbol row */
-      const divY = symY + divH + 18;
-      ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(lp, divY); ctx.lineTo(W - rp, divY); ctx.stroke();
+      /* Row divider (skip after last row) */
+      if (i < rows.length - 1) {
+        ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH);
+        ctx.stroke();
+      }
+    });
 
-      /* Data rows */
-      const rows = [
-        // [ label,          value,            color,  bigLot, isRR  ]
-        ['ENTRY PRICE',   tradeData.entry,   textW,  false,  false],
-        ['STOP LOSS',     tradeData.sl,      textW,  false,  false],
-        ['LOT SIZE',      tradeData.lot,     gold,   true,   false],
-        ['RISK / REWARD', '1 : 3',           gold,   false,  true ],
-      ];
+    /* ── RR Bar: strict 25% red / 75% green + soft blend at join ── */
+    const barAreaY = rowStartY + rows.length * rowH + barGapTop;
+    const barW     = W - lp - rp;
+    const riskPx   = Math.round(barW * 0.25);  // Exactly 25%
+    const blendW   = 22;                        // Soft blend zone width
 
-      const rowStartY = divY + 8;
+    /* Track background */
+    roundRect(ctx, lp, barAreaY, barW, barH, 8);
+    ctx.fillStyle = '#1a1a1a'; ctx.fill();
 
-      rows.forEach(([label, value, valColor, isBig, isRR], i) => {
-        const ry  = rowStartY + i * rowH;
-        const mid = ry + rowH / 2;
+    /* Red segment — 25% */
+    ctx.save();
+    ctx.shadowColor = red; ctx.shadowBlur = 14;
+    roundRect(ctx, lp, barAreaY, riskPx, barH, 8);
+    ctx.fillStyle = red; ctx.fill();
+    ctx.restore();
 
-        /* Label — left-aligned, brighter grey */
-        ctx.font      = '500 20px sans-serif';
-        ctx.fillStyle = labelCol;
-        ctx.textAlign = 'left';
-        ctx.fillText(label, lp, mid + 7);
+    /* Green segment — 75%, flush no gap */
+    ctx.save();
+    ctx.shadowColor = green; ctx.shadowBlur = 20;
+    roundRect(ctx, lp + riskPx, barAreaY, barW - riskPx, barH, 8);
+    ctx.fillStyle = green; ctx.fill();
+    ctx.restore();
 
-        /* Value — all right-aligned to W - rp (one optical column) */
-        if (isBig) {
-          /* LOT SIZE — large 48px gold + glow */
-          ctx.save();
-          ctx.shadowColor = gold; ctx.shadowBlur = 22;
-          ctx.font = 'bold 48px sans-serif'; ctx.fillStyle = valColor;
-          ctx.textAlign = 'right';
-          ctx.fillText(value, W - rp, mid + 17);
-          ctx.restore();
-        } else if (isRR) {
-          /* RISK / REWARD ratio — 26px gold + glow */
-          ctx.save();
-          ctx.shadowColor = gold; ctx.shadowBlur = 12;
-          ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor;
-          ctx.textAlign = 'right';
-          ctx.fillText(value, W - rp, mid + 9);
-          ctx.restore();
-        } else {
-          /* ENTRY PRICE / STOP LOSS — 26px white */
-          ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor;
-          ctx.textAlign = 'right';
-          ctx.fillText(value, W - rp, mid + 9);
-        }
+    /* Soft gradient blend at join point */
+    const blendGrad = ctx.createLinearGradient(
+      lp + riskPx - blendW / 2, 0,
+      lp + riskPx + blendW / 2, 0
+    );
+    blendGrad.addColorStop(0,    red);
+    blendGrad.addColorStop(0.38, '#c0392b');
+    blendGrad.addColorStop(0.62, '#145a32');
+    blendGrad.addColorStop(1,    green);
+    roundRect(ctx, lp + riskPx - blendW / 2, barAreaY, blendW, barH, 0);
+    ctx.fillStyle = blendGrad; ctx.fill();
 
-        /* Row divider (skip after last row) */
-        if (i < rows.length - 1) {
-          ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH);
-          ctx.stroke();
-        }
-      });
+    /* ── Risk / Reward amounts below bar ── */
+    const amtY = barAreaY + barH + 28;
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = red;   ctx.textAlign = 'left';
+    ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);
+    ctx.fillStyle = green; ctx.textAlign = 'right';
+    ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);
 
-      /* ── RR Bar: strict 25% red / 75% green + soft blend at join ── */
-      const barAreaY = rowStartY + rows.length * rowH + barGapTop;
-      const barW     = W - lp - rp;
-      const riskPx   = Math.round(barW * 0.25);  // Exactly 25%
-      const blendW   = 22;                        // Soft blend zone width
+    /* ── Download PNG ── */
+    const link = document.createElement('a');
+    link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
 
-      /* Track background */
-      roundRect(ctx, lp, barAreaY, barW, barH, 8);
-      ctx.fillStyle = '#1a1a1a'; ctx.fill();
-
-      /* Red segment — 25% */
-      ctx.save();
-      ctx.shadowColor = red; ctx.shadowBlur = 14;
-      roundRect(ctx, lp, barAreaY, riskPx, barH, 8);
-      ctx.fillStyle = red; ctx.fill();
-      ctx.restore();
-
-      /* Green segment — 75%, flush no gap */
-      ctx.save();
-      ctx.shadowColor = green; ctx.shadowBlur = 20;
-      roundRect(ctx, lp + riskPx, barAreaY, barW - riskPx, barH, 8);
-      ctx.fillStyle = green; ctx.fill();
-      ctx.restore();
-
-      /* Soft gradient blend at join point */
-      const blendGrad = ctx.createLinearGradient(
-        lp + riskPx - blendW / 2, 0,
-        lp + riskPx + blendW / 2, 0
-      );
-      blendGrad.addColorStop(0,    red);
-      blendGrad.addColorStop(0.38, '#c0392b');   // Warm dark red-brown
-      blendGrad.addColorStop(0.62, '#145a32');   // Deep dark green
-      blendGrad.addColorStop(1,    green);
-      roundRect(ctx, lp + riskPx - blendW / 2, barAreaY, blendW, barH, 0);
-      ctx.fillStyle = blendGrad; ctx.fill();
-
-      /* Risk / Reward amounts below bar */
-      const amtY = barAreaY + barH + 28;
-      ctx.font = 'bold 22px sans-serif';
-      ctx.fillStyle = red;   ctx.textAlign = 'left';
-      ctx.fillText('Risk  $' + tradeData.actualRisk, lp, amtY);
-      ctx.fillStyle = green; ctx.textAlign = 'right';
-      ctx.fillText('Reward  $' + tradeData.reward, W - rp, amtY);
-
-      /* Download PNG */
-      const link = document.createElement('a');
-      link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    }
-
-    /* Button feedback — shown immediately while image generates */
+    /* ── Button feedback ── */
     const btn  = document.getElementById('share-img-btn');
     const main = document.getElementById('share-img-main');
     main.textContent = '✓ SAVED';
@@ -811,7 +786,6 @@ Stop Loss: ${tradeData.sl}`;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     resetAll();
-    /* XAUUSD = 3 decimal places, others = 5 */
     const fmt = sym === 'XAUUSD' ? '0.000' : '0.00000';
     document.getElementById('entry').placeholder = fmt;
     document.getElementById('sl').placeholder = fmt;
@@ -835,9 +809,7 @@ Stop Loss: ${tradeData.sl}`;
     const s = parseFloat(document.getElementById('sl').value);
     const r = parseFloat(document.getElementById('risk').value);
     const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5;
-
-    /* All 3 inputs must be valid, non-zero, entry ≠ SL */
-    const ready = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
+    const ready  = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
 
     const dirBadge   = document.getElementById('direction-badge');
     const lotVal     = document.getElementById('lot-val');
@@ -851,7 +823,7 @@ Stop Loss: ${tradeData.sl}`;
     const shareRow   = document.getElementById('share-row');
     const rrWrap     = document.getElementById('rr-bar-wrap');
 
-    /* Reset UI when inputs are incomplete */
+    /* ── Reset UI when inputs are incomplete ── */
     if (!ready) {
       tradeData = null;
       dirBadge.className = 'badge badge-none'; dirBadge.textContent = '—';
@@ -865,11 +837,11 @@ Stop Loss: ${tradeData.sl}`;
       return;
     }
 
-    /* Direction: BUY if entry > SL, SELL if entry < SL */
+    /* ── Direction: BUY if entry > SL, SELL if entry < SL ── */
     const direction = e > s ? 'BUY' : 'SELL';
     let point, lotRaw, actualRiskVal, tpPrice;
 
-    /* Lot size formula per symbol */
+    /* ── Lot size formula per symbol ── */
     if (currentSymbol === 'XAUUSD') {
       point  = Math.abs(e - s) * 100;
       lotRaw = r / point;
@@ -881,16 +853,16 @@ Stop Loss: ${tradeData.sl}`;
       lotRaw = r / point;
     }
 
-    /* Round lot to 2 decimal places */
+    /* ── Round lot to 2 decimal places ── */
     const lot = Math.round(lotRaw * 100) / 100;
 
-    /* Actual risk in dollars */
+    /* ── Actual risk in dollars ── */
     actualRiskVal = currentSymbol === 'USDCHF' ? (lot * point) / e : lot * point;
 
-    /* Reward = 3× actual risk */
+    /* ── Reward = 3× actual risk ── */
     const reward = actualRiskVal * 3;
 
-    /* Take Profit at 1:3 */
+    /* ── Take Profit at 1:3 ── */
     if (currentSymbol === 'XAUUSD') {
       tpPrice = direction === 'BUY' ? e + Math.abs(e - s) * 3 : e - Math.abs(e - s) * 3;
     } else {
@@ -898,14 +870,14 @@ Stop Loss: ${tradeData.sl}`;
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
 
-    /* Store trade data for share/save functions */
+    /* ── Store trade data ── */
     tradeData = {
       symbol: currentSymbol, direction,
       entry:  e.toFixed(decFmt), sl: s.toFixed(decFmt), tp: tpPrice.toFixed(decFmt),
       lot: lot.toFixed(2), actualRisk: actualRiskVal.toFixed(2), reward: reward.toFixed(2)
     };
 
-    /* Update result UI */
+    /* ── Update result UI ── */
     dirBadge.className    = `badge badge-${direction.toLowerCase()}`;
     dirBadge.textContent  = direction;
     lotVal.className      = 'lot-value active'; lotVal.textContent = lot.toFixed(2);
@@ -916,7 +888,7 @@ Stop Loss: ${tradeData.sl}`;
     copyLotBtn.classList.add('visible'); copyTpBtn.classList.add('visible');
     shareRow.classList.add('visible');
 
-    /* Update RR bar — always 25% / 75% for 1:3 */
+    /* ── Update RR bar — always 25% / 75% for 1:3 ── */
     rrWrap.classList.add('visible');
     document.getElementById('rr-risk-bar').style.width   = '25%';
     document.getElementById('rr-reward-bar').style.width = '75%';
@@ -926,4 +898,4 @@ Stop Loss: ${tradeData.sl}`;
 
 </script>
 </body>
-</html>  
+</html>    
