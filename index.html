@@ -606,16 +606,7 @@
   /* ── SHARE SETUP: Native share sheet with trade entry details ── */
   function shareSetup() {
     if (!tradeData) return;
-    const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
-    const cs = currSym();
-    const text =
-`${tradeData.symbol}
-${orderType}
-Entry Price: ${tradeData.entry}
-Stop Loss: ${tradeData.sl}
-Lot Size: ${tradeData.lot}
-Risk: ${cs}${tradeData.actualRisk}
-Reward: ${cs}${tradeData.reward}`;
+
 
     const btn  = document.getElementById('share-btn');
     const main = document.getElementById('share-btn-main');
@@ -630,7 +621,11 @@ Reward: ${cs}${tradeData.reward}`;
         main.textContent = '✓ COPIED'; btn.classList.add('shared');
         showToast('Trade setup copied!');
         setTimeout(() => { main.textContent = 'SHARE'; btn.classList.remove('shared'); }, 2500);
-      });
+      }const text =
+`${tradeData.symbol}
+${orderType}
+Entry Price: ${tradeData.entry}
+Stop Loss: ${tradeData.sl}`;);
     }
   }
 
