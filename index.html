@@ -205,18 +205,8 @@
     font-size: 9px; letter-spacing: 0.06em;
     cursor: pointer; transition: all 0.18s;
   }
-  /* Dollar active state — green tint */
-  .acct-btn.active-dollar {
-    background: rgba(34,197,94,0.1);
-    border-color: rgba(34,197,94,0.5);
-    color: #22c55e;
-  }
-  /* Cent active state — purple/indigo tint */
-  .acct-btn.active-cent {
-    background: rgba(129,140,248,0.1);
-    border-color: rgba(129,140,248,0.5);
-    color: #818cf8;
-  }
+  .acct-btn.active-dollar { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.5); color: #22c55e; }
+  .acct-btn.active-cent   { background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.5); color: #818cf8; }
   .acct-btn:hover { border-color: #f5a623; color: #f5a623; }
 
   /* ── SYMBOL SELECTOR PILLS ── */
@@ -422,7 +412,6 @@
       <div class="right-col">
         <div class="results">
 
-          <!-- Results Header + Live Dot -->
           <div class="results-header">
             <span class="results-label">Results</span>
             <div class="live-indicator">
@@ -431,19 +420,16 @@
             </div>
           </div>
 
-          <!-- Direction Row -->
           <div class="result-row">
             <span class="result-key">DIRECTION</span>
             <span class="badge badge-none" id="direction-badge">—</span>
           </div>
 
-          <!-- Actual Risk Row (hidden until calculated) -->
           <div class="result-row hidden-row" id="actual-risk-row">
             <span class="result-key">ACTUAL RISK</span>
             <span class="normal-value" id="actual-risk-val">$0.00</span>
           </div>
 
-          <!-- Lot Size Row + Copy Button -->
           <div class="result-row">
             <span class="result-key">LOT SIZE</span>
             <div class="result-right">
@@ -452,7 +438,6 @@
             </div>
           </div>
 
-          <!-- Take Profit Row + Copy Button -->
           <div class="result-row">
             <span class="result-key">TAKE PROFIT (1:3)</span>
             <div class="result-right">
@@ -524,24 +509,18 @@
 
   /* ── STATE VARIABLES ── */
   let currentSymbol  = 'EURUSD';
-  let currentAcct    = 'dollar';   // 'dollar' or 'cent' — account type
+  let currentAcct    = 'dollar';   // 'dollar' or 'cent'
   let tradeData      = null;
   let deferredPrompt = null;
 
-  /* ── CURRENCY SYMBOL: returns $ or ¢ based on account type ── */
+  /* ── CURRENCY SYMBOL: returns $ or ¢ ── */
   function currSym() { return currentAcct === 'dollar' ? '$' : '¢'; }
 
   /* ── ACCOUNT TYPE: Switch between dollar and cent ── */
   function setAcctType(type) {
     currentAcct = type;
-
-    /* Update button active states */
-    const btnDollar = document.getElementById('btn-dollar');
-    const btnCent   = document.getElementById('btn-cent');
-    btnDollar.className = 'acct-btn' + (type === 'dollar' ? ' active-dollar' : '');
-    btnCent.className   = 'acct-btn' + (type === 'cent'   ? ' active-cent'   : '');
-
-    /* Re-run calculation so all displayed symbols update immediately */
+    document.getElementById('btn-dollar').className = 'acct-btn' + (type === 'dollar' ? ' active-dollar' : '');
+    document.getElementById('btn-cent').className   = 'acct-btn' + (type === 'cent'   ? ' active-cent'   : '');
     recalculate();
   }
 
@@ -603,10 +582,17 @@
     });
   }
 
-  /* ── SHARE SETUP: Native share sheet with trade entry details ── */
+  /* ── SHARE SETUP: Symbol, order type, entry price, stop loss only ── */
   function shareSetup() {
     if (!tradeData) return;
+    const orderType = tradeData.direction === 'BUY' ? 'Buy Limit' : 'Sell Limit';
 
+    /* ── Share text: symbol, order type, entry, stop loss only ── */
+    const text =
+`${tradeData.symbol}
+${orderType}
+Entry Price: ${tradeData.entry}
+Stop Loss: ${tradeData.sl}`;
 
     const btn  = document.getElementById('share-btn');
     const main = document.getElementById('share-btn-main');
@@ -621,11 +607,7 @@
         main.textContent = '✓ COPIED'; btn.classList.add('shared');
         showToast('Trade setup copied!');
         setTimeout(() => { main.textContent = 'SHARE'; btn.classList.remove('shared'); }, 2500);
-      }const text =
-`${tradeData.symbol}
-${orderType}
-Entry Price: ${tradeData.entry}
-Stop Loss: ${tradeData.sl}`;);
+      });
     }
   }
 
@@ -634,15 +616,13 @@ Stop Loss: ${tradeData.sl}`;);
     if (!tradeData) return;
 
     const canvas = document.getElementById('share-canvas');
-    const cs     = currSym();   // $ or ¢ based on account type
+    const cs     = currSym();   // $ or ¢
 
-    /* ── Canvas dimensions and equal padding ── */
     const W   = 1080;
     const pad = 90;
     const lp  = pad;
     const rp  = pad;
 
-    /* ── Color palette ── */
     const gold     = '#f5a623';
     const green    = '#22c55e';
     const red      = '#ef4444';
@@ -652,13 +632,11 @@ Stop Loss: ${tradeData.sl}`;);
     const labelCol = '#b8bec7';
     const rowDiv   = '#222222';
 
-    /* ── Direction colors ── */
     const dir        = tradeData.direction;
     const dirColor   = dir === 'BUY' ? green : red;
     const dirBgColor = dir === 'BUY' ? 'rgba(34,197,94,0.18)'  : 'rgba(239,68,68,0.18)';
     const dirBorder  = dir === 'BUY' ? 'rgba(34,197,94,0.75)'  : 'rgba(239,68,68,0.75)';
 
-    /* ── Content measurements ── */
     const symBlockH = 80;
     const divH      = 6;
     const rowH      = 130;
@@ -667,7 +645,6 @@ Stop Loss: ${tradeData.sl}`;);
     const barGapTop = 24;
     const amtH      = 48;
 
-    /* ── Auto-calculate height — equal padding top and bottom ── */
     const contentH = symBlockH + divH + (numRows * rowH) + barGapTop + barH + amtH;
     const H = pad + contentH + pad;
 
@@ -675,54 +652,47 @@ Stop Loss: ${tradeData.sl}`;);
     canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    /* ── Outer background ── */
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    /* ── Card background ── */
     roundRect(ctx, 20, 20, W - 40, H - 40, 22);
     ctx.fillStyle = cardBg; ctx.fill();
 
-    /* ── Gold glowing border ── */
     ctx.save();
     ctx.shadowColor = gold; ctx.shadowBlur = 32;
     roundRect(ctx, 20, 20, W - 40, H - 40, 22);
     ctx.strokeStyle = gold; ctx.lineWidth = 2.5; ctx.stroke();
     ctx.restore();
 
-    /* ── Symbol — left-aligned ── */
+    /* Symbol */
     const symY = pad + 56;
-    ctx.font      = 'bold 64px sans-serif';
-    ctx.fillStyle = textW;
-    ctx.textAlign = 'left';
+    ctx.font = 'bold 64px sans-serif'; ctx.fillStyle = textW; ctx.textAlign = 'left';
     ctx.fillText(tradeData.symbol, lp, symY);
 
-    /* ── Direction badge — right edge at W - rp ── */
+    /* Direction badge */
     const bW = 160, bH = 60;
     const bx = W - rp - bW;
     const by = symY - bH + 4;
     ctx.save();
     ctx.shadowColor = dirColor; ctx.shadowBlur = 32;
     roundRect(ctx, bx, by, bW, bH, 12);
-    ctx.fillStyle   = dirBgColor; ctx.fill();
-    ctx.strokeStyle = dirBorder;  ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = dirBgColor; ctx.fill();
+    ctx.strokeStyle = dirBorder; ctx.lineWidth = 2.5; ctx.stroke();
     ctx.restore();
-    ctx.font      = 'bold 28px sans-serif';
-    ctx.fillStyle = dirColor;
-    ctx.textAlign = 'center';
+    ctx.font = 'bold 28px sans-serif'; ctx.fillStyle = dirColor; ctx.textAlign = 'center';
     ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 10);
 
-    /* ── Divider below symbol ── */
+    /* Divider */
     const divY = symY + divH + 18;
     ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(lp, divY); ctx.lineTo(W - rp, divY); ctx.stroke();
 
-    /* ── Data rows ── */
+    /* Data rows */
     const rows = [
-      ['ENTRY PRICE',   tradeData.entry,  textW, false, false],
-      ['STOP LOSS',     tradeData.sl,     textW, false, false],
-      ['LOT SIZE',      tradeData.lot,    gold,  true,  false],
-      ['RISK / REWARD', '1 : 3',          gold,  false, true ],
+      ['ENTRY PRICE',   tradeData.entry, textW, false, false],
+      ['STOP LOSS',     tradeData.sl,    textW, false, false],
+      ['LOT SIZE',      tradeData.lot,   gold,  true,  false],
+      ['RISK / REWARD', '1 : 3',         gold,  false, true ],
     ];
 
     const rowStartY = divY + 8;
@@ -730,73 +700,43 @@ Stop Loss: ${tradeData.sl}`;);
     rows.forEach(([label, value, valColor, isBig, isRR], i) => {
       const ry  = rowStartY + i * rowH;
       const mid = ry + rowH / 2;
-
-      /* Label */
-      ctx.font      = '500 20px sans-serif';
-      ctx.fillStyle = labelCol;
-      ctx.textAlign = 'left';
+      ctx.font = '500 20px sans-serif'; ctx.fillStyle = labelCol; ctx.textAlign = 'left';
       ctx.fillText(label, lp, mid + 7);
-
-      /* Value — right-aligned to W - rp */
       if (isBig) {
-        ctx.save();
-        ctx.shadowColor = gold; ctx.shadowBlur = 22;
-        ctx.font = 'bold 48px sans-serif'; ctx.fillStyle = valColor;
-        ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 17);
-        ctx.restore();
+        ctx.save(); ctx.shadowColor = gold; ctx.shadowBlur = 22;
+        ctx.font = 'bold 48px sans-serif'; ctx.fillStyle = valColor; ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 17); ctx.restore();
       } else if (isRR) {
-        ctx.save();
-        ctx.shadowColor = gold; ctx.shadowBlur = 12;
-        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor;
-        ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 9);
-        ctx.restore();
+        ctx.save(); ctx.shadowColor = gold; ctx.shadowBlur = 12;
+        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor; ctx.textAlign = 'right';
+        ctx.fillText(value, W - rp, mid + 9); ctx.restore();
       } else {
-        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor;
-        ctx.textAlign = 'right';
+        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor; ctx.textAlign = 'right';
         ctx.fillText(value, W - rp, mid + 9);
       }
-
-      /* Row divider */
       if (i < rows.length - 1) {
         ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH); ctx.stroke();
       }
     });
 
-    /* ── RR Bar: 25% red / 75% green + soft blend ── */
+    /* RR Bar */
     const barAreaY = rowStartY + rows.length * rowH + barGapTop;
     const barW     = W - lp - rp;
     const riskPx   = Math.round(barW * 0.25);
     const blendW   = 22;
-
-    roundRect(ctx, lp, barAreaY, barW, barH, 8);
-    ctx.fillStyle = '#1a1a1a'; ctx.fill();
-
-    ctx.save();
-    ctx.shadowColor = red; ctx.shadowBlur = 14;
-    roundRect(ctx, lp, barAreaY, riskPx, barH, 8);
-    ctx.fillStyle = red; ctx.fill();
-    ctx.restore();
-
-    ctx.save();
-    ctx.shadowColor = green; ctx.shadowBlur = 20;
-    roundRect(ctx, lp + riskPx, barAreaY, barW - riskPx, barH, 8);
-    ctx.fillStyle = green; ctx.fill();
-    ctx.restore();
-
+    roundRect(ctx, lp, barAreaY, barW, barH, 8); ctx.fillStyle = '#1a1a1a'; ctx.fill();
+    ctx.save(); ctx.shadowColor = red; ctx.shadowBlur = 14;
+    roundRect(ctx, lp, barAreaY, riskPx, barH, 8); ctx.fillStyle = red; ctx.fill(); ctx.restore();
+    ctx.save(); ctx.shadowColor = green; ctx.shadowBlur = 20;
+    roundRect(ctx, lp + riskPx, barAreaY, barW - riskPx, barH, 8); ctx.fillStyle = green; ctx.fill(); ctx.restore();
     const blendGrad = ctx.createLinearGradient(lp + riskPx - blendW/2, 0, lp + riskPx + blendW/2, 0);
-    blendGrad.addColorStop(0,    red);
-    blendGrad.addColorStop(0.38, '#c0392b');
-    blendGrad.addColorStop(0.62, '#145a32');
-    blendGrad.addColorStop(1,    green);
+    blendGrad.addColorStop(0, red); blendGrad.addColorStop(0.38, '#c0392b');
+    blendGrad.addColorStop(0.62, '#145a32'); blendGrad.addColorStop(1, green);
     roundRect(ctx, lp + riskPx - blendW/2, barAreaY, blendW, barH, 0);
     ctx.fillStyle = blendGrad; ctx.fill();
 
-    /* ── Risk / Reward amounts — uses $ or ¢ based on account type ── */
+    /* ── Amounts below bar — uses $ or ¢ from account type ── */
     const amtY = barAreaY + barH + 28;
     ctx.font = 'bold 22px sans-serif';
     ctx.fillStyle = red;   ctx.textAlign = 'left';
@@ -804,26 +744,23 @@ Stop Loss: ${tradeData.sl}`;);
     ctx.fillStyle = green; ctx.textAlign = 'right';
     ctx.fillText('Reward  ' + cs + tradeData.reward, W - rp, amtY);
 
-    /* ── Download PNG ── */
+    /* Download */
     const link = document.createElement('a');
     link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 
-    /* ── Button feedback ── */
     const btn  = document.getElementById('share-img-btn');
     const main = document.getElementById('share-img-main');
-    main.textContent = '✓ SAVED';
-    btn.classList.add('shared');
+    main.textContent = '✓ SAVED'; btn.classList.add('shared');
     showToast('Trade card saved to gallery!');
     setTimeout(() => { main.textContent = 'SAVE'; btn.classList.remove('shared'); }, 2500);
   }
 
-  /* ── HELPER: Draw rounded rectangle path ── */
+  /* ── HELPER: Rounded rectangle path ── */
   function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
     ctx.quadraticCurveTo(x + w, y, x + w, y + r);
     ctx.lineTo(x + w, y + h - r);
     ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
@@ -834,15 +771,14 @@ Stop Loss: ${tradeData.sl}`;);
     ctx.closePath();
   }
 
-  /* ── TOAST: Show bottom notification ── */
+  /* ── TOAST ── */
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = '✓ ' + msg;
-    t.classList.add('show');
+    t.textContent = '✓ ' + msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  /* ── SYMBOL: Switch active trading symbol ── */
+  /* ── SYMBOL SELECTOR ── */
   function selectSymbol(sym, btn) {
     currentSymbol = sym;
     document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
@@ -853,11 +789,11 @@ Stop Loss: ${tradeData.sl}`;);
     document.getElementById('sl').placeholder = fmt;
   }
 
-  /* ── LABEL FOCUS: Gold label when input is active ── */
+  /* ── LABEL FOCUS ── */
   function focusLabel(id) { document.getElementById(id).classList.add('focused'); }
   function blurLabel(id)  { document.getElementById(id).classList.remove('focused'); }
 
-  /* ── RESET: Clear all inputs and results ── */
+  /* ── RESET ── */
   function resetAll() {
     document.getElementById('entry').value = '';
     document.getElementById('sl').value = '';
@@ -865,14 +801,14 @@ Stop Loss: ${tradeData.sl}`;);
     recalculate();
   }
 
-  /* ── CALCULATE: Runs on every input change ── */
+  /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
     const s = parseFloat(document.getElementById('sl').value);
     const r = parseFloat(document.getElementById('risk').value);
     const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5;
     const ready  = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
-    const cs     = currSym();   // $ or ¢
+    const cs     = currSym();
 
     const dirBadge   = document.getElementById('direction-badge');
     const lotVal     = document.getElementById('lot-val');
@@ -886,7 +822,6 @@ Stop Loss: ${tradeData.sl}`;);
     const shareRow   = document.getElementById('share-row');
     const rrWrap     = document.getElementById('rr-bar-wrap');
 
-    /* ── Reset UI when inputs incomplete ── */
     if (!ready) {
       tradeData = null;
       dirBadge.className = 'badge badge-none'; dirBadge.textContent = '—';
@@ -897,16 +832,12 @@ Stop Loss: ${tradeData.sl}`;);
       liveDot.classList.remove('active'); liveText.textContent = 'WAITING';
       copyLotBtn.classList.remove('visible'); copyTpBtn.classList.remove('visible');
       shareRow.classList.remove('visible'); rrWrap.classList.remove('visible');
-      /* Update risk label placeholder symbol even when reset */
-      document.getElementById('actual-risk-val').textContent = cs + '0.00';
       return;
     }
 
-    /* ── Direction ── */
     const direction = e > s ? 'BUY' : 'SELL';
     let point, lotRaw, actualRiskVal, tpPrice;
 
-    /* ── Lot size formula per symbol ── */
     if (currentSymbol === 'XAUUSD') {
       point  = Math.abs(e - s) * 100;
       lotRaw = r / point;
@@ -929,33 +860,30 @@ Stop Loss: ${tradeData.sl}`;);
       tpPrice = direction === 'BUY' ? e + tpDist : e - tpDist;
     }
 
-    /* ── Store trade data ── */
     tradeData = {
       symbol: currentSymbol, direction,
       entry:  e.toFixed(decFmt), sl: s.toFixed(decFmt), tp: tpPrice.toFixed(decFmt),
       lot: lot.toFixed(2), actualRisk: actualRiskVal.toFixed(2), reward: reward.toFixed(2)
     };
 
-    /* ── Update result UI — all currency symbols use cs ($ or ¢) ── */
     dirBadge.className    = `badge badge-${direction.toLowerCase()}`;
     dirBadge.textContent  = direction;
     lotVal.className      = 'lot-value active'; lotVal.textContent = lot.toFixed(2);
     tpVal.className       = 'normal-value active'; tpVal.textContent = tpPrice.toFixed(decFmt);
     actualVal.className   = 'normal-value active';
-    actualVal.textContent = cs + actualRiskVal.toFixed(2);   // $ or ¢
+    actualVal.textContent = cs + actualRiskVal.toFixed(2);   // ── $ or ¢
     actualRow.classList.add('visible');
     liveDot.classList.add('active'); liveText.textContent = 'LIVE';
     copyLotBtn.classList.add('visible'); copyTpBtn.classList.add('visible');
     shareRow.classList.add('visible');
 
-    /* ── Update RR bar labels with $ or ¢ ── */
     rrWrap.classList.add('visible');
     document.getElementById('rr-risk-bar').style.width   = '25%';
     document.getElementById('rr-reward-bar').style.width = '75%';
-    document.getElementById('rr-risk-lbl').textContent   = 'RISK '   + cs + actualRiskVal.toFixed(2);
-    document.getElementById('rr-reward-lbl').textContent = 'REWARD ' + cs + reward.toFixed(2);
+    document.getElementById('rr-risk-lbl').textContent   = 'RISK '   + cs + actualRiskVal.toFixed(2);  // ── $ or ¢
+    document.getElementById('rr-reward-lbl').textContent = 'REWARD ' + cs + reward.toFixed(2);          // ── $ or ¢
   }
 
 </script>
 </body>
-</html>
+</html>  
