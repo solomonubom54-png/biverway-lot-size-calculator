@@ -211,6 +211,9 @@
 
   /* ── SYMBOL SELECTOR PILLS ── */
   .symbol-row { display: flex; gap: 6px; }
+  .symbol-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .symbol-grid .symbol-btn { grid-column: span 2; }
+  .symbol-grid .symbol-btn.wide { grid-column: span 3; }
   .symbol-btn { flex:1; padding:10px 4px; border-radius:7px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.18s; letter-spacing:0.02em; }
   .symbol-btn:hover { border-color:rgba(245,166,35,0.3); color:#f5a623; }
   .symbol-btn.active { background:#f5a623; border-color:#f5a623; color:#000; font-weight:500; }
@@ -331,7 +334,7 @@
 
 <!-- ── SPLASH SCREEN ── -->
 <div id="splash">
-  <img src="logo.png" class="splash-logo" alt="Biverway" onerror="this.style.display='none'" />
+  <img src="icon-512.png" class="splash-logo" alt="Biverway" onerror="this.style.display='none'" />
   <div class="splash-brand">BIVER<span>WAY</span></div>
   <div class="splash-sub">Lot Size Calculator</div>
   <div class="splash-bar-wrap"><div class="splash-bar-fill"></div></div>
@@ -343,7 +346,7 @@
   <!-- ── PAGE HEADER ── -->
   <div class="header">
     <div class="header-main">
-      <img src="logo.png" alt="Biverway Logo" class="logo-icon" onerror="this.style.display='none'" />
+      <img src="icon-512.png" alt="Biverway Logo" class="logo-icon" onerror="this.style.display='none'" />
       <span class="brand">BIVERWAY</span>
     </div>
     <div class="subtitle">Lot Size Calculator</div>
@@ -364,11 +367,12 @@
       <!-- ── LEFT COLUMN: INPUTS ── -->
       <div class="left-col">
         <div class="section-pad">
-          <div class="symbol-row">
+          <div class="symbol-grid">
             <button class="symbol-btn active" onclick="selectSymbol('EURUSD',this)">EURUSD</button>
             <button class="symbol-btn" onclick="selectSymbol('GBPUSD',this)">GBPUSD</button>
             <button class="symbol-btn" onclick="selectSymbol('USDCHF',this)">USDCHF</button>
-            <button class="symbol-btn" onclick="selectSymbol('XAUUSD',this)">XAUUSD</button>
+            <button class="symbol-btn wide" onclick="selectSymbol('USDCAD',this)">USDCAD</button>
+            <button class="symbol-btn wide" onclick="selectSymbol('XAUUSD',this)">XAUUSD</button>
           </div>
         </div>
         <div class="glow-line"></div>
@@ -490,7 +494,7 @@
 <!-- ── PWA INSTALL BANNER ── -->
 <div class="install-banner" id="install-banner">
   <div class="install-banner-left">
-    <img src="logo.png" class="install-banner-icon" onerror="this.style.display='none'" />
+    <img src="icon-512.png" class="install-banner-icon" onerror="this.style.display='none'" />
     <div class="install-banner-text">
       <div class="install-banner-title">Biverway Calculator</div>
       <div class="install-banner-sub">ADD TO HOME SCREEN</div>
