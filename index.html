@@ -188,32 +188,32 @@
   .section-pad { padding: 14px 20px 0; }
 
   /* ── INPUT LABEL ROW (label + inline toggle on same line) ── */
-  .label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 
   /* ── INPUT LABELS ── */
-  .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; transition: color 0.2s; }
+  .label { font-size: 10px; color: var(--very-muted); letter-spacing: 0.14em; text-transform: uppercase; transition: color 0.2s; margin-bottom: 10px; }
   .label.focused { color: #f5a623; }
-
-  /* ── ACCOUNT TYPE INLINE TOGGLE ($ / ¢ next to Risk Amount label) ── */
-  .acct-toggle { display: flex; gap: 4px; align-items: center; }
-  .acct-btn {
-    padding: 2px 9px; border-radius: 4px;
-    border: 1px solid var(--input-border);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 9px; letter-spacing: 0.06em;
-    cursor: pointer; transition: all 0.18s;
-  }
-  .acct-btn.active-dollar { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.5); color: #22c55e; }
-  .acct-btn.active-cent   { background: rgba(129,140,248,0.1); border-color: rgba(129,140,248,0.5); color: #818cf8; }
-  .acct-btn:hover { border-color: #f5a623; color: #f5a623; }
 
   /* ── SYMBOL SELECTOR PILLS ── */
   .symbol-row { display: flex; gap: 6px; }
-  .symbol-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-  .symbol-grid .symbol-btn { grid-column: span 2; }
-  .symbol-grid .symbol-btn.wide { grid-column: span 3; }
+  .inst-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .inst-tab {
+    padding: 11px 0; border-radius: 8px; border: 1px solid var(--input-border);
+    background: transparent; color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.16em;
+    cursor: pointer; transition: all 0.18s;
+  }
+  .inst-tab:hover { border-color: rgba(245,166,35,0.3); color: #f5a623; }
+  .inst-tab.active { background: rgba(245,166,35,0.08); border-color: #f5a623; color: #f5a623; font-weight: 500; }
+  .pair-row { display: grid; gap: 6px; animation: pairIn 0.25s ease; }
+  .pair-row[hidden] { display: none; }
+  .forex-row { grid-template-columns: repeat(4, 1fr); }
+  .gold-row { grid-template-columns: 1fr; }
+  .gold-row .symbol-btn { width: 50%; justify-self: center; }
+  @keyframes pairIn { from { opacity: 0; } to { opacity: 1; } }
+  .inputs.locked .input-group { opacity: 0.45; }
+  .inputs.locked input { cursor: not-allowed; }
+  .toast.notice { background: #f5a623; }
+  .toast { white-space: nowrap; }
   .symbol-btn { flex:1; padding:10px 4px; border-radius:7px; border:1px solid var(--input-border); background:transparent; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.18s; letter-spacing:0.02em; }
   .symbol-btn:hover { border-color:rgba(245,166,35,0.3); color:#f5a623; }
   .symbol-btn.active { background:#f5a623; border-color:#f5a623; color:#000; font-weight:500; }
@@ -367,16 +367,22 @@
       <!-- ── LEFT COLUMN: INPUTS ── -->
       <div class="left-col">
         <div class="section-pad">
-          <div class="symbol-grid">
-            <button class="symbol-btn active" onclick="selectSymbol('EURUSD',this)">EURUSD</button>
+          <div class="inst-tabs">
+            <button class="inst-tab" id="tab-forex" onclick="selectInstrument('forex')">FOREX</button>
+            <button class="inst-tab" id="tab-gold"  onclick="selectInstrument('gold')">GOLD</button>
+          </div>
+          <div class="pair-row forex-row" id="forex-pairs" hidden>
+            <button class="symbol-btn" onclick="selectSymbol('EURUSD',this)">EURUSD</button>
             <button class="symbol-btn" onclick="selectSymbol('GBPUSD',this)">GBPUSD</button>
             <button class="symbol-btn" onclick="selectSymbol('USDCHF',this)">USDCHF</button>
-            <button class="symbol-btn wide" onclick="selectSymbol('USDCAD',this)">USDCAD</button>
-            <button class="symbol-btn wide" onclick="selectSymbol('XAUUSD',this)">XAUUSD</button>
+            <button class="symbol-btn" onclick="selectSymbol('USDCAD',this)">USDCAD</button>
+          </div>
+          <div class="pair-row gold-row" id="gold-pair" hidden>
+            <button class="symbol-btn active" id="gold-btn" onclick="selectSymbol('XAUUSD',this)">XAUUSD</button>
           </div>
         </div>
         <div class="glow-line"></div>
-        <div class="inputs">
+        <div class="inputs locked" id="inputs">
 
           <!-- Entry Price -->
           <div class="input-group">
@@ -392,16 +398,9 @@
               onfocus="focusLabel('lbl-sl')" onblur="blurLabel('lbl-sl')" oninput="recalculate()" />
           </div>
 
-          <!-- Risk Amount + inline $ / ¢ toggle -->
+          <!-- Risk Amount -->
           <div class="input-group">
-            <div class="label-row">
-              <div class="label" id="lbl-risk">Risk Amount</div>
-              <!-- ── ACCOUNT TYPE TOGGLE: $ Dollar / ¢ Cent ── -->
-              <div class="acct-toggle">
-                <button class="acct-btn active-dollar" id="btn-dollar" onclick="setAcctType('dollar')">$ Dollar</button>
-                <button class="acct-btn"               id="btn-cent"   onclick="setAcctType('cent')">¢ Cent</button>
-              </div>
-            </div>
+            <div class="label" id="lbl-risk">Risk Amount</div>
             <input type="number" id="risk" step="any" placeholder="0.00" inputmode="decimal"
               onfocus="focusLabel('lbl-risk')" onblur="blurLabel('lbl-risk')" oninput="recalculate()" />
           </div>
@@ -431,7 +430,7 @@
 
           <div class="result-row hidden-row" id="actual-risk-row">
             <span class="result-key">ACTUAL RISK</span>
-            <span class="normal-value" id="actual-risk-val">$0.00</span>
+            <span class="normal-value" id="actual-risk-val">0.00</span>
           </div>
 
           <div class="result-row">
@@ -461,8 +460,8 @@
               <div class="rr-bar-reward" id="rr-reward-bar" style="width:75%"></div>
             </div>
             <div class="rr-bar-labels">
-              <span class="rr-bar-risk-lbl"   id="rr-risk-lbl">RISK $0.00</span>
-              <span class="rr-bar-reward-lbl" id="rr-reward-lbl">REWARD $0.00</span>
+              <span class="rr-bar-risk-lbl"   id="rr-risk-lbl">RISK 0.00</span>
+              <span class="rr-bar-reward-lbl" id="rr-reward-lbl">REWARD 0.00</span>
             </div>
           </div>
 
@@ -481,9 +480,6 @@
         </div>
       </div>
     </div>
-
-    <!-- ── CARD FOOTER ── -->
-    <div class="card-footer">DESIGNED ACCORDING TO BIVERWAY TRADING SYSTEM · V2.1+</div>
 
   </div>
 </div>
@@ -512,21 +508,10 @@
 <script>
 
   /* ── STATE VARIABLES ── */
-  let currentSymbol  = 'EURUSD';
-  let currentAcct    = 'dollar';   // 'dollar' or 'cent'
-  let tradeData      = null;
-  let deferredPrompt = null;
-
-  /* ── CURRENCY SYMBOL: returns $ or ¢ ── */
-  function currSym() { return currentAcct === 'dollar' ? '$' : '¢'; }
-
-  /* ── ACCOUNT TYPE: Switch between dollar and cent ── */
-  function setAcctType(type) {
-    currentAcct = type;
-    document.getElementById('btn-dollar').className = 'acct-btn' + (type === 'dollar' ? ' active-dollar' : '');
-    document.getElementById('btn-cent').className   = 'acct-btn' + (type === 'cent'   ? ' active-cent'   : '');
-    recalculate();
-  }
+  let currentSymbol     = null;   // nothing selected at start
+  let currentInstrument = null;   // 'forex' or 'gold'
+  let tradeData         = null;
+  let deferredPrompt    = null;
 
   /* ── SPLASH: Hide after 2 seconds ── */
   window.addEventListener('load', () => {
@@ -616,144 +601,86 @@ Take Profit: ${tradeData.tp}`;
     }
   }
 
-  /* ── SAVE AS IMAGE: auto-fitted height, equal margins ── */
+  /* ── SAVE AS IMAGE: compact trade card, follows the selected theme ── */
   function saveAsImage() {
     if (!tradeData) return;
+    const logo = new Image();
+    const go = (img) => {
+      const fontsReady = (document.fonts && document.fonts.load)
+        ? Promise.all([document.fonts.load('800 84px "Syne"'), document.fonts.load('500 44px "DM Mono"')]).catch(() => {})
+        : Promise.resolve();
+      fontsReady.then(() => drawCard(img));
+    };
+    logo.onload  = () => go(logo);
+    logo.onerror = () => go(null);
+    logo.src = 'icon-512.png';
+  }
 
+  function drawCard(logo) {
     const canvas = document.getElementById('share-canvas');
-    const cs     = currSym();   // $ or ¢
+    const W = 900, H = 720, pad = 88;
+    canvas.width = W; canvas.height = H;
+    const ctx  = canvas.getContext('2d');
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const c = dark
+      ? { bg: '#0b0d15', text: '#f2f3f7', muted: '#8b90b0', line: 'rgba(255,255,255,0.09)', frame: 'rgba(245,166,35,0.55)' }
+      : { bg: '#ffffff', text: '#10131f', muted: '#7b8494', line: 'rgba(16,19,31,0.10)',   frame: 'rgba(245,166,35,0.80)' };
+    const isBuy  = tradeData.direction === 'BUY';
+    const dirRGB = isBuy ? '34,197,94' : '239,68,68';
+    const setSpacing = (px) => { if ('letterSpacing' in ctx) ctx.letterSpacing = px + 'px'; };
 
-    const W   = 1080;
-    const pad = 90;
-    const lp  = pad;
-    const rp  = pad;
+    /* Background + gold hairline frame */
+    ctx.fillStyle = c.bg; ctx.fillRect(0, 0, W, H);
+    roundRect(ctx, 24, 24, W - 48, H - 48, 32);
+    ctx.strokeStyle = c.frame; ctx.lineWidth = 2; ctx.stroke();
 
-    const gold     = '#f5a623';
-    const green    = '#22c55e';
-    const red      = '#ef4444';
-    const bg       = '#0a0a0a';
-    const cardBg   = '#111111';
-    const textW    = '#ffffff';
-    const labelCol = '#b8bec7';
-    const rowDiv   = '#222222';
+    /* Header: logo tile + wordmark */
+    let textX = pad;
+    if (logo) {
+      ctx.save(); roundRect(ctx, pad, 84, 56, 56, 14); ctx.clip();
+      ctx.drawImage(logo, pad, 84, 56, 56); ctx.restore();
+      textX = pad + 56 + 18;
+    }
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.fillStyle = c.text; ctx.font = '800 30px "Syne", sans-serif'; setSpacing(4);
+    ctx.fillText('BIVERWAY', textX, 113);
 
-    const dir        = tradeData.direction;
-    const dirColor   = dir === 'BUY' ? green : red;
-    const dirBgColor = dir === 'BUY' ? 'rgba(34,197,94,0.18)'  : 'rgba(239,68,68,0.18)';
-    const dirBorder  = dir === 'BUY' ? 'rgba(34,197,94,0.75)'  : 'rgba(239,68,68,0.75)';
+    /* Symbol + order type badge */
+    setSpacing(0);
+    ctx.fillStyle = c.text; ctx.font = '800 84px "Syne", sans-serif'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(tradeData.symbol, pad, 262);
+    const bw = 232, bh = 54, bx = W - pad - bw, by = 205;
+    roundRect(ctx, bx, by, bw, bh, 27);
+    ctx.fillStyle = 'rgba(' + dirRGB + ',0.12)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(' + dirRGB + ',0.65)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = 'rgb(' + dirRGB + ')'; ctx.font = '500 24px "DM Mono", monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; setSpacing(3);
+    ctx.fillText(isBuy ? 'BUY LIMIT' : 'SELL LIMIT', bx + bw / 2 + 1, by + bh / 2 + 1);
 
-    const symBlockH = 80;
-    const divH      = 6;
-    const rowH      = 130;
-    const numRows   = 5;
-    const barH      = 28;
-    const barGapTop = 24;
-    const amtH      = 48;
-
-    const contentH = symBlockH + divH + (numRows * rowH) + barGapTop + barH + amtH;
-    const H = pad + contentH + pad;
-
-    canvas.width  = W;
-    canvas.height = H;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
-    roundRect(ctx, 20, 20, W - 40, H - 40, 22);
-    ctx.fillStyle = cardBg; ctx.fill();
-
-    ctx.save();
-    ctx.shadowColor = gold; ctx.shadowBlur = 32;
-    roundRect(ctx, 20, 20, W - 40, H - 40, 22);
-    ctx.strokeStyle = gold; ctx.lineWidth = 2.5; ctx.stroke();
-    ctx.restore();
-
-    /* Symbol */
-    const symY = pad + 56;
-    ctx.font = 'bold 64px sans-serif'; ctx.fillStyle = textW; ctx.textAlign = 'left';
-    ctx.fillText(tradeData.symbol, lp, symY);
-
-    /* Direction badge */
-    const bW = 160, bH = 60;
-    const bx = W - rp - bW;
-    const by = symY - bH + 4;
-    ctx.save();
-    ctx.shadowColor = dirColor; ctx.shadowBlur = 32;
-    roundRect(ctx, bx, by, bW, bH, 12);
-    ctx.fillStyle = dirBgColor; ctx.fill();
-    ctx.strokeStyle = dirBorder; ctx.lineWidth = 2.5; ctx.stroke();
-    ctx.restore();
-    ctx.font = 'bold 28px sans-serif'; ctx.fillStyle = dirColor; ctx.textAlign = 'center';
-    ctx.fillText(dir, bx + bW / 2, by + bH / 2 + 10);
-
-    /* Divider */
-    const divY = symY + divH + 18;
-    ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(lp, divY); ctx.lineTo(W - rp, divY); ctx.stroke();
-
-    /* Data rows */
-    const rows = [
-      ['ENTRY PRICE',   tradeData.entry, textW, false, false],
-      ['STOP LOSS',     tradeData.sl,    textW, false, false],
-      ['TAKE PROFIT',   tradeData.tp,    textW, false, false],
-      ['LOT SIZE',      tradeData.lot,   gold,  true,  false],
-      ['RISK / REWARD', '1 : 3',         gold,  false, true ],
-    ];
-
-    const rowStartY = divY + 8;
-
-    rows.forEach(([label, value, valColor, isBig, isRR], i) => {
-      const ry  = rowStartY + i * rowH;
-      const mid = ry + rowH / 2;
-      ctx.font = '500 20px sans-serif'; ctx.fillStyle = labelCol; ctx.textAlign = 'left';
-      ctx.fillText(label, lp, mid + 7);
-      if (isBig) {
-        ctx.save(); ctx.shadowColor = gold; ctx.shadowBlur = 22;
-        ctx.font = 'bold 48px sans-serif'; ctx.fillStyle = valColor; ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 17); ctx.restore();
-      } else if (isRR) {
-        ctx.save(); ctx.shadowColor = gold; ctx.shadowBlur = 12;
-        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor; ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 9); ctx.restore();
-      } else {
-        ctx.font = 'bold 26px sans-serif'; ctx.fillStyle = valColor; ctx.textAlign = 'right';
-        ctx.fillText(value, W - rp, mid + 9);
-      }
+    /* Rule + three rows */
+    const y0 = 312, rowH = 108;
+    ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, y0); ctx.lineTo(W - pad, y0); ctx.stroke();
+    const rows = [['ENTRY PRICE', tradeData.entry], ['STOP LOSS', tradeData.sl], ['TAKE PROFIT', tradeData.tp]];
+    rows.forEach((r, i) => {
+      const cy = y0 + rowH * i + rowH / 2;
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';  ctx.fillStyle = c.muted; ctx.font = '400 22px "DM Mono", monospace'; setSpacing(3);
+      ctx.fillText(r[0], pad, cy);
+      ctx.textAlign = 'right'; ctx.fillStyle = c.text;  ctx.font = '500 44px "DM Mono", monospace'; setSpacing(0);
+      ctx.fillText(r[1], W - pad, cy);
       if (i < rows.length - 1) {
-        ctx.strokeStyle = rowDiv; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(lp, ry + rowH); ctx.lineTo(W - rp, ry + rowH); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad, y0 + rowH * (i + 1)); ctx.lineTo(W - pad, y0 + rowH * (i + 1)); ctx.stroke();
       }
     });
 
-    /* RR Bar */
-    const barAreaY = rowStartY + rows.length * rowH + barGapTop;
-    const barW     = W - lp - rp;
-    const riskPx   = Math.round(barW * 0.25);
-    const blendW   = 22;
-    roundRect(ctx, lp, barAreaY, barW, barH, 8); ctx.fillStyle = '#1a1a1a'; ctx.fill();
-    ctx.save(); ctx.shadowColor = red; ctx.shadowBlur = 14;
-    roundRect(ctx, lp, barAreaY, riskPx, barH, 8); ctx.fillStyle = red; ctx.fill(); ctx.restore();
-    ctx.save(); ctx.shadowColor = green; ctx.shadowBlur = 20;
-    roundRect(ctx, lp + riskPx, barAreaY, barW - riskPx, barH, 8); ctx.fillStyle = green; ctx.fill(); ctx.restore();
-    const blendGrad = ctx.createLinearGradient(lp + riskPx - blendW/2, 0, lp + riskPx + blendW/2, 0);
-    blendGrad.addColorStop(0, red); blendGrad.addColorStop(0.38, '#c0392b');
-    blendGrad.addColorStop(0.62, '#145a32'); blendGrad.addColorStop(1, green);
-    roundRect(ctx, lp + riskPx - blendW/2, barAreaY, blendW, barH, 0);
-    ctx.fillStyle = blendGrad; ctx.fill();
-
-    /* ── Amounts below bar — uses $ or ¢ from account type ── */
-    const amtY = barAreaY + barH + 28;
-    ctx.font = 'bold 22px sans-serif';
-    ctx.fillStyle = red;   ctx.textAlign = 'left';
-    ctx.fillText('Risk  ' + cs + tradeData.actualRisk, lp, amtY);
-    ctx.fillStyle = green; ctx.textAlign = 'right';
-    ctx.fillText('Reward  ' + cs + tradeData.reward, W - rp, amtY);
-
     /* Download */
+    let dataUrl;
+    try { dataUrl = canvas.toDataURL('image/png'); }
+    catch (err) { if (logo) { drawCard(null); } return; }
     const link = document.createElement('a');
-    link.download = `biverway-${tradeData.symbol}-${dir.toLowerCase()}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = `biverway-${tradeData.symbol}-${tradeData.direction.toLowerCase()}.png`;
+    link.href = dataUrl;
     link.click();
 
     const btn  = document.getElementById('share-img-btn');
@@ -780,20 +707,61 @@ Take Profit: ${tradeData.tp}`;
   /* ── TOAST ── */
   function showToast(msg) {
     const t = document.getElementById('toast');
+    t.classList.remove('notice');
     t.textContent = '✓ ' + msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  /* ── SYMBOL SELECTOR ── */
+  /* ── NOTICE: short hint (no tick) ── */
+  function showNotice(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show', 'notice');
+    clearTimeout(window._noticeTimer);
+    window._noticeTimer = setTimeout(() => t.classList.remove('show', 'notice'), 2200);
+  }
+
+  /* ── INSTRUMENT TABS: FOREX / GOLD ── */
+  function selectInstrument(type) {
+    if (currentInstrument === type) return;
+    currentInstrument = type;
+    document.getElementById('tab-forex').classList.toggle('active', type === 'forex');
+    document.getElementById('tab-gold').classList.toggle('active', type === 'gold');
+    document.getElementById('forex-pairs').hidden = (type !== 'forex');
+    document.getElementById('gold-pair').hidden   = (type !== 'gold');
+    document.querySelectorAll('#forex-pairs .symbol-btn').forEach(b => b.classList.remove('active'));
+    currentSymbol = (type === 'gold') ? 'XAUUSD' : null;   // forex: wait for a pair
+    setPlaceholders(); updateLock(); resetAll();
+  }
+
+  /* ── PAIR BUTTONS ── */
   function selectSymbol(sym, btn) {
+    if (currentSymbol === sym) return;
     currentSymbol = sym;
-    document.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    resetAll();
-    const fmt = sym === 'XAUUSD' ? '0.000' : '0.00000';
+    document.querySelectorAll('#forex-pairs .symbol-btn').forEach(b => b.classList.remove('active'));
+    if (sym !== 'XAUUSD') btn.classList.add('active');
+    setPlaceholders(); updateLock(); resetAll();
+  }
+
+  function setPlaceholders() {
+    const fmt = currentSymbol === 'XAUUSD' ? '0.000' : '0.00000';
     document.getElementById('entry').placeholder = fmt;
     document.getElementById('sl').placeholder = fmt;
   }
+
+  /* ── LOCK INPUTS until an instrument is chosen ── */
+  function updateLock() {
+    const locked = !currentSymbol;
+    document.getElementById('inputs').classList.toggle('locked', locked);
+    ['entry', 'sl', 'risk'].forEach(id => { document.getElementById(id).readOnly = locked; });
+  }
+  ['entry', 'sl', 'risk'].forEach(id => {
+    document.getElementById(id).addEventListener('focus', function () {
+      if (!currentSymbol) {
+        this.blur();
+        showNotice(currentInstrument === 'forex' ? 'Select a currency pair first' : 'Select an instrument first');
+      }
+    });
+  });
 
   /* ── LABEL FOCUS ── */
   function focusLabel(id) { document.getElementById(id).classList.add('focused'); }
@@ -814,7 +782,6 @@ Take Profit: ${tradeData.tp}`;
     const r = parseFloat(document.getElementById('risk').value);
     const decFmt = currentSymbol === 'XAUUSD' ? 3 : 5;
     const ready  = !isNaN(e) && !isNaN(s) && !isNaN(r) && e > 0 && s > 0 && r > 0 && e !== s;
-    const cs     = currSym();
 
     const dirBadge   = document.getElementById('direction-badge');
     const lotVal     = document.getElementById('lot-val');
@@ -877,7 +844,7 @@ Take Profit: ${tradeData.tp}`;
     lotVal.className      = 'lot-value active'; lotVal.textContent = lot.toFixed(2);
     tpVal.className       = 'normal-value active'; tpVal.textContent = tpPrice.toFixed(decFmt);
     actualVal.className   = 'normal-value active';
-    actualVal.textContent = cs + actualRiskVal.toFixed(2);   // ── $ or ¢
+    actualVal.textContent = actualRiskVal.toFixed(2);
     actualRow.classList.add('visible');
     liveDot.classList.add('active'); liveText.textContent = 'LIVE';
     copyLotBtn.classList.add('visible'); copyTpBtn.classList.add('visible');
@@ -886,9 +853,11 @@ Take Profit: ${tradeData.tp}`;
     rrWrap.classList.add('visible');
     document.getElementById('rr-risk-bar').style.width   = '25%';
     document.getElementById('rr-reward-bar').style.width = '75%';
-    document.getElementById('rr-risk-lbl').textContent   = 'RISK '   + cs + actualRiskVal.toFixed(2);  // ── $ or ¢
-    document.getElementById('rr-reward-lbl').textContent = 'REWARD ' + cs + reward.toFixed(2);          // ── $ or ¢
+    document.getElementById('rr-risk-lbl').textContent   = 'RISK '   + actualRiskVal.toFixed(2);
+    document.getElementById('rr-reward-lbl').textContent = 'REWARD ' + reward.toFixed(2);
   }
+
+  updateLock();
 
 </script>
 </body>
