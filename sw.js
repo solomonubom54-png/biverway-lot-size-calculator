@@ -1,22 +1,19 @@
-const CACHE = 'biverway-v2';
+const CACHE = 'biverway-v3';
 const ASSETS = [
   '/biverway-lot-size-calculator/',
   '/biverway-lot-size-calculator/index.html',
-  '/biverway-lot-size-calculator/logo.png',
-  '/biverway-lot-size-calculator/manifest.json',
-  '/biverway-lot-size-calculator/sw.js'
+  '/biverway-lot-size-calculator/icon-512.png',
+  '/biverway-lot-size-calculator/manifest.json'
 ];
 
-// Install — cache everything immediately
+// Install: save the app files
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => {
-      return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
   );
 });
 
-// Activate — clear old caches
+// Activate: delete old caches
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -25,17 +22,20 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch — cache first, then network
+// Fetch: network first, saved copy only when offline
 self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(response => {
-        if (!response || response.status !== 200) return response;
+    fetch(e.request, { cache: 'no-cache' }).then(response => {
+      if (response && response.status === 200) {
         const clone = response.clone();
         caches.open(CACHE).then(cache => cache.put(e.request, clone));
-        return response;
-      }).catch(() => caches.match('/biverway-lot-size-calculator/index.html'));
-    })
+      }
+      return response;
+    }).catch(() =>
+      caches.match(e.request).then(cached =>
+        cached || caches.match('/biverway-lot-size-calculator/index.html')
+      )
+    )
   );
 });
