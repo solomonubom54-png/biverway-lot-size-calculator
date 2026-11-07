@@ -592,7 +592,8 @@
 `${tradeData.symbol}
 ${orderType}
 Entry Price: ${tradeData.entry}
-Stop Loss: ${tradeData.sl}`;
+Stop Loss: ${tradeData.sl}
+Take Profit: ${tradeData.tp}`;
 
     const btn  = document.getElementById('share-btn');
     const main = document.getElementById('share-btn-main');
@@ -640,7 +641,7 @@ Stop Loss: ${tradeData.sl}`;
     const symBlockH = 80;
     const divH      = 6;
     const rowH      = 130;
-    const numRows   = 4;
+    const numRows   = 5;
     const barH      = 28;
     const barGapTop = 24;
     const amtH      = 48;
@@ -691,6 +692,7 @@ Stop Loss: ${tradeData.sl}`;
     const rows = [
       ['ENTRY PRICE',   tradeData.entry, textW, false, false],
       ['STOP LOSS',     tradeData.sl,    textW, false, false],
+      ['TAKE PROFIT',   tradeData.tp,    textW, false, false],
       ['LOT SIZE',      tradeData.lot,   gold,  true,  false],
       ['RISK / REWARD', '1 : 3',         gold,  false, true ],
     ];
@@ -841,7 +843,7 @@ Stop Loss: ${tradeData.sl}`;
     if (currentSymbol === 'XAUUSD') {
       point  = Math.abs(e - s) * 100;
       lotRaw = r / point;
-    } else if (currentSymbol === 'USDCHF') {
+    } else if (currentSymbol === 'USDCHF' || currentSymbol === 'USDCAD') {
       point  = Math.abs(Math.round(e * 100000) - Math.round(s * 100000));
       lotRaw = (r * e) / point;
     } else {
@@ -850,7 +852,7 @@ Stop Loss: ${tradeData.sl}`;
     }
 
     const lot = Math.round(lotRaw * 100) / 100;
-    actualRiskVal = currentSymbol === 'USDCHF' ? (lot * point) / e : lot * point;
+    actualRiskVal = (currentSymbol === 'USDCHF' || currentSymbol === 'USDCAD') ? (lot * point) / e : lot * point;
     const reward  = actualRiskVal * 3;
 
     if (currentSymbol === 'XAUUSD') {
