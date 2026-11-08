@@ -646,7 +646,7 @@ Take Profit: ${tradeData.tp}`;
     const cy = 218;
     ctx.fillStyle = c.text; ctx.font = mono(700); setSpacing(2); ctx.textAlign = 'left';   /* bold pair name */
     ctx.fillText(tradeData.symbol, pad, cy);
-    ctx.font = mono(500);
+    ctx.font = mono(500); setSpacing(1);
     const label = isBuy ? 'Buy Limit' : 'Sell Limit';
     const tw = ctx.measureText(label).width;
     const bh = 60, bw = tw + 56, bx = W - pad - bw, by = cy - bh / 2;
@@ -664,7 +664,7 @@ Take Profit: ${tradeData.tp}`;
     rows.forEach((r, i) => {
       const ry = y0 + rowH * i + rowH / 2;
       ctx.textBaseline = 'middle'; ctx.font = mono(400);
-      ctx.textAlign = 'left';  ctx.fillStyle = c.muted; setSpacing(2); ctx.fillText(r[0], pad, ry);
+      ctx.textAlign = 'left';  ctx.fillStyle = c.muted; setSpacing(1); ctx.fillText(r[0], pad, ry);
       ctx.textAlign = 'right'; ctx.fillStyle = c.text;  setSpacing(0); ctx.fillText(r[1], W - pad, ry);
       if (i < rows.length - 1) {
         ctx.beginPath(); ctx.moveTo(pad, y0 + rowH * (i + 1)); ctx.lineTo(W - pad, y0 + rowH * (i + 1)); ctx.stroke();
