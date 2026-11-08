@@ -401,8 +401,7 @@
           </div>
 
           <!-- Reset Button -->
-          <button class="reset-btn" onclick="resetAll()">↺ Reset All</button>
-
+          <button class="reset-btn" onclick="resetToStart()">↺ Reset All</button>
         </div>
       </div>
 
@@ -771,6 +770,17 @@ Take Profit: ${tradeData.tp}`;
     recalculate();
   }
 
+  /* ── RESET ALL BUTTON: back to the start screen (nothing selected) ── */
+  function resetToStart() {
+    currentInstrument = null;
+    currentSymbol = null;
+    document.getElementById('tab-forex').classList.remove('active');
+    document.getElementById('tab-gold').classList.remove('active');
+    document.getElementById('forex-pairs').hidden = true;
+    document.querySelectorAll('#forex-pairs .symbol-btn').forEach(b => b.classList.remove('active'));
+    setPlaceholders(); updateLock(); resetAll();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                      }
   /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
