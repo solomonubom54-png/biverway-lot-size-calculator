@@ -780,7 +780,8 @@ Take Profit: ${tradeData.tp}`;
     document.querySelectorAll('#forex-pairs .symbol-btn').forEach(b => b.classList.remove('active'));
     setPlaceholders(); updateLock(); resetAll();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                                      }
+  }
+  
   /* ── CALCULATE ── */
   function recalculate() {
     const e = parseFloat(document.getElementById('entry').value);
