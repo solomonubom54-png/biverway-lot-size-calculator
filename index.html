@@ -207,8 +207,6 @@
   .pair-row { display: grid; gap: 6px; animation: pairIn 0.25s ease; }
   .pair-row[hidden] { display: none; }
   .forex-row { grid-template-columns: repeat(4, 1fr); }
-  .gold-row { grid-template-columns: 1fr; }
-  .gold-row .symbol-btn { width: 50%; justify-self: center; }
   @keyframes pairIn { from { opacity: 0; } to { opacity: 1; } }
   .inputs.locked .input-group { opacity: 0.45; }
   .inputs.locked input { cursor: not-allowed; }
@@ -369,16 +367,13 @@
         <div class="section-pad">
           <div class="inst-tabs">
             <button class="inst-tab" id="tab-forex" onclick="selectInstrument('forex')">FOREX</button>
-            <button class="inst-tab" id="tab-gold"  onclick="selectInstrument('gold')">GOLD</button>
+            <button class="inst-tab" id="tab-gold"  onclick="selectInstrument('gold')">XAUUSD</button>
           </div>
           <div class="pair-row forex-row" id="forex-pairs" hidden>
             <button class="symbol-btn" onclick="selectSymbol('EURUSD',this)">EURUSD</button>
             <button class="symbol-btn" onclick="selectSymbol('GBPUSD',this)">GBPUSD</button>
             <button class="symbol-btn" onclick="selectSymbol('USDCHF',this)">USDCHF</button>
             <button class="symbol-btn" onclick="selectSymbol('USDCAD',this)">USDCAD</button>
-          </div>
-          <div class="pair-row gold-row" id="gold-pair" hidden>
-            <button class="symbol-btn active" id="gold-btn" onclick="selectSymbol('XAUUSD',this)">XAUUSD</button>
           </div>
         </div>
         <div class="glow-line"></div>
@@ -442,7 +437,7 @@
           </div>
 
           <div class="result-row">
-            <span class="result-key">TAKE PROFIT (1:3)</span>
+            <span class="result-key">TAKE PROFIT</span>
             <div class="result-right">
               <button class="icon-btn" id="copy-tp-btn" onclick="copyValue('tp-val','copy-tp-btn','Take profit')">⧉</button>
               <span class="normal-value" id="tp-val">0.00000</span>
@@ -607,7 +602,7 @@ Take Profit: ${tradeData.tp}`;
     const logo = new Image();
     const go = (img) => {
       const fontsReady = (document.fonts && document.fonts.load)
-        ? Promise.all([document.fonts.load('800 84px "Syne"'), document.fonts.load('500 44px "DM Mono"')]).catch(() => {})
+        ? Promise.all([document.fonts.load('700 36px "Syne"'), document.fonts.load('500 36px "DM Mono"'), document.fonts.load('400 36px "DM Mono"')]).catch(() => {})
         : Promise.resolve();
       fontsReady.then(() => drawCard(img));
     };
@@ -618,7 +613,7 @@ Take Profit: ${tradeData.tp}`;
 
   function drawCard(logo) {
     const canvas = document.getElementById('share-canvas');
-    const W = 900, H = 720, pad = 88;
+    const W = 900, H = 600, pad = 84, fs = 36;          /* 3:2 card, one text size */
     canvas.width = W; canvas.height = H;
     const ctx  = canvas.getContext('2d');
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -628,6 +623,7 @@ Take Profit: ${tradeData.tp}`;
     const isBuy  = tradeData.direction === 'BUY';
     const dirRGB = isBuy ? '34,197,94' : '239,68,68';
     const setSpacing = (px) => { if ('letterSpacing' in ctx) ctx.letterSpacing = px + 'px'; };
+    const mono = (w) => w + ' ' + fs + 'px "DM Mono", monospace';
 
     /* Background + gold hairline frame */
     ctx.fillStyle = c.bg; ctx.fillRect(0, 0, W, H);
@@ -635,40 +631,41 @@ Take Profit: ${tradeData.tp}`;
     ctx.strokeStyle = c.frame; ctx.lineWidth = 2; ctx.stroke();
 
     /* Header: logo tile + wordmark */
+    const top = 84;
     let textX = pad;
     if (logo) {
-      ctx.save(); roundRect(ctx, pad, 84, 56, 56, 14); ctx.clip();
-      ctx.drawImage(logo, pad, 84, 56, 56); ctx.restore();
-      textX = pad + 56 + 18;
+      ctx.save(); roundRect(ctx, pad, top, 56, 56, 14); ctx.clip();
+      ctx.drawImage(logo, pad, top, 56, 56); ctx.restore();
+      textX = pad + 56 + 20;
     }
     ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
-    ctx.fillStyle = c.text; ctx.font = '800 30px "Syne", sans-serif'; setSpacing(4);
-    ctx.fillText('BIVERWAY', textX, 113);
+    ctx.fillStyle = c.text; ctx.font = '700 ' + fs + 'px "Syne", sans-serif'; setSpacing(3);
+    ctx.fillText('BIVERWAY', textX, top + 29);
 
-    /* Symbol + order type badge */
-    setSpacing(0);
-    ctx.fillStyle = c.text; ctx.font = '800 84px "Syne", sans-serif'; ctx.textBaseline = 'alphabetic';
-    ctx.fillText(tradeData.symbol, pad, 262);
-    const bw = 232, bh = 54, bx = W - pad - bw, by = 205;
-    roundRect(ctx, bx, by, bw, bh, 27);
+    /* Pair (slightly heavier) + order type badge */
+    const cy = 218;
+    ctx.fillStyle = c.text; ctx.font = mono(700); setSpacing(2); ctx.textAlign = 'left';   /* bold pair name */
+    ctx.fillText(tradeData.symbol, pad, cy);
+    ctx.font = mono(500);
+    const label = isBuy ? 'BUY LIMIT' : 'SELL LIMIT';
+    const tw = ctx.measureText(label).width;
+    const bh = 60, bw = tw + 56, bx = W - pad - bw, by = cy - bh / 2;
+    roundRect(ctx, bx, by, bw, bh, 30);
     ctx.fillStyle = 'rgba(' + dirRGB + ',0.12)'; ctx.fill();
     ctx.strokeStyle = 'rgba(' + dirRGB + ',0.65)'; ctx.lineWidth = 2; ctx.stroke();
-    ctx.fillStyle = 'rgb(' + dirRGB + ')'; ctx.font = '500 24px "DM Mono", monospace';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; setSpacing(3);
-    ctx.fillText(isBuy ? 'BUY LIMIT' : 'SELL LIMIT', bx + bw / 2 + 1, by + bh / 2 + 1);
+    ctx.fillStyle = 'rgb(' + dirRGB + ')'; ctx.textAlign = 'center';
+    ctx.fillText(label, bx + bw / 2 + 1, cy + 1);
 
     /* Rule + three rows */
-    const y0 = 312, rowH = 108;
+    const y0 = 276, rowH = 86;
     ctx.strokeStyle = c.line; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(pad, y0); ctx.lineTo(W - pad, y0); ctx.stroke();
     const rows = [['ENTRY PRICE', tradeData.entry], ['STOP LOSS', tradeData.sl], ['TAKE PROFIT', tradeData.tp]];
     rows.forEach((r, i) => {
-      const cy = y0 + rowH * i + rowH / 2;
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'left';  ctx.fillStyle = c.muted; ctx.font = '400 22px "DM Mono", monospace'; setSpacing(3);
-      ctx.fillText(r[0], pad, cy);
-      ctx.textAlign = 'right'; ctx.fillStyle = c.text;  ctx.font = '500 44px "DM Mono", monospace'; setSpacing(0);
-      ctx.fillText(r[1], W - pad, cy);
+      const ry = y0 + rowH * i + rowH / 2;
+      ctx.textBaseline = 'middle'; ctx.font = mono(400);
+      ctx.textAlign = 'left';  ctx.fillStyle = c.muted; setSpacing(2); ctx.fillText(r[0], pad, ry);
+      ctx.textAlign = 'right'; ctx.fillStyle = c.text;  setSpacing(0); ctx.fillText(r[1], W - pad, ry);
       if (i < rows.length - 1) {
         ctx.beginPath(); ctx.moveTo(pad, y0 + rowH * (i + 1)); ctx.lineTo(W - pad, y0 + rowH * (i + 1)); ctx.stroke();
       }
@@ -727,7 +724,6 @@ Take Profit: ${tradeData.tp}`;
     document.getElementById('tab-forex').classList.toggle('active', type === 'forex');
     document.getElementById('tab-gold').classList.toggle('active', type === 'gold');
     document.getElementById('forex-pairs').hidden = (type !== 'forex');
-    document.getElementById('gold-pair').hidden   = (type !== 'gold');
     document.querySelectorAll('#forex-pairs .symbol-btn').forEach(b => b.classList.remove('active'));
     currentSymbol = (type === 'gold') ? 'XAUUSD' : null;   // forex: wait for a pair
     setPlaceholders(); updateLock(); resetAll();
@@ -738,7 +734,7 @@ Take Profit: ${tradeData.tp}`;
     if (currentSymbol === sym) return;
     currentSymbol = sym;
     document.querySelectorAll('#forex-pairs .symbol-btn').forEach(b => b.classList.remove('active'));
-    if (sym !== 'XAUUSD') btn.classList.add('active');
+    btn.classList.add('active');
     setPlaceholders(); updateLock(); resetAll();
   }
 
